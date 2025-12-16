@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử Mượn - Thư viện HAUI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" alt="Logo" class="sidebar-logo">
+                    <span>Hệ thống thư viện</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item" onclick="showDemoAlert('Dashboard')">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Bảng điều khiển</span>
+                </a>
+
+                <a href="#" class="menu-item" onclick="showDemoAlert('Sách')">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Danh mục sách</span>
+                </a>
+                
+                <a href="#" class="menu-item" onclick="showDemoAlert('Giỏ hàng')">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Giỏ hàng của tôi</span>
+                </a>
+                
+                <a href="qr.html" class="menu-item">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Vé mượn QR</span>
+                </a>
+
+                <a href="lichsu.html" class="menu-item active">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Lịch sử mượn của tôi</span>
+                </a>
+
+                <a href="mk.html" class="menu-item">
+                    <i class="fa-solid fa-user-lock"></i>
+                    <span>Thay đổi mật khẩu</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 class="page-title">Lịch sử mượn</h1> 
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name">Loading...</span>
+                        <span class="user-email">Loading...</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-right-from-bracket logout-icon" onclick="showDemoAlert('Đăng xuất')"></i>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div id="view-history" class="view-section">
+                    <div class="page-header">
+                        <i class="fa-solid fa-clock-rotate-left title-icon text-orange"></i>
+                        <div class="header-text">
+                            <h2>Lịch sử mượn của tôi</h2>
+                            <p>Hồ sơ hoàn chỉnh về hoạt động mượn thư viện của bạn với thông tin chi tiết.</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-card border-orange">
+                            <div class="stat-content">
+                                <span class="stat-label">Tổng số đã mượn</span>
+                                <span class="stat-value" id="total-borrowed">0</span>
+                                <span class="stat-sub">Mọi lúc</span>
+                            </div>
+                            <div class="stat-icon icon-orange">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card border-green">
+                            <div class="stat-content">
+                                <span class="stat-label">Đang mượn</span>
+                                <span class="stat-value text-green-bold" id="currently-borrowing">0</span>
+                                <span class="stat-sub">Sách đang hoạt động</span>
+                            </div>
+                            <div class="stat-icon icon-green">
+                                <i class="fa-solid fa-eye"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card border-red">
+                            <div class="stat-content">
+                                <span class="stat-label">Quá hạn</span>
+                                <span class="stat-value text-red-bold" id="overdue-books">0</span>
+                                <span class="stat-sub">Cần chú ý</span>
+                            </div>
+                            <div class="stat-icon icon-red">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card border-blue">
+                            <div class="stat-content">
+                                <span class="stat-label">Đã trả</span>
+                                <span class="stat-value text-blue-bold" id="returned-books">0</span>
+                                <span class="stat-sub">Hoàn thành</span>
+                            </div>
+                            <div class="stat-icon icon-blue">
+                                <i class="fa-regular fa-circle-check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">
+                        <div class="section-header">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <h3>Hồ sơ mượn sách</h3>
+                        </div>
+                        <p class="section-desc">Lịch sử hoàn chỉnh về việc mượn sách của bạn với thông tin chi tiết</p>
+                    </div>
+
+                    <div id="history-records">
+                        </div>
+
+                </div>
+            </div>
+            
+            <footer class="main-footer">
+                <div class="footer-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" alt="Logo" class="footer-logo">
+                    <span>Thư viện HAUI</span>
+                </div>
+                <div class="footer-right">
+                    <span>© 2025 Thư viện HAUI</span>
+                    <a href="#" onclick="showDemoAlert('Chính sách riêng tư')">Sự riêng tư</a>
+                    <a href="#" onclick="showDemoAlert('Điều khoản sử dụng')">Điều khoản</a>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

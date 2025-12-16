@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vé Mượn QR - Thư viện HAUI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" alt="Logo" class="sidebar-logo">
+                    <span>Hệ thống thư viện</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item" onclick="showDemoAlert('Dashboard')">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Bảng điều khiển</span>
+                </a>
+                
+                <a href="#" class="menu-item" onclick="showDemoAlert('Sách')">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Danh mục sách</span>
+                </a>
+                
+                <a href="#" class="menu-item" onclick="showDemoAlert('Giỏ hàng')">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Giỏ hàng của tôi</span>
+                </a>
+                
+                <a href="qr.html" class="menu-item active">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Vé mượn QR</span>
+                </a>
+                
+                <a href="lichsu.html" class="menu-item">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Lịch sử mượn của tôi</span>
+                </a>
+
+                <a href="mk.html" class="menu-item">
+                    <i class="fa-solid fa-user-lock"></i>
+                    <span>Thay đổi mật khẩu</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 class="page-title">Vé mượn QR</h1> 
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name">Loading...</span>
+                        <span class="user-email">Loading...</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-right-from-bracket logout-icon" onclick="showDemoAlert('Đăng xuất')"></i>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div id="view-qr" class="view-section">
+                    <div class="page-header">
+                        <i class="fa-solid fa-qrcode title-icon"></i>
+                        <div class="header-text">
+                            <h2>Vé mượn QR</h2>
+                            <p>Mã QR của bạn để mượn sách và truy cập thư viện.</p>
+                        </div>
+                    </div>
+
+                    <div class="cards-container">
+                        <div class="card qr-section">
+                            <h3 class="card-title text-center">Vé QR của bạn</h3>
+                            <p class="card-subtitle text-center">Hãy đưa cái này cho thủ thư.</p>
+                            
+                            <div class="qr-display">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TKT-J1K89Q6P8" alt="QR Code">
+                            </div>
+
+                            <div class="qr-info text-center">
+                                <span class="ticket-code">Mã vé: <strong>TKT-J1K89Q6P8</strong></span>
+                                <span class="created-at">Được tạo lúc...</span>
+                            </div>
+
+                            <div class="download-btn-container">
+                                <button class="btn-download" id="btn-download-qr">
+                                    <i class="fa-solid fa-download"></i> Tải xuống
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card details-section">
+                            <h3 class="card-title">Chi tiết vé</h3>
+                            <p class="card-subtitle">Thông tin được mã hóa trong vé QR của bạn</p>
+
+                            <div class="info-list">
+                                <div class="info-row">
+                                    <span class="label">Mã số sinh viên:</span>
+                                    <span class="value" id="student-id">...</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Tên:</span>
+                                    <span class="value" id="student-name">...</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">E-mail:</span>
+                                    <span class="value" id="student-email">...</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Mục đích:</span>
+                                    <span class="value">Mượn sách</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Trạng thái:</span>
+                                    <span class="badge-status">TÍCH CỰC</span>
+                                </div>
+                            </div>
+
+                            <div class="usage-guide">
+                                <h4>Cách sử dụng:</h4>
+                                <ol>
+                                    <li>Hãy đưa mã QR này cho thủ thư xem.</li>
+                                    <li>Họ sẽ quét mã để xác minh danh tính của bạn.</li>
+                                    <li>Tiến hành mượn hoặc trả sách</li>
+                                    <li>Sử dụng chức năng thanh toán giỏ hàng để mượn sách cụ thể</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notes-container">
+                        <div class="card note-box">
+                            <h4 class="note-title text-green"><i class="fa-solid fa-circle-info"></i> Lưu ý quan trọng</h4>
+                            <div class="note-content">
+                                <p class="text-green-small" style="font-weight: 500; margin-bottom: 5px;"><i class="fa-solid fa-check"></i> Có hiệu lực cho:</p>
+                                <ul class="bullet-list">
+                                    <li>Mượn và trả sách</li>
+                                    <li>Xác minh quyền truy cập thư viện</li>
+                                    <li>Ghi nhận sự có mặt</li>
+                                    <li>Đặt phòng học</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card note-box">
+                            <h4 class="note-title text-orange"><i class="fa-solid fa-triangle-exclamation"></i> Hãy nhớ:</h4>
+                            <div class="note-content">
+                                <ul class="bullet-list">
+                                    <li>Sử dụng chức năng thanh toán giỏ hàng cho các cuốn sách cụ thể</li>
+                                    <li>Đừng chia sẻ mã QR của bạn với người khác</li>
+                                    <li>Hãy chuẩn bị thẻ sinh viên để làm giấy tờ dự phòng.</li>
+                                    <li>Vé thanh toán sẽ hết hạn sau 15 phút.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="main-footer">
+                <div class="footer-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" alt="Logo" class="footer-logo">
+                    <span>Thư viện HAUI</span>
+                </div>
+                <div class="footer-right">
+                    <span>© 2025 Thư viện HAUI</span>
+                    <a href="#" onclick="showDemoAlert('Chính sách riêng tư')">Sự riêng tư</a>
+                    <a href="#" onclick="showDemoAlert('Điều khoản sử dụng')">Điều khoản</a>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

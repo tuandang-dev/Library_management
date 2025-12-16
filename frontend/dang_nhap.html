@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống quản lý thư viện</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            background: linear-gradient(to bottom right, #fff7ed, #fed7aa);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 32rem;
+            position: relative;
+            margin: auto;
+        }
+
+        .card-header {
+            display: grid;
+            grid-template-rows: auto auto;
+            grid-auto-rows: min-content;
+            align-items: start;
+            gap: 0.375rem;
+            padding: 1.5rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+        }
+
+        .close-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 500;
+            transition: all 0.15s;
+            border: none;
+            background: none;
+            height: 2rem;
+            width: 2rem;
+            border-radius: 0.375rem;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .close-btn:hover {
+            background: rgb(249 250 251);
+        }
+
+        .close-btn svg {
+            height: 1rem;
+            width: 1rem;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo {
+            height: 5rem;
+            width: 5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .card-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .input {
+            display: flex;
+            height: 2.25rem;
+            width: 100%;
+            min-width: 0;
+            border-radius: 0.375rem;
+            border: 1px solid #e5e7eb;
+            padding: 0.25rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            background: #fff7ed;
+            transition: color 0.15s, box-shadow 0.15s;
+            outline: none;
+        }
+
+        .input:focus {
+            box-shadow: none;
+            border-color: rgba(0, 0, 0, 0.2);
+            outline-style: solid;
+            outline-width: 2px;
+            outline-offset: 2px;
+            outline-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .input::placeholder {
+            color: #9ca3af;
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 500;
+            transition: all 0.15s;
+            border: none;
+            outline: none;
+            background: #ea580c;
+            color: white;
+            height: 2.25rem;
+            padding: 0.5rem 1rem;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #c2410c;
+        }
+
+        .submit-btn:focus-visible {
+            border-color: #ea580c;
+            outline-style: solid;
+            outline-width: 3px;
+            outline-color: rgba(234, 88, 12, 0.5);
+        }
+
+        .forgot-password-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.15s;
+            border: none;
+            background: none;
+            outline: none;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            height: 2.25rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .forgot-password-btn:hover {
+            text-decoration: none;
+        }
+
+        .demo-info {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            color: #6b7280;
+        }
+
+        .demo-info p {
+            margin-top: 0.5rem;
+        }
+
+        .demo-list {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+
+        .footer {
+            background: linear-gradient(to right, #fff7ed, #fef3c7);
+            border-top: 1px solid #fed7aa;
+        }
+
+        .footer-content {
+            max-width: 80rem;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .footer-top {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .footer-logo {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        .footer-icon {
+            height: 1.5rem;
+            width: 1.5rem;
+            color: #ea580c;
+        }
+
+        .footer-heading {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            font-weight: 500;
+            color: #7c2d12;
+        }
+
+        .footer-description {
+            max-width: 42rem;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-description p {
+            color: #c2410c;
+            line-height: 1.625;
+            font-size: 0.875rem;
+        }
+
+        .footer-bottom {
+            padding-top: 1.5rem;
+            border-top: 1px solid #fed7aa;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-copyright {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            color: #ea580c;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .footer-link {
+            color: #ea580c;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .footer-link:hover {
+            color: #9a3412;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .tab-btn:hover {
+            color: #ea580c;
+        }
+
+        .tab-btn.active {
+            color: #ea580c;
+            border-bottom-color: #ea580c;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+        <div class="container">
+            <button class="close-btn" aria-label="Đóng">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
+            </button>
+
+            <div class="card-header">
+                <div class="logo-container">
+                    <img src="https://i.imgur.com/8YJc8Zx.png" alt="Logo của Đại học Caloocan City" class="logo">
+                </div>
+                <h4 class="card-title">Hệ thống quản lý thư viện</h4>
+                <p class="card-description">Đăng nhập để truy cập trang tổng quan của bạn</p>
+            </div>
+
+            <div class="card-content">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
+                    <button class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
+                </div>
+
+                <!-- Login Tab -->
+                <div id="login-tab" class="tab-content active">
+                    <form class="form" id="loginForm">
+                        <div class="input-group">
+                            <label class="label" for="loginField">Tên người dùng / Mã số sinh viên</label>
+                            <input type="text" class="input" id="loginField" placeholder="Nhập tên người dùng hoặc mã số sinh viên của bạn" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label" for="password">Mật khẩu</label>
+                            <input type="password" class="input" id="password" placeholder="Nhập mật khẩu của bạn" required>
+                        </div>
+
+                        <button class="submit-btn" type="submit">Đăng nhập</button>
+                    </form>
+
+                    <div style="margin-top: 1rem; text-align: center;">
+                        <button class="forgot-password-btn">Quên mật khẩu?</button>
+                    </div>
+
+                    <!-- <div class="demo-info">
+                        <p>Thông tin đăng nhập demo:</p>
+                        <div class="demo-list">
+                            <p>Sinh viên: 123 / 123</p>
+                            <p>Thủ thư: thủ thư / 123</p>
+                            <p>Quản trị viên: admin / 123</p>
+                            <p>Máy quét: máy quét / 123</p>
+                        </div>
+                    </div> -->
+                </div>
+
+                <!-- Register Tab -->
+                <div id="register-tab" class="tab-content">
+                    <form class="form" id="registerForm">
+                        <div class="input-group">
+                            <label class="label" for="fullname">Họ và tên</label>
+                            <input type="text" class="input" id="fullname" placeholder="Nhập họ và tên đầy đủ" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label" for="studentId">Mã số sinh viên</label>
+                            <input type="text" class="input" id="studentId" placeholder="Nhập mã số sinh viên" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label" for="email">Email</label>
+                            <input type="email" class="input" id="email" placeholder="Nhập địa chỉ email" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label" for="phone">Số điện thoại</label>
+                            <input type="tel" class="input" id="phone" placeholder="Nhập số điện thoại" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label" for="newPassword">Mật khẩu</label>
+                            <input type="password" class="input" id="newPassword" placeholder="Nhập mật khẩu" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label" for="confirmPassword">Xác nhận mật khẩu</label>
+                            <input type="password" class="input" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <input type="checkbox" id="agreeTerms" required style="width: 1rem; height: 1rem; cursor: pointer;">
+                            <label for="agreeTerms" style="font-size: 0.875rem; color: #6b7280; cursor: pointer;">
+                                Tôi đồng ý với <a href="#terms" style="color: #ea580c; text-decoration: underline;">điều khoản sử dụng</a>
+                            </label>
+                        </div>
+
+                        <button class="submit-btn" type="submit">Đăng ký</button>
+                    </form>
+
+                    <div class="demo-info" style="margin-top: 1rem;">
+                        <p style="font-size: 0.875rem; color: #92400e;">
+                            📝 Sau khi đăng ký, tài khoản của bạn sẽ được xem xét và kích hoạt trong vòng 24 giờ.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-top">
+                <div class="footer-title">
+                    <img src="https://i.imgur.com/8YJc8Zx.png" alt="Logo của Đại học Caloocan City" class="footer-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="footer-icon" aria-hidden="true">
+                        <path d="M12 7v14"></path>
+                        <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
+                    </svg>
+                    <h3 class="footer-heading">Thư viện UCC</h3>
+                </div>
+                <div class="footer-description">
+                    <p>Tầm nhìn của chúng tôi là tạo ra một không gian học tập hiện đại, nơi kiến thức, công nghệ và cộng đồng kết hợp với nhau.</p>
+                    <p>Chúng tôi hỗ trợ sinh viên và nhà giáo dục đạt được thành tích học tập xuất sắc.</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright">© Hệ thống quản lý thư viện UCC năm 2024. Đã đăng ký Bản quyền.</p>
+                <div class="footer-links">
+                    <a href="#privacy" class="footer-link">Sự riêng tư</a>
+                    <a href="#terms" class="footer-link">Điều kiện</a>
+                    <a href="#accessibility" class="footer-link">Tiếp cận</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching function
+        function switchTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Update card description
+            const description = document.querySelector('.card-description');
+            if (tabName === 'login') {
+                description.textContent = 'Đăng nhập để truy cập trang tổng quan của bạn';
+            } else {
+                description.textContent = 'Tạo tài khoản mới để sử dụng dịch vụ thư viện';
+            }
+        }
+
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginField').value;
+            const password = document.getElementById('password').value;
+            
+            // Demo authentication
+            const users = {
+                '123': { password: '123', role: 'Sinh viên' },
+                'thủ thư': { password: '123', role: 'Thủ thư' },
+                'admin': { password: '123', role: 'Quản trị viên' },
+                'máy quét': { password: '123', role: 'Máy quét' }
+            };
+            
+            if (users[username] && users[username].password === password) {
+                // alert(`✓ Đăng nhập thành công!\n\nChào mừng ${users[username].role}.\nBạn sẽ được chuyển đến trang Dashboard...`);
+                window.location.href = 'mk.html';
+            } else {
+                alert('✗ Tên đăng nhập hoặc mật khẩu không chính xác!');
+            }
+        });
+
+        // Register Form Handler
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fullname = document.getElementById('fullname').value;
+            const studentId = document.getElementById('studentId').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                alert('✗ Mật khẩu xác nhận không khớp!\n\nVui lòng nhập lại mật khẩu.');
+                return;
+            }
+            
+            // Validate password length
+            if (password.length < 6) {
+                alert('✗ Mật khẩu phải có ít nhất 6 ký tự!');
+                return;
+            }
+            
+            // Check terms agreement
+            if (!agreeTerms) {
+                alert('✗ Bạn cần đồng ý với điều khoản sử dụng để đăng ký!');
+                return;
+            }
+            
+            // Success message
+            alert(`✓ Đăng ký thành công!\n\nThông tin tài khoản:\n• Họ tên: ${fullname}\n• MSSV: ${studentId}\n• Email: ${email}\n• SĐT: ${phone}\n\nTài khoản của bạn đang được xem xét và sẽ được kích hoạt trong vòng 24 giờ.`);
+            
+            // Reset form and switch to login tab
+            this.reset();
+            setTimeout(() => {
+                switchTab('login');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            }, 1000);
+        });
+
+        //Close button handler
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            // if (confirm('Bạn có muốn đóng trang này không?')) {}
+            window.location.href = 'trang_chu.html';
+        });
+
+        document.querySelector('.forgot-password-btn').addEventListener('click', function() {
+            // if (confirm('Bạn có muốn đóng trang này không?')) {}
+            window.location.href = 'quen_mat_khau.html';
+        });
+    </script>
+</body>
+</html>

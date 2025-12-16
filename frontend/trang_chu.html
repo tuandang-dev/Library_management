@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thư viện Đại học Công Nghiệp Hà Nội</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/trang_chu.css" />
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="header-top">
+                    <div class="logo-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="header-title">
+                        <h1>Bộ Sưu Tập Sách</h1>
+                        <div class="header-subtitle">
+                            <i class="fas fa-sparkles"></i>
+                            <p>Khám phá cuốn sách tuyệt vời tiếp theo của bạn</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="header-description">
+                    Duyệt qua bộ sưu tập tài nguyên học thuật toàn diện của chúng tôi.
+                    Tìm sách, kiểm tra tình trạng còn hàng và dễ dàng thêm chúng vào giỏ
+                    mượn của bạn.
+                </p>
+                <button class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Đăng Nhập Để Mượn Sách
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Card -->
+        <div class="search-card">
+            <div class="search-header">
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="search-title">
+                    <h2>Tìm Kiếm & Khám Phá</h2>
+                    <p>
+                        Tìm chính xác những gì bạn đang tìm kiếm với công cụ tìm kiếm nâng
+                        cao của chúng tôi
+                    </p>
+                </div>
+            </div>
+            <div class="search-controls">
+                <div class="search-input">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm theo tiêu đề, tác giả, ISBN..." />
+                </div>
+                <select id="categoryFilter">
+                    <option value="">Tất cả thể loại</option>
+                </select>
+                <select id="statusFilter">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="available">Có sẵn</option>
+                    <option value="borrowed">Đang mượn</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-left">
+                <div class="stat-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><span id="totalBooks">0</span> Sách Tìm Thấy</h3>
+                    <p>Tổng bộ sưu tập: <span id="totalCollection">0</span> sách</p>
+                </div>
+            </div>
+            <div class="stat-badges">
+                <div class="badge badge-available">
+                    Có sẵn: <span id="availableCount">0</span>
+                </div>
+                <div class="badge badge-total">
+                    Tổng bản sao: <span id="totalCopies">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Books Grid -->
+        <div class="books-grid" id="booksGrid">
+            <!-- Books will be dynamically loaded here -->
+        </div>
+
+        <div class="pagination" id="pagination">
+            
+        </div>
+
+        <!-- CTA Card -->
+        <div class="cta-card">
+            <div class="cta-content">
+                <div class="cta-icon">
+                    <i class="fas fa-sparkles"></i>
+                </div>
+                <h3>Sẵn Sàng Bắt Đầu Đọc?</h3>
+                <p>
+                    Đăng nhập bằng thông tin sinh viên của bạn để thêm sách vào giỏ hàng
+                    và tạo vé mượn QR. Truy cập ngay hàng nghìn tài nguyên học thuật.
+                </p>
+                <button class="btn-cta">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Bắt Đầu Ngay
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-book-open"></i>
+                    <h3>Thư Viện UCC</h3>
+                </div>
+                <div class="footer-text">
+                    <p>
+                        Tầm nhìn của chúng tôi là tạo ra một không gian học tập hiện đại
+                        nơi kiến thức, công nghệ và cộng đồng hòa quyện với nhau.
+                    </p>
+                    <p>
+                        Chúng tôi hỗ trợ sinh viên và giảng viên đạt được sự xuất sắc
+                        trong học thuật.
+                    </p>
+                </div>
+                <div class="footer-bottom">
+                    <p>
+                        © 2024 Hệ Thống Quản Lý Thư Viện UCC. Tất cả quyền được bảo lưu.
+                    </p>
+                    <div class="footer-links">
+                        <a href="#privacy">Quyền riêng tư</a>
+                        <a href="#terms">Điều khoản</a>
+                        <a href="#accessibility">Khả năng tiếp cận</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/trang_chu.js">
+        // Load data from data.js (simulated)
+    </script>
+</body>
+
+</html>
