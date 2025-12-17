@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Máy quét chấm công</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: white;
+        --accent: #ef6c17; /* cam */
+        --green: rgb(22, 163, 74);
+        --muted: #92400e;
+        --card: #fff;
+        --sidebar: #fff7ed;
+        --border: #fed7aa;
+        --soft: #f9f2ee;
+        --blue: #5b5cff;
+        --radius: 14px;
+        --shadow: 0 6px 18px rgba(22, 18, 13, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
+        margin: 0;
+        background: linear-gradient(180deg, var(--bg), #fff);
+        color: #2d1b0e;
+      }
+      .wrap {
+        display: flex;
+        min-height: 100vh;
+      }
+      aside.sidebar {
+        width: 16rem;
+        background: var(--sidebar);
+        border-right: 1px solid var(--border);
+        position: fixed;
+        height: 100vh;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        height: 58px;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand .logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #ffb37d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+      }
+      .brand h3 {
+        font-size: 0.875rem;
+        margin: 0;
+      }
+
+      nav.menu {
+        padding: 1rem;
+      }
+      nav.menu a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        color: #5b463a;
+        text-decoration: none;
+        margin-bottom: 8px;
+        font-size: 0.875rem;
+        padding-inline: 0.75rem;
+      }
+      nav.menu a.active {
+        background: var(--green);
+        color: white;
+      }
+      nav.menu a.active:hover {
+        background-color: rgb(69, 179, 106);
+      }
+      nav.menu a i {
+        width: 14px;
+        height: 14px;
+        text-align: center;
+      }
+      nav.menu a:hover {
+        background-color: rgb(245, 158, 11);
+      }
+      main {
+        flex: 1;
+        margin-left: 16rem;
+      }
+      header.top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 21px 14px 21px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background-color: white;
+      }
+      header .top1 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      /* Nút menu */
+      .menu-btn {
+        display: none;
+        font-size: 22px;
+        background: none;
+        border: none;
+        color: #5b463a;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 10px;
+      }
+
+      /* Sidebar dạng trượt */
+      .sidebar {
+        transition: transform 0.3s ease;
+      }
+
+      /* Ẩn sidebar khi mobile */
+      @media (max-width: 980px) {
+        .menu-btn {
+          display: block; /* Hiện nút ☰ */
+        }
+
+        aside.sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 250px;
+          background: #fff;
+          z-index: 999;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+          transform: translateX(-100%); /* Ẩn ra ngoài màn hình */
+        }
+
+        aside.sidebar.show {
+          transform: translateX(0); /* Trượt vào */
+        }
+
+        /* Main full width */
+        main {
+          margin-left: 0 !important;
+          width: 100%;
+        }
+
+        /* Overlay mờ phía sau sidebar */
+        #overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 998;
+        }
+
+        #overlay.show {
+          display: block;
+        }
+      }
+      .user {
+        text-align: right;
+        display: flex;
+      }
+      .user h4 {
+        margin: 0;
+        font-weight: 400;
+        font-size: 12.25px;
+      }
+      .user p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 10.5px;
+      }
+      .user button {
+        padding: 6px 12px;
+        border: none;
+        background: none;
+        color: black;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .welcome {
+        background: linear-gradient(180deg, #fff, #fff);
+        padding: 21px 21px 0px 21px;
+      }
+      .welcome h1 {
+        margin: 0 0 10px;
+        font-size: 21px;
+      }
+      .welcome p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 30px;
+      }
+      .stats-row {
+        display: flex;
+        gap: 18px;
+        padding: 0 21px;
+        margin-top: -10px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        flex: 1;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        box-shadow: var(--shadow);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .stat-title {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2d1b0e;
+      }
+
+      .stat-icon {
+        color: var(--green);
+      }
+      .stat-icon-blue {
+        color: var(--blue);
+      }
+      .stat-icon-orange {
+        color: var(--accent);
+      }
+      /* Khung quét */
+      .scan-area {
+        width: 520px;
+        height: 360px;
+        background: #fff4e6;
+        border-radius: 16px;
+        border: 1px solid #f7d1b5;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #a05a2c;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .scan-area:hover {
+        background: #ffe8d5;
+      }
+
+      /* Icon camera */
+      .scan-area i {
+        font-size: 42px;
+        margin-bottom: 10px;
+        color: #a05a2c;
+      }
+
+      /* Nút khởi động */
+      .scan-btn {
+        margin: 20px auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        background: var(--accent);
+        color: white;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .scan-btn:hover {
+        background: #f57c27;
+      }
+      .camera {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin: 21px;
+      }
+      /* Nhập mã QR thủ công */
+      .manual-box {
+        border: 1px solid var(--border);
+        background: #fff;
+        border-radius: 14px;
+        padding: 18px;
+        margin: 0 21px 30px 21px;
+      }
+
+      .manual-box h3 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        color: black;
+      }
+
+      .manual-input {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid var(--border);
+        background: #fff7ed;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
+        color: #5b463a;
+      }
+
+      .manual-input::placeholder {
+        color: #c28a5a;
+      }
+
+      .manual-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .manual-btn {
+        padding: 10px 18px;
+        background: var(--accent);
+        color: white;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .manual-btn:hover {
+        background: #f57c27;
+      }
+
+      /* Hồ sơ tham dự gần đây */
+      .recent-box {
+        border: 1px solid var(--border);
+        background: #fff;
+        border-radius: 14px;
+        padding: 18px;
+        margin: 0 21px 30px 21px;
+      }
+
+      .recent-box h3 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        color: black;
+      }
+
+      .recent-sub {
+        margin: 0;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 18px;
+      }
+
+      /* Item */
+      .recent-item {
+        background: #fffaf2;
+        border: 1px solid #f6e4d3;
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      /* Khối trái */
+      .recent-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .recent-date {
+        background: #fff;
+        border-radius: 12px;
+        padding: 10px 14px;
+        text-align: center;
+        font-size: 12px;
+        color: #8a6246;
+        border: 1px solid #f6dfca;
+      }
+
+      .recent-info .name {
+        font-size: 14px;
+        font-weight: 600;
+        color: black;
+      }
+
+      .recent-info .id {
+        font-size: 12px;
+        color: #a87452;
+        margin-top: 2px;
+      }
+
+      .recent-info .time {
+        font-size: 12px;
+        color: #a87452;
+        margin-top: 2px;
+      }
+
+      /* Trạng thái */
+      .status {
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        color: white;
+      }
+
+      .status.active {
+        background: var(--accent);
+      }
+
+      .status.done {
+        background: var(--green);
+      }
+
+      /* footer */
+      footer {
+        margin-top: 18px;
+        padding: 15px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--sidebar);
+        border-top: 1px solid var(--accent);
+        font-size: 12px;
+      }
+
+      /* responsive */
+      @media (max-width: 980px) {
+        .menu-btn {
+          display: block;
+        }
+
+        aside.sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 250px;
+          background: #fff;
+          z-index: 999;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+          transform: translateX(
+            -100%
+          ); /* Ẩn bằng transform, KHÔNG display:none */
+          transition: transform 0.3s ease;
+        }
+
+        aside.sidebar.show {
+          transform: translateX(0);
+        }
+
+        #overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 998;
+        }
+
+        #overlay.show {
+          display: block;
+        }
+
+        main {
+          margin-left: 0 !important;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="overlay"></div>
+    <div class="wrap">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">HaUI</div>
+          <div>
+            <h3>Hệ thống thư viện</h3>
+            <div style="font-size: 12px; color: var(--muted)">Thư viện HaUI</div>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a href="BangDieuKhien.html" class="active"
+            ><i class="fa-solid fa-qrcode"></i> Máy quét chấm công</a
+          >
+        </nav>
+      </aside>
+
+      <main>
+        <header class="top">
+          <div class="top1">
+            <button id="menu-btn" class="menu-btn">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <h2 style="margin: 0; font-size: 17.5px; font-weight: normal">
+              Bảng Điều Khiển Máy Quét
+            </h2>
+          </div>
+          <div class="user">
+            <div>
+              <h4>Máy quét</h4>
+              <p>scanner@haui.edu</p>
+            </div>
+            <button>
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </header>
+
+        <section class="welcome">
+          <h1>Máy quét chấm công</h1>
+          <p>Quét mã QR của sinh viên để theo dõi điểm danh thư viện.</p>
+        </section>
+        <section class="report">
+          <div class="stats-row">
+            <!-- Ô 1 -->
+            <div class="stat-card">
+              <div class="stat-title">
+                <i class="fa-solid fa-user stat-icon"></i>
+                Sinh viên năng động
+              </div>
+              <div class="stat-value">1</div>
+              <div
+                style="font-size: 13px; color: var(--muted); margin-top: 4px"
+              >
+                Hiện đang ở trong thư viện
+              </div>
+            </div>
+
+            <!-- Ô 2 -->
+            <div class="stat-card">
+              <div class="stat-title">
+                <i class="fa-regular fa-clock stat-icon-blue"></i>
+                Hôm nay
+              </div>
+              <div class="stat-value">2</div>
+              <div
+                style="font-size: 13px; color: var(--muted); margin-top: 4px"
+              >
+                Tổng số người tham dự
+              </div>
+            </div>
+
+            <!-- Ô 3 -->
+            <div class="stat-card">
+              <div class="stat-title">
+                <i class="fa-solid fa-qrcode stat-icon-orange"></i>
+                Trạng thái máy quét
+              </div>
+              <div class="stat-value">Sẵn sàng</div>
+              <div
+                style="font-size: 13px; color: var(--muted); margin-top: 4px"
+              >
+                Trạng thái hiện tại
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="camera" style="padding: 0 21px; margin-bottom: 30px">
+          <h3 style="color: black; margin-bottom: 10px; font-size: 14px">
+            Máy quét mã QR
+          </h3>
+          <p style="margin-top: 0; color: var(--muted); font-size: 14px">
+            Quét mã QR của học sinh để ghi lại việc tham dự thư viện
+          </p>
+
+          <div class="scan-area" id="scan-area">
+            <i class="fa-solid fa-camera"></i>
+            <div>Nhấp để bắt đầu quét</div>
+          </div>
+
+          <button class="scan-btn">
+            <i class="fa-solid fa-camera"></i> Khởi động máy quét
+          </button>
+        </section>
+        <section class="manual-box">
+          <h3>Nhập mã QR thủ công</h3>
+
+          <input
+            type="text"
+            class="manual-input"
+            placeholder="Dán dữ liệu mã QR vào đây..."
+          />
+
+          <div class="manual-actions">
+            <button class="manual-btn">Quá trình</button>
+          </div>
+        </section>
+        <section class="recent-box">
+          <h3>Hồ sơ tham dự gần đây</h3>
+          <p class="recent-sub">Đăng ký và hoạt động mới nhất của học sinh</p>
+
+          <!-- Item 1 -->
+          <div class="recent-item">
+            <div class="recent-left">
+              <div class="recent-date">
+                Tháng Mười Hai 11 <br />
+                <small>Thứ năm</small>
+              </div>
+
+              <div class="recent-info">
+                <div class="name">Alex Johnson</div>
+                <div class="id">ST001234567</div>
+                <div class="time">
+                  <i class="fa-regular fa-clock"></i>
+                  9:18:59 tối
+                </div>
+              </div>
+            </div>
+
+            <div class="status active">Hoạt động</div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="recent-item">
+            <div class="recent-left">
+              <div class="recent-date">
+                Tháng Mười Hai 11 <br />
+                <small>Thứ năm</small>
+              </div>
+
+              <div class="recent-info">
+                <div class="name">Maria Garcia</div>
+                <div class="id">ST001234568</div>
+                <div class="time">
+                  <i class="fa-regular fa-clock"></i>
+                  7:48:59 chiều
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="status done">Hoàn thành</div>
+              <div style="font-size: 11px; margin-top: 4px; color: #8e6b55">
+                90 phút
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          <div>© Thư viện HaUI</div>
+          <div style="color: var(--muted)">
+            © Thư viện HaUI 2025 · Sự riêng tư · Điều khoản
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      const menuBtn = document.getElementById("menu-btn");
+      const sidebar = document.querySelector("aside.sidebar");
+      const overlay = document.getElementById("overlay");
+
+      menuBtn.onclick = () => {
+        sidebar.classList.add("show");
+        overlay.classList.add("show");
+      };
+
+      overlay.onclick = () => {
+        sidebar.classList.remove("show");
+        overlay.classList.remove("show");
+      };
+    </script>
+    <script>
+      const scanArea = document.getElementById("scan-area");
+
+      scanArea.onclick = () => {
+        alert("Máy quét đang khởi động...");
+      };
+    </script>
+  </body>
+</html>

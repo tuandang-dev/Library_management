@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Quản lý sách</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: white;
+        --accent: #ef6c17; /* cam */
+        --green: rgb(22, 163, 74);
+        --muted: #92400e;
+        --card: #fff;
+        --sidebar: #fff7ed;
+        --border: #fed7aa;
+        --soft: #f9f2ee;
+        --blue: #5b5cff;
+        --radius: 14px;
+        --shadow: 0 6px 18px rgba(22, 18, 13, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
+        margin: 0;
+        background: linear-gradient(180deg, var(--bg), #fff);
+        color: #2d1b0e;
+      }
+      .wrap {
+        display: flex;
+        min-height: 100vh;
+      }
+      aside.sidebar {
+        width: 16rem;
+        background: var(--sidebar);
+        border-right: 1px solid var(--border);
+        position: fixed;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        height: 58px;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand .logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #ffb37d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+      }
+      .brand h3 {
+        font-size: 0.875rem;
+        margin: 0;
+      }
+
+      nav.menu {
+        padding: 1rem;
+      }
+      nav.menu a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        color: #5b463a;
+        text-decoration: none;
+        margin-bottom: 8px;
+        font-size: 0.875rem;
+        padding-inline: 0.75rem;
+      }
+      nav.menu a.active {
+        background: var(--green);
+        color: white;
+      }
+      nav.menu a.active:hover {
+        background-color: rgb(69, 179, 106);
+      }
+      nav.menu a i {
+        width: 14px;
+        height: 14px;
+        text-align: center;
+      }
+      nav.menu a:hover {
+        background-color: rgb(245, 158, 11);
+      }
+      main {
+        flex: 1;
+        margin-left: 16rem;
+      }
+      header.top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 21px 14px 21px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background-color: white;
+      }
+      header .top1 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      /* Nút menu */
+      .menu-btn {
+        display: none;
+        font-size: 22px;
+        background: none;
+        border: none;
+        color: #5b463a;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 10px;
+      }
+
+      /* Sidebar dạng trượt */
+      .sidebar {
+        transition: transform 0.3s ease;
+      }
+
+      /* Ẩn sidebar khi mobile */
+      @media (max-width: 980px) {
+        .menu-btn {
+          display: block; /* Hiện nút ☰ */
+        }
+
+        aside.sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 250px;
+          background: #fff;
+          z-index: 999;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+          transform: translateX(-100%); /* Ẩn ra ngoài màn hình */
+        }
+
+        aside.sidebar.show {
+          transform: translateX(0); /* Trượt vào */
+        }
+
+        /* Main full width */
+        main {
+          margin-left: 0 !important;
+          width: 100%;
+        }
+
+        /* Overlay mờ phía sau sidebar */
+        #overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 998;
+        }
+
+        #overlay.show {
+          display: block;
+        }
+      }
+      .user {
+        text-align: right;
+        display: flex;
+      }
+      .user h4 {
+        margin: 0;
+        font-weight: 400;
+        font-size: 12.25px;
+      }
+      .user p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 10.5px;
+      }
+      .user button {
+        padding: 6px 12px;
+        border: none;
+        background: none;
+        color: black;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .content {
+        flex: 1;
+        padding: 25px;
+        overflow-y: auto;
+      }
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .manage1 {
+        width: 60%;
+      }
+      .manage1 h1 {
+        margin: 0 0 10px;
+        font-size: 21px;
+      }
+      .manage1 p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 30px;
+      }
+      .buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .buttons button {
+        padding: 0px 5px;
+        border-radius: 8px;
+        cursor: pointer;
+        line-height: 40px;
+        background-color: var(--card);
+        border: 1px solid var(--border);
+      }
+      .buttons .add-btn {
+        background: #e65e17;
+        color: white;
+        border: none;
+      }
+      .box {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-top: 20px;
+      }
+      .search-row {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+      }
+      input,
+      select {
+        padding: 10px;
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #d2c8b8;
+        background: #fdf7ef;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .id-tag {
+        background: #f3f4f6;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        display: inline-block;
+      }
+
+      .badge-available {
+        background: #ff8a38;
+        padding: 6px 16px;
+        color: white;
+        border-radius: 20px;
+        font-size: 13px;
+      }
+
+      .badge-borrowed {
+        background: #22c55e;
+        padding: 6px 16px;
+        color: white;
+        border-radius: 20px;
+        font-size: 13px;
+      }
+
+      .edit-btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid #d7d7d7;
+        background: white;
+        cursor: pointer;
+        margin-right: 6px;
+      }
+
+      .delete-btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: none;
+        background: #dc2626;
+        color: white;
+        cursor: pointer;
+      }
+
+      td:last-child {
+        white-space: nowrap; /* Không cho xuống dòng */
+      }
+
+      td:last-child button {
+        display: inline-flex; /* Giúp icon + text thẳng hàng */
+        align-items: center;
+        gap: 6px;
+      }
+      table,
+      table * {
+        font-size: 12px !important;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #e0d8cd;
+        text-align: left;
+      }
+      .status-available {
+        background: #ff8a38;
+        padding: 6px 15px;
+        color: white;
+        border-radius: 20px;
+      }
+      .status-borrowed {
+        background: #2aa647;
+        padding: 6px 15px;
+        color: white;
+        border-radius: 20px;
+      }
+      .action-btn {
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid #c9c4bc;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+      .delete-btn {
+        background: #d73232;
+        color: white;
+        border: none;
+      }
+      footer {
+        margin-top: 18px;
+        padding: 15px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--sidebar);
+        border-top: 1px solid var(--accent);
+        font-size: 12px;
+      }
+      /* responsive */
+      @media (max-width: 980px) {
+        .menu-btn {
+          display: block;
+        }
+
+        aside.sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 250px;
+          background: #fff;
+          z-index: 999;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+        }
+
+        aside.sidebar.show {
+          transform: translateX(0);
+        }
+
+        #overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 998;
+        }
+
+        #overlay.show {
+          display: block;
+        }
+
+        main {
+          margin-left: 0 !important;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="overlay"></div>
+    <div class="wrap">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">U</div>
+          <div>
+            <h3>Hệ thống thư viện</h3>
+            <div style="font-size: 12px; color: var(--muted)">
+              Thư viện HaUI
+            </div>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a href="BangDieuKhien.html"
+            ><i class="fa-solid fa-house"></i> Bảng điều khiển</a
+          >
+          <a href="QuanLyNguoiDung.html"
+            ><i class="fa-solid fa-users"></i> Quản lý người dùng</a
+          >
+          <a><i class="fa-solid fa-gears"></i> Đặc trưng</a>
+          <a href="QuanLySach.html" class="active"
+            ><i class="fa-solid fa-book"></i> Quản lý sách</a
+          >
+          <a><i class="fa-solid fa-desktop"></i> Quản lý thiết bị</a>
+          <a><i class="fa-solid fa-calendar-check"></i> Nhật ký tham dự</a>
+          <a><i class="fa-solid fa-book-open"></i> Lịch sử vay mượn</a>
+          <a
+            ><i class="fa-solid fa-triangle-exclamation"></i> Cảnh báo quá
+            hạn</a
+          >
+          <a><i class="fa-solid fa-arrow-trend-up"></i>Nhật ký toàn cầu</a>
+          <a><i class="fa-solid fa-database"></i> Sao lưu &amp; Khôi phục</a>
+          <a><i class="fa-solid fa-key"></i> Thay đổi mật khẩu</a>
+        </nav>
+      </aside>
+
+      <main>
+        <header class="top">
+          <div class="top1">
+            <button id="menu-btn" class="menu-btn">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <h2 style="margin: 0; font-size: 17.5px; font-weight: normal">
+              Bảng Điều Khiển Quản Trị
+            </h2>
+          </div>
+          <div class="user">
+            <div>
+              <h4>Admin</h4>
+              <p>admin@haui.edu</p>
+            </div>
+            <button>
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </header>
+        <div class="content">
+          <div class="top-bar">
+            <div class="manage1">
+              <h1>Quản lý sổ quản trị</h1>
+              <p>Quản lý sách toàn diện với các tính năng quản trị nâng cao.</p>
+            </div>
+            <div class="buttons">
+              <button>Xuất khẩu</button>
+              <button>Nhập số lượng lớn</button>
+              <button class="add-btn">+ Thêm sách mới</button>
+            </div>
+          </div>
+
+          <div class="box">
+            <h3>Tìm kiếm & Lọc</h3>
+            <div class="search-row">
+              <input
+                type="text"
+                placeholder="Tìm kiếm theo tiêu đề, tác giả, ISBN..."
+              />
+              <select>
+                <option>Tất cả danh mục</option>
+              </select>
+              <select>
+                <option>Tất cả trạng thái</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="box">
+            <table>
+              <thead>
+                <tr>
+                  <th>Chi tiết sách</th>
+                  <th>ID sách</th>
+                  <th>Loại</th>
+                  <th>Vị trí</th>
+                  <th>Sẵn sàng</th>
+                  <th>Tình trạng</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <!-- 1 -->
+                <tr>
+                  <td>
+                    <div><b>Giới thiệu về Khoa học Máy tính</b></div>
+                    <div style="color: #6b7280">bởi John Smith</div>
+                    <div style="font-size: 13px; color: #9ca3af">
+                      Mã ISBN: 978-0-123456-78-9
+                    </div>
+                  </td>
+                  <td><span class="id-tag">CS-001</span></td>
+                  <td>Tin học</td>
+                  <td>Phần A, Kệ 2</td>
+                  <td>
+                    <span style="color: green; font-weight: 600">3 / 5</span
+                    ><br /><span style="font-size: 13px">có sẵn</span>
+                  </td>
+                  <td><span class="badge-available">có sẵn</span></td>
+                  <td>
+                    <button class="edit-btn">
+                      <i class="fa-regular fa-pen-to-square"></i> Biên tập
+                    </button>
+                    <button class="delete-btn">
+                      <i class="fa-solid fa-trash"></i> Xóa
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- 2 -->
+                <tr>
+                  <td>
+                    <div><b>Cấu trúc dữ liệu và thuật toán</b></div>
+                    <div style="color: #6b7280">bởi Jane Doe</div>
+                    <div style="font-size: 13px; color: #9ca3af">
+                      Mã ISBN: 978-0-123456-79-6
+                    </div>
+                  </td>
+                  <td><span class="id-tag">CS-002</span></td>
+                  <td>Tin học</td>
+                  <td>Phần A, Kệ 3</td>
+                  <td>
+                    <span style="color: red; font-weight: 600">0 / 3</span
+                    ><br /><span style="font-size: 13px">có sẵn</span>
+                  </td>
+                  <td><span class="badge-borrowed">Mượn</span></td>
+                  <td>
+                    <button class="edit-btn">
+                      <i class="fa-regular fa-pen-to-square"></i> Biên tập
+                    </button>
+                    <button class="delete-btn">
+                      <i class="fa-solid fa-trash"></i> Xóa
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- 3 -->
+                <tr>
+                  <td>
+                    <div><b>Vật lý hiện đại</b></div>
+                    <div style="color: #6b7280">bởi Robert Johnson</div>
+                    <div style="font-size: 13px; color: #9ca3af">
+                      Mã ISBN: 978-0-123456-80-2
+                    </div>
+                  </td>
+                  <td><span class="id-tag">PHY-001</span></td>
+                  <td>Vật lý học</td>
+                  <td>Phần B, Kệ 1</td>
+                  <td>
+                    <span style="color: green; font-weight: 600">2 / 4</span
+                    ><br /><span style="font-size: 13px">có sẵn</span>
+                  </td>
+                  <td><span class="badge-available">có sẵn</span></td>
+                  <td>
+                    <button class="edit-btn">
+                      <i class="fa-regular fa-pen-to-square"></i> Biên tập
+                    </button>
+                    <button class="delete-btn">
+                      <i class="fa-solid fa-trash"></i> Xóa
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- 4 -->
+                <tr>
+                  <td>
+                    <div><b>Toán học nâng cao</b></div>
+                    <div style="color: #6b7280">bởi Tiến sĩ Emily Chen</div>
+                    <div style="font-size: 13px; color: #9ca3af">
+                      Mã ISBN: 978-0-123456-81-9
+                    </div>
+                  </td>
+                  <td><span class="id-tag">TOÁN-HOC-001</span></td>
+                  <td>Toán học</td>
+                  <td>Phần C, Kệ 1</td>
+                  <td>
+                    <span style="color: green; font-weight: 600">4 / 6</span
+                    ><br /><span style="font-size: 13px">có sẵn</span>
+                  </td>
+                  <td><span class="badge-available">có sẵn</span></td>
+                  <td>
+                    <button class="edit-btn">
+                      <i class="fa-regular fa-pen-to-square"></i> Biên tập
+                    </button>
+                    <button class="delete-btn">
+                      <i class="fa-solid fa-trash"></i> Xóa
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <footer>
+          <div>© Thư viện HaUI</div>
+          <div style="color: var(--muted)">
+            © Thư viện HaUI 2025 · Sự riêng tư · Điều khoản
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <!-- Chart.js -->
+    <script>
+      const menuBtn = document.getElementById("menu-btn");
+      const sidebar = document.querySelector("aside.sidebar");
+      const overlay = document.getElementById("overlay");
+
+      menuBtn.onclick = () => {
+        sidebar.classList.add("show");
+        overlay.classList.add("show");
+      };
+
+      overlay.onclick = () => {
+        sidebar.classList.remove("show");
+        overlay.classList.remove("show");
+      };
+    </script>
+  </body>
+</html>

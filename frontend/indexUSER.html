@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng điều khiển - Thư viện HAUI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" alt="Logo" class="sidebar-logo">
+                    <span>Hệ thống thư viện</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="index.html" class="menu-item active">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Bảng điều khiển</span>
+                </a>
+                <a href="books.html" class="menu-item">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Danh mục sách</span>
+                </a>
+                <a href="#" class="menu-item" onclick="showDemoAlert('Thiết bị')">
+                    <i class="fa-solid fa-desktop"></i>
+                    <span>Danh mục thiết bị</span>
+                </a>
+                <a href="cart.html" class="menu-item">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Giỏ hàng của tôi</span>
+                    <span class="menu-badge" id="cartBadge">0</span>
+                </a>
+                
+                <a href="#" class="menu-item" onclick="showDemoAlert('QR')">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Vé mượn QR</span>
+                </a>
+
+                <a href="#" class="menu-item" onclick="showDemoAlert('Điểm danh')">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>Sự có mặt của tôi</span>
+                </a>
+                
+                <a href="lichsu.html" class="menu-item">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Lịch sử mượn của tôi</span>
+                </a>
+
+                <a href="#" class="menu-item" onclick="showDemoAlert('Mật khẩu')">
+                    <i class="fa-solid fa-user-lock"></i>
+                    <span>Thay đổi mật khẩu</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 class="page-title">Bảng điều khiển sinh viên</h1> 
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name">Nguyễn Văn A</span>
+                        <span class="user-email">nguyenvana@student.haui.edu.vn</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-right-from-bracket logout-icon" onclick="logout()"></i>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div id="dashboard" class="view-section">
+                    <div class="page-header">
+                        <i class="fa-solid fa-house title-icon text-primary"></i>
+                        <div class="header-text">
+                            <h2>Chào mừng trở lại, Nguyễn Văn A!</h2>
+                            <p>Đây là tổng quan về thư viện của bạn cho ngày hôm nay.</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-card border-primary">
+                            <div class="stat-content">
+                                <span class="stat-label">Tổng số sách</span>
+                                <span class="stat-value" id="totalBooks">0</span>
+                                <span class="stat-sub">Có sẵn trong thư viện</span>
+                            </div>
+                            <div class="stat-icon icon-primary">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card border-success">
+                            <div class="stat-content">
+                                <span class="stat-label">Sách Công nghệ</span>
+                                <span class="stat-value text-success-bold" id="techBooks">0</span>
+                                <span class="stat-sub">Thể loại CNTT</span>
+                            </div>
+                            <div class="stat-icon icon-success">
+                                <i class="fa-solid fa-laptop-code"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card border-warning">
+                            <div class="stat-content">
+                                <span class="stat-label">Sách sắp hết</span>
+                                <span class="stat-value text-warning-bold" id="lowStockBooks">0</span>
+                                <span class="stat-sub">Số lượng ≤ 5</span>
+                            </div>
+                            <div class="stat-icon icon-warning">
+                                <i class="fa-solid fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card border-info">
+                            <div class="stat-content">
+                                <span class="stat-label">Sách mới 2023</span>
+                                <span class="stat-value text-info-bold" id="newBooks">0</span>
+                                <span class="stat-sub">Xuất bản gần đây</span>
+                            </div>
+                            <div class="stat-icon icon-info">
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid">
+                        <div class="section-card">
+                            <div class="section-header">
+                                <i class="fa-solid fa-book section-icon"></i>
+                                <h3>Sách đang mượn gần đây</h3>
+                            </div>
+                            <div class="book-list" id="borrowedBooksList">
+                                <!-- Sách sẽ được tải ở đây -->
+                            </div>
+                        </div>
+                        
+                        <div class="section-card">
+                            <div class="section-header">
+                                <i class="fa-solid fa-bolt section-icon"></i>
+                                <h3>Hành động nhanh</h3>
+                            </div>
+                            <div class="quick-actions">
+                                <a href="books.html" class="action-btn">
+                                    <div class="action-icon">
+                                        <i class="fa-solid fa-search"></i>
+                                    </div>
+                                    <div class="action-info">
+                                        <div class="action-title">Tìm kiếm sách</div>
+                                        <div class="action-desc">Tìm sách trong danh mục của chúng tôi</div>
+                                    </div>
+                                </a>
+                                
+                                <a href="books.html?filter=new" class="action-btn">
+                                    <div class="action-icon">
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                    <div class="action-info">
+                                        <div class="action-title">Sách mới nhất</div>
+                                        <div class="action-desc">Xem những cuốn sách mới xuất bản</div>
+                                    </div>
+                                </a>
+                                
+                                <a href="books.html?filter=low-stock" class="action-btn">
+                                    <div class="action-icon">
+                                        <i class="fa-solid fa-exclamation-circle"></i>
+                                    </div>
+                                    <div class="action-info">
+                                        <div class="action-title">Sách sắp hết</div>
+                                        <div class="action-desc">Xem sách có số lượng ít</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="main-footer">
+                <div class="footer-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" alt="Logo" class="footer-logo">
+                    <span>Thư viện HAUI</span>
+                </div>
+                <div class="footer-right">
+                    <span>© 2025 Thư viện HAUI</span>
+                    <a href="#" onclick="showDemoAlert('Chính sách riêng tư')">Sự riêng tư</a>
+                    <a href="#" onclick="showDemoAlert('Điều khoản sử dụng')">Điều khoản</a>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Hàm khởi tạo dữ liệu
+        function initializePage() {
+            // Tải dữ liệu từ localStorage
+            const data = JSON.parse(localStorage.getItem('libraryData')) || { sach: [], muonTra: [] };
+            
+            // Cập nhật thống kê
+            updateStats(data);
+            
+            // Hiển thị sách đang mượn
+            displayBorrowedBooks(data);
+            
+            // Cập nhật badge giỏ hàng
+            updateCartBadge(data);
+        }
+        
+        function updateStats(data) {
+            // Tổng số sách
+            const totalBooks = data.sach.length || 0;
+            document.getElementById('totalBooks').textContent = totalBooks;
+            
+            // Sách công nghệ
+            const techBooks = data.sach.filter(book => book.theLoaiId === 1).length || 0;
+            document.getElementById('techBooks').textContent = techBooks;
+            
+            // Sách sắp hết (số lượng <= 5)
+            const lowStockBooks = data.sach.filter(book => book.soLuong > 0 && book.soLuong <= 5).length || 0;
+            document.getElementById('lowStockBooks').textContent = lowStockBooks;
+            
+            // Sách mới (năm 2023)
+            const newBooks = data.sach.filter(book => book.namXuatBan === 2023).length || 0;
+            document.getElementById('newBooks').textContent = newBooks;
+        }
+        
+        function displayBorrowedBooks(data) {
+            const borrowedBooksList = document.getElementById('borrowedBooksList');
+            
+            // Lấy 3 sách đầu tiên đang mượn của user hiện tại (Nguyễn Văn A - ID 3)
+            const borrowedBooks = data.muonTra
+                .filter(record => record.docGiaId === 3 && record.trangThai === "Đang mượn")
+                .slice(0, 3);
+            
+            if (borrowedBooks.length === 0) {
+                borrowedBooksList.innerHTML = '<div class="empty-message">Không có sách đang mượn</div>';
+                return;
+            }
+            
+            borrowedBooksList.innerHTML = '';
+            borrowedBooks.forEach(record => {
+                const book = data.sach.find(b => b.id === record.sachId);
+                
+                if (book) {
+                    const bookElement = document.createElement('div');
+                    bookElement.className = 'book-item';
+                    bookElement.innerHTML = `
+                        <div class="book-info">
+                            <div class="book-title">${book.tieuDe}</div>
+                            <div class="book-author">${book.tacGia}</div>
+                            <div class="book-due">Đến hạn: ${record.hanTra}</div>
+                        </div>
+                        <div class="book-status status-borrowed">Đang mượn</div>
+                    `;
+                    borrowedBooksList.appendChild(bookElement);
+                }
+            });
+        }
+        
+        function updateCartBadge(data) {
+            const userBorrowedBooks = data.muonTra.filter(record => 
+                record.docGiaId === 3 && record.trangThai === "Đang mượn"
+            ).length;
+            document.getElementById('cartBadge').textContent = userBorrowedBooks;
+        }
+        
+        function logout() {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                alert('Đăng xuất thành công!');
+                // Trong thực tế, sẽ redirect đến trang login
+                // window.location.href = 'login.html';
+            }
+        }
+        
+        function showDemoAlert(feature) {
+            alert(`Tính năng "${feature}" đang được phát triển. Vui lòng thử lại sau!`);
+        }
+        
+        // Khởi tạo trang khi tải xong
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sao lưu & Khôi phục</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/layout.css" />
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="header"></div>
+
+    <h5 class="mb-3">Sao lưu & Khôi phục</h5>
+
+    <!-- THANH THỐNG KÊ ĐÃ XÓA -->
+    <div class="section mb-3" style="background:#fffdf7;border-color:var(--border);">
+      <div class="d-flex justify-content-between">
+        <div>
+          <b>Người dùng đã xóa:</b> <span id="deletedUsers">0</span>
+        </div>
+        <div>
+          <b>Sách đã xóa:</b> <span id="deletedBooks">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KHỐI CẢNH BÁO SAO LƯU -->
+    <div class="section mb-3" style="background:#fffdf7;border-color:#f3ddc5">
+      <h6 class="mb-2">Sao lưu dữ liệu thủ công</h6>
+      <p class="mb-2">
+        Sao lưu giúp bạn tải xuống toàn bộ dữ liệu thư viện. Tập sao lưu sẽ chứa tất cả các bảng và bản ghi.
+      </p>
+      <button class="btn btn-warning" onclick="downloadBackup()">
+        <i class="bi bi-cloud-arrow-down"></i> Tạo bản sao lưu cơ sở dữ liệu
+      </button>
+    </div>
+
+    <!-- KHỐI KHÔI PHỤC DỮ LIỆU -->
+    <div class="section mb-3" style="background:#fff4f4;border-color:#f3cccc">
+      <h6 class="mb-2">Khôi phục dữ liệu thủ công</h6>
+      <p>Upload tệp sao lưu để khôi phục toàn bộ dữ liệu trước đó.</p>
+
+      <div class="alert alert-danger mt-3">
+        <b>Cảnh báo quan trọng:</b><br>
+        Khôi phục sao lưu sẽ thay thế hoàn toàn dữ liệu hệ thống. Hành động này không thể hoàn tác.
+      </div>
+
+      <input type="file" id="restoreFile" class="form-control mt-2 mb-3" accept=".json" />
+
+      <button class="btn btn-danger" onclick="openRestoreModal()">
+        <i class="bi bi-arrow-counterclockwise"></i> Khôi phục dữ liệu
+      </button>
+    </div>
+
+    <!-- LỊCH SỬ SAO LƯU -->
+    <div class="section mb-3">
+      <h6 class="mb-3">Lịch sử sao lưu gần đây</h6>
+      <div id="backupList" class="list-group"></div>
+    </div>
+
+    <div class="footer">© Thư viện UCC</div>
+  </div>
+
+  <!-- MODAL XÁC NHẬN KHÔI PHỤC -->
+  <div class="modal fade" id="restoreModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Xác nhận khôi phục dữ liệu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          Bạn có chắc chắn muốn khôi phục? <br>
+          <b class="text-danger">Toàn bộ dữ liệu hiện tại sẽ bị thay thế.</b>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button class="btn btn-danger" onclick="restoreData()">Xác nhận</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="data.js"></script>
+  <script src="assets/js/common.js"></script>
+
+  <script>
+    initializeLibraryData();
+    renderSidebar("backup");
+    renderHeader("Sao lưu & Khôi phục");
+
+    //-----------------------------------------
+    // THỐNG KÊ NGƯỜI DÙNG / SÁCH ĐÃ XÓA
+    //-----------------------------------------
+    function loadDeletedStats() {
+      const db = JSON.parse(localStorage.getItem("libraryData"));
+
+      // Nếu bạn chưa có trường deleted, mặc định = 0
+      const deletedUsers = db.docGia.filter(u => u.deleted === true).length;
+      const deletedBooks = db.sach.filter(b => b.deleted === true).length;
+
+      document.getElementById("deletedUsers").innerText = deletedUsers;
+      document.getElementById("deletedBooks").innerText = deletedBooks;
+    }
+
+    loadDeletedStats();
+
+    //-----------------------------------------
+    // TẢI XUỐNG SAO LƯU
+    //-----------------------------------------
+    function downloadBackup() {
+      const data = localStorage.getItem("libraryData");
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "backup-library.json";
+      a.click();
+
+      URL.revokeObjectURL(url);
+
+      saveBackupHistory();
+    }
+
+    //-----------------------------------------
+    // MỞ MODAL KHÔI PHỤC
+    //-----------------------------------------
+    function openRestoreModal() {
+      const file = document.getElementById("restoreFile").files[0];
+      if (!file) {
+        alert("Vui lòng chọn file JSON để khôi phục!");
+        return;
+      }
+      const modal = new bootstrap.Modal(document.getElementById("restoreModal"));
+      modal.show();
+    }
+
+    //-----------------------------------------
+    // KHÔI PHỤC DỮ LIỆU
+    //-----------------------------------------
+    function restoreData() {
+      const file = document.getElementById("restoreFile").files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const newData = JSON.parse(e.target.result);
+          localStorage.setItem("libraryData", JSON.stringify(newData));
+
+          alert("Khôi phục dữ liệu thành công!");
+          location.reload();
+
+        } catch (err) {
+          alert("File không hợp lệ!");
+        }
+      };
+
+      reader.readAsText(file);
+    }
+
+    //-----------------------------------------
+    // LỊCH SỬ SAO LƯU
+    //-----------------------------------------
+    function saveBackupHistory() {
+      let list = JSON.parse(localStorage.getItem("backupHistory")) || [];
+      const now = new Date();
+
+      list.unshift({
+        time: now.toLocaleString(),
+        file: "backup-library.json"
+      });
+
+      localStorage.setItem("backupHistory", JSON.stringify(list));
+      renderBackupHistory();
+    }
+
+    function renderBackupHistory() {
+      const list = JSON.parse(localStorage.getItem("backupHistory")) || [];
+      const wrap = document.getElementById("backupList");
+      wrap.innerHTML = "";
+
+      if (list.length === 0) {
+        wrap.innerHTML = `<div class="list-group-item">Chưa có bản sao lưu nào.</div>`;
+        return;
+      }
+
+      list.forEach(i => {
+        wrap.innerHTML += `
+          <div class="list-group-item d-flex justify-content-between">
+            <span><i class="bi bi-filetype-json"></i> ${i.file}</span>
+            <span>${i.time}</span>
+          </div>
+        `;
+      });
+    }
+
+    renderBackupHistory();
+  </script>
+
+</body>
+</html>

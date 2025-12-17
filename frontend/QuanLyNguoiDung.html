@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Quản lý người dùng</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: white;
+        --accent: #ef6c17; /* cam */
+        --green: rgb(22, 163, 74);
+        --muted: #92400e;
+        --card: #fff;
+        --sidebar: #fff7ed;
+        --border: #fed7aa;
+        --soft: #f9f2ee;
+        --blue: #5b5cff;
+        --radius: 14px;
+        --shadow: 0 6px 18px rgba(22, 18, 13, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
+        margin: 0;
+        background: linear-gradient(180deg, var(--bg), #fff);
+        color: #2d1b0e;
+      }
+      .wrap {
+        display: flex;
+        min-height: 100vh;
+      }
+      aside.sidebar {
+        width: 16rem;
+        background: var(--sidebar);
+        border-right: 1px solid var(--border);
+        position: fixed;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        height: 58px;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand .logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #ffb37d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+      }
+      .brand h3 {
+        font-size: 0.875rem;
+        margin: 0;
+      }
+
+      nav.menu {
+        padding: 1rem;
+      }
+      nav.menu a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        color: #5b463a;
+        text-decoration: none;
+        margin-bottom: 8px;
+        font-size: 0.875rem;
+        padding-inline: 0.75rem;
+      }
+      nav.menu a.active {
+        background: var(--green);
+        color: white;
+      }
+      nav.menu a.active:hover {
+        background-color: rgb(69, 179, 106);
+      }
+      nav.menu a i {
+        width: 14px;
+        height: 14px;
+        text-align: center;
+      }
+      nav.menu a:hover {
+        background-color: rgb(245, 158, 11);
+      }
+      main {
+        flex: 1;
+        margin-left: 16rem;
+      }
+      header.top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 21px 14px 21px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background-color: white;
+      }
+      header .top1 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      /* Nút menu mobile - ẩn trên PC */
+      .menu-btn {
+        display: none;
+        font-size: 22px;
+        background: none;
+        border: none;
+        color: #5b463a;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 10px;
+      }
+
+      /* Hiệu ứng trượt sidebar */
+      aside.sidebar {
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+        z-index: 2000;
+      }
+
+      /* Overlay nền mờ khi sidebar mở */
+      .mobile-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 1500;
+      }
+
+      /* Khi sidebar mở trên mobile */
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      /* --- MOBILE --- */
+      @media (max-width: 900px) {
+        .menu-btn {
+          display: block;
+        }
+
+        aside.sidebar {
+          width: 15rem;
+          transform: translateX(-100%);
+          position: fixed;
+          top: 0;
+          bottom: 0;
+        }
+
+        /* Main full width */
+        main {
+          margin-left: 0 !important;
+        }
+      }
+      .user {
+        text-align: right;
+        display: flex;
+      }
+      .user h4 {
+        margin: 0;
+        font-weight: 400;
+        font-size: 12.25px;
+      }
+      .user p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 10.5px;
+      }
+      .user button {
+        padding: 6px 12px;
+        border: none;
+        background: none;
+        color: black;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      /* CONTENT */
+
+      .content {
+        background: linear-gradient(180deg, #fff, #fff);
+        padding: 21px 21px 0px 21px;
+      }
+      .manage {
+        display: flex;
+      }
+      .manage1 {
+        width: 65%;
+      }
+      .manage1 h1 {
+        margin: 0 0 10px;
+        font-size: 21px;
+      }
+      .manage1 p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 30px;
+      }
+      .top-actions {
+        margin: 20px 0;
+        display: flex;
+        gap: 10px;
+      }
+
+      .import-btn,
+      .add-btn {
+        padding: 0px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .import-btn {
+        background: none;
+        border: 1px solid var(--accent);
+      }
+
+      .add-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+      }
+
+      .full {
+        border: 1px solid var(--accent);
+        border-radius: 15px;
+        padding: 21px;
+      }
+      /* FILTERS */
+
+      .filters1 h2,
+      p {
+        font-size: 14px;
+      }
+      .filters1 p {
+        color: var(--muted);
+      }
+      .filters {
+        margin-bottom: 21px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .filters1 {
+        width: 50%;
+      }
+
+      .filters input,
+      .filters select {
+        padding: 0px 5px;
+        border-radius: 8px;
+        border: none;
+        background-color: var(--sidebar);
+        height: 35px;
+      }
+      /* SELECT đẹp giống Figma */
+      .fancy-select {
+        position: relative;
+      }
+
+      .fancy-select select {
+        appearance: none;
+        padding: 7px 35px 7px 12px;
+        background: var(--sidebar);
+        border-radius: 10px;
+        border: 1px solid #f4d6b7;
+        cursor: pointer;
+        font-size: 14px;
+        color: #5b463a;
+      }
+
+      /* Mũi tên */
+      .fancy-select::after {
+        content: "\f107"; /* icon angle-down */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #6a4c3a;
+      }
+      /* TABLE */
+
+      .table {
+        background: white;
+        border-radius: 12px;
+        overflow: visible; /* cho phép dropdown tràn ra */
+        border: 1px solid var(--border);
+      }
+
+      /* Tạo lưới chuẩn 6 cột */
+      .row {
+        display: grid;
+        grid-template-columns: 2.2fr 1fr 1fr 1fr 1fr 1.2fr;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        align-items: center; /* Căn giữa theo chiều dọc */
+        font-size: 15px;
+      }
+
+      .header-row {
+        background: var(--sidebar);
+        font-weight: 600;
+        border-bottom: none;
+      }
+
+      /* Mỗi ô là flex để căn giữa theo chiều dọc */
+      .col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      /* Người dùng: text thẳng hàng hơn */
+      .col.user {
+        align-items: flex-start;
+      }
+
+      /* Vai trò, trạng thái, ngày tháng, hoạt động cuối */
+      .col.role,
+      .col.status,
+      .col.date,
+      .col.active {
+        align-items: center; /* Căn giữa hoàn toàn */
+        justify-content: center;
+        text-align: center;
+      }
+
+      /* Cột hành động — ngang hàng đẹp */
+      .col.action {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+      }
+
+      /* Email */
+      .email {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+
+      /* BADGE (tag đẹp) */
+      .tag {
+        padding: 4px 10px;
+        border-radius: 20px;
+        color: white;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .blue {
+        background: #497cff;
+      }
+      .green {
+        background: #16a34a;
+      }
+      .red {
+        background: #dc2626;
+      }
+      .orange {
+        background: #f97316;
+      }
+      /* DROPDOWN */
+      .dropdown {
+        position: relative;
+      }
+
+      .dropdown-btn {
+        background: #fff7ed;
+        border: 1px solid #f4d6b7;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        width: 120px;
+        box-shadow: 0 6px 18px rgba(22, 18, 13, 0.06);
+        display: none;
+        z-index: 1000;
+      }
+
+      .dropdown-item {
+        padding: 10px 14px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .dropdown-item:hover {
+        background: #fff7ed;
+      }
+
+      .small-btn {
+        padding: 6px 12px;
+        background: #f7f7f7;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .delete {
+        background: none;
+        border: none;
+        font-size: 16px;
+        margin-left: 6px;
+        cursor: pointer;
+        color: #888;
+      }
+
+      .delete:hover {
+        color: #d00;
+      }
+      /* footer */
+      footer {
+        margin-top: 18px;
+        padding: 15px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--sidebar);
+        border-top: 1px solid var(--accent);
+        font-size: 12px;
+      }
+      /* --- ẨN SIDEBAR KHI THU NHỎ MÀN HÌNH --- */
+      @media (max-width: 900px) {
+        .filters1 {
+          display: none;
+        }
+        .menu-btn {
+          display: block;
+        }
+
+        aside.sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 250px;
+          background: #fff;
+          z-index: 999;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+          transform: translateX(
+            -100%
+          ); /* Ẩn bằng transform, KHÔNG display:none */
+          transition: transform 0.3s ease;
+        }
+
+        aside.sidebar.show {
+          transform: translateX(0);
+        }
+
+        #overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 998;
+        }
+
+        #overlay.show {
+          display: block;
+        }
+
+        main {
+          margin-left: 0 !important;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">U</div>
+          <div>
+            <h3>Hệ thống thư viện</h3>
+            <div style="font-size: 12px; color: var(--muted)">
+              Thư viện HaUI
+            </div>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a href="BangDieuKhien.html"
+            ><i class="fa-solid fa-house"></i> Bảng điều khiển</a
+          >
+          <a class="active"
+            ><i class="fa-solid fa-users"></i> Quản lý người dùng</a
+          >
+          <a><i class="fa-solid fa-gears"></i> Đặc trưng</a>
+          <a href="QuanLySach.html"
+            ><i class="fa-solid fa-book"></i> Quản lý sách</a
+          >
+          <a><i class="fa-solid fa-desktop"></i> Quản lý thiết bị</a>
+          <a><i class="fa-solid fa-calendar-check"></i> Nhật ký tham dự</a>
+          <a><i class="fa-solid fa-book-open"></i> Lịch sử vay mượn</a>
+          <a
+            ><i class="fa-solid fa-triangle-exclamation"></i> Cảnh báo quá
+            hạn</a
+          >
+          <a><i class="fa-solid fa-arrow-trend-up"></i>Nhật ký toàn cầu</a>
+          <a><i class="fa-solid fa-database"></i> Sao lưu &amp; Khôi phục</a>
+          <a><i class="fa-solid fa-key"></i> Thay đổi mật khẩu</a>
+        </nav>
+      </aside>
+
+      <main>
+        <header class="top">
+          <div class="top1">
+            <button class="menu-btn" id="menuBtn">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <h2 style="margin: 0; font-size: 17.5px; font-weight: normal">
+              Bảng Điều Khiển Quản Trị
+            </h2>
+          </div>
+          <div class="user">
+            <div>
+              <h4>Admin</h4>
+              <p>admin@haui.edu</p>
+            </div>
+            <button>
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </header>
+        <section class="content">
+          <div class="manage">
+            <div class="manage1">
+              <h1>Quản lý người dùng</h1>
+              <p>Quản lý sinh viên, thủ thư và quyền truy cập hệ thống.</p>
+            </div>
+
+            <div class="top-actions">
+              <button class="import-btn">
+                <i class="fa-solid fa-upload"></i> Nhập số lượng lớn
+              </button>
+              <button class="add-btn">
+                <i class="fa-solid fa-plus"></i> Thêm người dùng
+              </button>
+            </div>
+          </div>
+
+          <div class="full">
+            <!-- SEARCH + FILTER -->
+            <div class="filters">
+              <div class="filters1">
+                <h2>Cơ sở dữ liệu người dùng</h2>
+                <p>Tất cả người dùng đã đăng ký trong hệ thống</p>
+              </div>
+              <input
+                id="searchBox"
+                type="text"
+                placeholder="Tìm kiếm người dùng…"
+              />
+              <div class="fancy-select">
+                <select id="roleFilter">
+                  <option value="all">Tất cả vai trò</option>
+                  <option value="Sinh viên">Sinh viên</option>
+                  <option value="Thủ thư">Thủ thư</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+
+              <div class="fancy-select">
+                <select id="statusFilter">
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="Hoạt động">Hoạt động</option>
+                  <option value="Ngừng hoạt động">Ngừng hoạt động</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="table">
+              <div class="row header-row">
+                <div class="col user">Người dùng</div>
+                <div class="col role">Vai trò</div>
+                <div class="col status">Tình trạng</div>
+                <div class="col date">Ngày tham gia</div>
+                <div class="col active">Hoạt động cuối</div>
+                <div class="col action">Hành động</div>
+              </div>
+
+              <!-- ITEM -->
+              <div class="row">
+                <div class="col user">
+                  <strong>Alex Johnson</strong>
+                  <div class="email">alex.johnson@student.university.edu</div>
+                </div>
+                <div class="col role">
+                  <span class="tag blue">Sinh viên</span>
+                </div>
+                <div class="col status">
+                  <span class="tag orange">Hoạt động</span>
+                </div>
+                <div class="col date">9/1/2024</div>
+                <div class="col active">8/1/2025</div>
+                <div class="col action">
+                  <div class="dropdown">
+                    <button class="small-btn dropdown-btn">
+                      Hoạt động <i class="fa-solid fa-angle-down"></i>
+                    </button>
+
+                    <div class="dropdown-menu">
+                      <div class="dropdown-item" data-value="Hoạt động">
+                        Hoạt động
+                      </div>
+                      <div class="dropdown-item" data-value="Ngừng hoạt động">
+                        Ngừng hoạt động
+                      </div>
+                    </div>
+                  </div>
+                  <button class="delete">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ITEM -->
+              <div class="row">
+                <div class="col user">
+                  <strong>Sarah Trần</strong>
+                  <div class="email">sarah.chen@university.edu</div>
+                </div>
+                <div class="col role">
+                  <span class="tag green">Thủ thư</span>
+                </div>
+                <div class="col status">
+                  <span class="tag orange">Hoạt động</span>
+                </div>
+                <div class="col date">8/15/2023</div>
+                <div class="col active">8/1/2025</div>
+                <div class="col action">
+                  <div class="dropdown">
+                    <button class="small-btn dropdown-btn">
+                      Hoạt động <i class="fa-solid fa-angle-down"></i>
+                    </button>
+
+                    <div class="dropdown-menu">
+                      <div class="dropdown-item" data-value="Hoạt động">
+                        Hoạt động
+                      </div>
+                      <div class="dropdown-item" data-value="Ngừng hoạt động">
+                        Ngừng hoạt động
+                      </div>
+                    </div>
+                  </div>
+                  <button class="delete">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ITEM -->
+              <div class="row">
+                <div class="col user">
+                  <strong>Tiến sĩ Maria Santos</strong>
+                  <div class="email">maria.santos@university.edu</div>
+                </div>
+                <div class="col role"><span class="tag red">Admin</span></div>
+                <div class="col status">
+                  <span class="tag orange">Hoạt động</span>
+                </div>
+                <div class="col date">1/10/2022</div>
+                <div class="col active">7/31/2025</div>
+                <div class="col action">
+                  <div class="dropdown">
+                    <button class="small-btn dropdown-btn">
+                      Hoạt động <i class="fa-solid fa-angle-down"></i>
+                    </button>
+
+                    <div class="dropdown-menu">
+                      <div class="dropdown-item" data-value="Hoạt động">
+                        Hoạt động
+                      </div>
+                      <div class="dropdown-item" data-value="Ngừng hoạt động">
+                        Ngừng hoạt động
+                      </div>
+                    </div>
+                  </div>
+                  <button class="delete">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <footer>
+          <div>© Thư viện HaUI</div>
+          <div style="color: var(--muted)">
+            © Thư viện HaUI 2025 · Sự riêng tư · Điều khoản
+          </div>
+        </footer>
+      </main>
+    </div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <script>
+      function normalize(text) {
+        return text
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase();
+      }
+
+      function filterTable() {
+        const keyword = normalize(document.getElementById("searchBox").value);
+        const role = document.getElementById("roleFilter").value;
+        const status = document.getElementById("statusFilter").value;
+
+        const rows = document.querySelectorAll(".table .row:not(.header-row)");
+
+        rows.forEach((row) => {
+          const name = normalize(
+            row.querySelector(".col.user strong").innerText
+          );
+          const email = normalize(row.querySelector(".email").innerText);
+          const roleText = row.querySelector(".col.role .tag").innerText.trim();
+          const statusText = row
+            .querySelector(".col.status .tag")
+            .innerText.trim();
+
+          let show = true;
+
+          // Lọc theo tìm kiếm
+          if (keyword && !name.includes(keyword) && !email.includes(keyword)) {
+            show = false;
+          }
+
+          // Lọc theo vai trò
+          if (role !== "all" && role !== roleText) {
+            show = false;
+          }
+
+          // Lọc theo trạng thái
+          if (status !== "all" && status !== statusText) {
+            show = false;
+          }
+
+          row.style.display = show ? "grid" : "none";
+        });
+      }
+
+      // Gắn sự kiện vào các bộ lọc
+      document
+        .getElementById("searchBox")
+        .addEventListener("input", filterTable);
+      document
+        .getElementById("roleFilter")
+        .addEventListener("change", filterTable);
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", filterTable);
+    </script>
+    <script>
+      // Mở/đóng dropdown
+      document.querySelectorAll(".dropdown-btn").forEach((btn) => {
+        btn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          const menu = this.parentElement.querySelector(".dropdown-menu");
+          menu.style.display =
+            menu.style.display === "block" ? "none" : "block";
+        });
+      });
+
+      // Chọn item và cập nhật trạng thái + lọc lại bảng
+      document.querySelectorAll(".dropdown-item").forEach((item) => {
+        item.addEventListener("click", function () {
+          const newStatus = this.dataset.value; // Hoạt động / Ngừng hoạt động
+
+          const row = this.closest(".row");
+          const statusTag = row.querySelector(".col.status .tag");
+          const dropdown = this.closest(".dropdown");
+          const btn = dropdown.querySelector(".dropdown-btn");
+
+          // 1. Cập nhật text nút dropdown
+          btn.childNodes[0].textContent = newStatus + " ";
+
+          // 2. Cập nhật text trạng thái trong bảng
+          statusTag.textContent = newStatus;
+
+          // 3. Cập nhật màu theo trạng thái
+          statusTag.className =
+            "tag " + (newStatus === "Hoạt động" ? "orange" : "red");
+
+          // 4. Đóng menu
+          dropdown.querySelector(".dropdown-menu").style.display = "none";
+
+          // 5. Lọc lại bảng theo bộ lọc đang chọn
+          filterTable();
+        });
+      });
+
+      // Click ra ngoài để đóng
+      document.addEventListener("click", () => {
+        document
+          .querySelectorAll(".dropdown-menu")
+          .forEach((m) => (m.style.display = "none"));
+      });
+    </script>
+    <script>
+      const sidebar = document.querySelector(".sidebar");
+      const menuBtn = document.getElementById("menuBtn");
+      const overlay = document.getElementById("mobileOverlay");
+
+      menuBtn.addEventListener("click", () => {
+        sidebar.classList.add("open");
+        overlay.style.display = "block";
+      });
+
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        overlay.style.display = "none";
+      });
+      // MENU MOBILE
+      menuBtn.addEventListener("click", () => {
+        sidebar.classList.add("open");
+        overlay.classList.add("show");
+      });
+
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+      });
+    </script>
+  </body>
+</html>

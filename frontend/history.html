@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lịch sử vay mượn - Thư viện</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main">
+      <div class="header"></div>
+
+      <h5 style="margin-top: 8px">Lịch sử vay mượn</h5>
+
+      <div class="stats-row" style="margin-top: 12px">
+        <div class="stat">
+          <h6>Tổng số bản ghi</h6>
+          <div class="num" id="stat-total">0</div>
+        </div>
+        <div class="stat">
+          <h6>Hiện đang mượn</h6>
+          <div class="num" id="stat-borrowing">0</div>
+        </div>
+        <div class="stat">
+          <h6>Đã trả</h6>
+          <div class="num" id="stat-returned">0</div>
+        </div>
+        <div class="stat">
+          <h6>Quá hạn</h6>
+          <div class="num" id="stat-late">0</div>
+        </div>
+      </div>
+
+      <div class="search-box mt-3">
+        <div class="d-flex gap-3">
+          <input
+            id="searchInput"
+            class="form-control"
+            placeholder="Tìm kiếm theo tên sách hoặc tên học sinh..."
+          />
+          <select id="statusFilter" class="form-select" style="width: 200px">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Đang mượn">Đang mượn</option>
+            <option value="Đã trả">Đã trả</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section mt-3">
+        <h6 class="mb-3">Lịch sử giao dịch</h6>
+        <div id="txList"></div>
+      </div>
+
+      <div class="footer">© Thư viện UCC</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="data.js"></script>
+    <script src="assets/js/common.js"></script>
+
+    <script>
+      initializeLibraryData();
+      const data = getLibraryData();
+
+      renderSidebar("history");
+      renderHeader("Bảng Điều Khiển Quản Trị");
+
+      const d = getLibraryData();
+      const muon = d.muonTra;
+      const books = d.sach;
+      const readers = d.docGia;
+
+      function bookOf(id) {
+        return books.find((b) => b.id === id) || { tieuDe: "Không rõ" };
+      }
+      function readerOf(id) {
+        return readers.find((r) => r.id === id) || { hoTen: "Không rõ" };
+      }
+
+      function renderStats() {
+        document.getElementById("stat-total").innerText = muon.length;
+        document.getElementById("stat-borrowing").innerText = muon.filter(
+          (m) => m.trangThai === "Đang mượn"
+        ).length;
+        document.getElementById("stat-returned").innerText = muon.filter(
+          (m) => m.trangThai === "Đã trả"
+        ).length;
+        document.getElementById("stat-late").innerText = muon.filter(
+          (m) => new Date(m.hanTra) < new Date() && m.trangThai === "Đang mượn"
+        ).length;
+      }
+
+      function renderList(filter = "") {
+        const list = document.getElementById("txList");
+        list.innerHTML = "";
+        const statusFilter = document.getElementById("statusFilter").value;
+
+        muon
+          .filter((m) => {
+            const bk = bookOf(m.sachId).tieuDe.toLowerCase();
+            const rd = readerOf(m.docGiaId).hoTen.toLowerCase();
+            const kw = filter.toLowerCase();
+            if (kw && !(bk.includes(kw) || rd.includes(kw))) return false;
+            if (statusFilter && m.trangThai !== statusFilter) return false;
+            return true;
+          })
+          .forEach((m) => {
+            const bk = bookOf(m.sachId);
+            const rd = readerOf(m.docGiaId);
+            const isLate =
+              new Date(m.hanTra) < new Date() && m.trangThai === "Đang mượn";
+            const pillClass =
+              m.trangThai === "Đã trả"
+                ? "pill return"
+                : isLate
+                ? "pill late"
+                : "pill borrow";
+            const rightPurple = `<div class="small-purple">Nhân viên<br/>Sarah Chen</div>`;
+            const html = `
+            <div class="tx-card">
+              <div class="tx-row">
+                <div class="tx-left">
+                  <div class="book-title">${bk.tieuDe}</div>
+                  <div class="book-sub">${rd.hoTen}</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="${pillClass}">${
+              isLate ? "Quá hạn" : m.trangThai
+            }</div>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-4 small-text">
+                  <i class="bi bi-box-arrow-in-right"></i> Mượn: ${formatDate(
+                    m.ngayMuon
+                  )}
+                </div>
+                <div class="col-md-4 small-text">
+                  <i class="bi bi-calendar"></i> Ngày đến hạn: ${formatDate(
+                    m.hanTra
+                  )}
+                </div>
+                <div class="col-md-4 small-text" style="text-align:right">
+                  ${rightPurple}
+                </div>
+              </div>
+            </div>
+          `;
+            list.insertAdjacentHTML("beforeend", html);
+          });
+      }
+
+      function formatDate(d) {
+        if (!d) return "";
+        const dt = new Date(d);
+        const opt = { day: "numeric", month: "long", year: "numeric" };
+        return dt.toLocaleDateString("vi-VN", opt);
+      }
+
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        renderList(e.target.value);
+      });
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", () =>
+          renderList(document.getElementById("searchInput").value)
+        );
+
+      renderStats();
+      renderList("");
+    </script>
+  </body>
+</html>
