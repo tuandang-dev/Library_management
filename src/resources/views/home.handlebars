@@ -1,17 +1,96 @@
-<div class="mt-4">
-    <div class="row">
+<div class="search-card">
+    <div class="search-header">
+        <div class="search-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="search-title">
+            <h2>Tìm Kiếm & Khám Phá</h2>
+            <p>
+                Tìm chính xác những gì bạn đang tìm kiếm với công cụ tìm kiếm nâng
+                cao của chúng tôi
+            </p>
+        </div>
+    </div>
+    <div class="search-controls">
+        <div class="search-input">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Tìm theo tiêu đề, tác giả, ISBN..." />
+        </div>
+        <select id="categoryFilter">
+            <option value="">Tất cả thể loại</option>
+            {{#each categories}}
+            <option value="">{{this.name}}</option>
+            {{/each}}
+        </select>
+        <select id="statusFilter">
+            <option value="">Tất cả trạng thái</option>
+            <option value="available">Có sẵn</option>
+            <option value="borrowed">Đang mượn</option>
+        </select>
+    </div>
+</div>
 
-        {{#each courses}}
-        <div class="col-sm-6 col-lg-4">
-            <div class="card">
-                <img class="card-img-top" src="{{this.image}}" alt="{{this.name}}">
-                <div class="card-body">
-                    <h5 class="card-title">{{this.name}}</h5>
-                    <p class="card-text">{{this.description}}</p>
-                    <a href="#" class="btn btn-primary">Đăng ký học</a>
-                </div>
+<div class="stats">
+    <div class="stat-left">
+        <div class="stat-icon">
+            <i class="fas fa-book-open"></i>
+        </div>
+        <div class="stat-info">
+            <h3><span id="totalBooks">{{totalBooks}}</span> Sách Tìm Thấy</h3>
+            <p>Tổng bộ sưu tập: <span id="totalCollection">0</span> sách</p>
+        </div>
+    </div>
+    <div class="stat-badges">
+        <div class="badge badge-available">
+            Có sẵn: <span id="availableCount">{{totalBooks}}</span>
+        </div>
+        <div class="badge badge-total">
+            Tổng bản sao: <span id="totalCopies">0</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {{#each books}}
+    <div class="col-6 col-md-4 col-lg-3 mb-4">
+        <div class="book-card">
+            <div class="book-card-img-wrapper">
+                <img src="{{this.image}}" class="book-card-img" alt="{{this.title}}"
+                    onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">
+
+                <span class="badge-overlay badge-left">{{this.numberOfCopies}} còn lại</span>
+
+                {{#if this.numberOfCopies}}
+                <span class="badge-overlay badge-right bg-orange">Có sẵn</span>
+                {{else}}
+                <span class="badge-overlay badge-right bg-secondary">Hết hàng</span>
+                {{/if}}
+            </div>
+
+            <div class="book-card-body">
+                <h5 class="book-title">{{this.title}}</h5>
+                <p class="book-author">bởi <span>{{this.author}}</span></p>
+                <p class="book-category">{{this.categoryId.name}}</p>
             </div>
         </div>
-        {{/each}}
+    </div>
+    {{/each}}
+</div>
+
+<!-- CTA Card -->
+<div class="cta-card">
+    <div class="cta-content">
+        <div class="cta-icon">
+            <i class="fas fa-sparkles"></i>
+        </div>
+        <h3>Sẵn Sàng Bắt Đầu Đọc?</h3>
+        <p>
+            Đăng nhập bằng thông tin sinh viên của bạn để thêm sách vào giỏ hàng
+            và tạo vé mượn QR. Truy cập ngay hàng nghìn tài nguyên học thuật.
+        </p>
+        <button class="btn-cta">
+            <i class="fas fa-sign-in-alt"></i>
+            Bắt Đầu Ngay
+        </button>
     </div>
 </div>
