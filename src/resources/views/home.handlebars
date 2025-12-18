@@ -5,29 +5,37 @@
         </div>
         <div class="search-title">
             <h2>Tìm Kiếm & Khám Phá</h2>
-            <p>
-                Tìm chính xác những gì bạn đang tìm kiếm với công cụ tìm kiếm nâng
-                cao của chúng tôi
-            </p>
+            <p>Tìm chính xác những gì bạn đang tìm kiếm với công cụ tìm kiếm nâng cao của chúng tôi</p>
         </div>
     </div>
-    <div class="search-controls">
-        <div class="search-input">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Tìm theo tiêu đề, tác giả, ISBN..." />
+
+    <form action="/search" method="GET" id="searchForm">
+        <div class="search-controls">
+
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" name="keyword" value="{{searchOptions.keyword}}"
+                    placeholder="Tìm theo tiêu đề, tác giả, ISBN..." />
+            </div>
+
+            <select id="categoryFilter" name="category" onchange="this.form.submit()">
+                <option value="">Tất cả thể loại</option>
+                {{#each categories}}
+                <option value="{{this._id}}" {{#if (eq ../searchOptions.category this._id)}}selected{{/if}}>
+                    {{this.name}}
+                </option>
+                {{/each}}
+            </select>
+
+            <select id="statusFilter" name="status" onchange="this.form.submit()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="available" {{#if (eq searchOptions.status 'available' )}}selected{{/if}}>Có sẵn</option>
+                <option value="borrowed" {{#if (eq searchOptions.status 'borrowed' )}}selected{{/if}}>Đang mượn</option>
+            </select>
+
+            <button type="submit" style="display: none;"></button>
         </div>
-        <select id="categoryFilter">
-            <option value="">Tất cả thể loại</option>
-            {{#each categories}}
-            <option value="">{{this.name}}</option>
-            {{/each}}
-        </select>
-        <select id="statusFilter">
-            <option value="">Tất cả trạng thái</option>
-            <option value="available">Có sẵn</option>
-            <option value="borrowed">Đang mượn</option>
-        </select>
-    </div>
+    </form>
 </div>
 
 <div class="stats">
@@ -53,11 +61,10 @@
 <div class="row">
     {{#each books}}
     <div class="col-6 col-md-4 col-lg-3 mb-4">
-        <div class="book-card">
+        <div class="book-card" onclick="openBookModal('{{this._id}}')">
             <div class="book-card-img-wrapper">
                 <img src="{{this.image}}" class="book-card-img" alt="{{this.title}}"
                     onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">
-
                 <span class="badge-overlay badge-left">{{this.numberOfCopies}} còn lại</span>
 
                 {{#if this.numberOfCopies}}
@@ -94,3 +101,78 @@
         </button>
     </div>
 </div>
+
+<div id="bookModal" class="book-detail-modal" style="display: none;">
+    <div class="book-detail-card">
+
+        <div class="book-detail-header">
+            <div class="book-cover-small">
+                <img id="modal-img" src="" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div class="header-info">
+                <span class="status-badge available">Available</span>
+                <h2 id="modal-title" class="book-title">Loading...</h2>
+                <p id="modal-author" class="book-author">...</p>
+            </div>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+
+        <div class="book-detail-body">
+            <div class="info-section">
+                <div class="info-row">
+                    <span class="info-label">Book ID:</span>
+                    <span id="modal-id" class="info-value">...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Category:</span>
+                    <span id="modal-category" class="info-value">...</span>
+                </div>
+            </div>
+
+            <button class="action-btn">
+                <i class="fas fa-book"></i> Mượn sách
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Hàm mở Modal và lấy dữ liệu
+    function openBookModal(bookId) {
+        const modal = document.getElementById('bookModal');
+
+        // Hiện modal lên trước (có thể hiện loading nếu muốn)
+        modal.style.display = 'flex';
+
+        // Gọi API từ Server
+        fetch(`/book/${bookId}/api`)
+            .then(response => response.json())
+            .then(data => {
+                // Điền dữ liệu vào các thẻ HTML dựa theo ID đã đặt ở Bước 2
+                document.getElementById('modal-title').innerText = data.title;
+                document.getElementById('modal-author').innerText = 'by ' + data.author;
+                document.getElementById('modal-id').innerText = '#' + data._id;
+                document.getElementById('modal-img').src = data.image; // Nếu có ảnh
+
+                // Xử lý Category (nếu object category populate thì lấy name, không thì lấy id)
+                document.getElementById('modal-category').innerText = data.categoryId ? data.categoryId.name : 'Unknown';
+            })
+            .catch(err => {
+                console.error('Lỗi lấy chi tiết sách:', err);
+                alert('Không tải được thông tin sách');
+            });
+    }
+
+    // 2. Hàm đóng Modal
+    function closeModal() {
+        document.getElementById('bookModal').style.display = 'none';
+    }
+
+    // 3. Đóng Modal khi click ra ngoài vùng trắng (Overlay)
+    window.onclick = function (event) {
+        const modal = document.getElementById('bookModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>

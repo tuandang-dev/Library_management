@@ -22,7 +22,14 @@ app.use(express.json())
 app.use(morgan('combined'))
 
 // Template engine
-app.engine('handlebars', engine())
+app.engine('handlebars', engine({
+  helpers: {
+    eq: (a, b) => {
+      // So sánh lỏng (==) để '1' bằng 1, hoặc convert sang string để khớp với ObjectId
+      return a == b;
+    }
+  }
+}))
 app.set('view engine', 'handlebars')
 app.set('views', path.join(__dirname, 'resources', 'views'))
 
