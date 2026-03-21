@@ -35,7 +35,10 @@
   "dependencies": {
     "express": "^5.2.1",
     "express-handlebars": "^8.0.4",
-    "mongoose": "^9.0.1"
+    "method-override": "^3.0.0",
+    "mongoose": "^9.0.1",
+    "mongoose-delete": "^1.0.7",
+    "mongoose-slug-generator": "^1.0.4"
   },
   "devDependencies": {
     "husky": "^9.1.7",
@@ -43,6 +46,6 @@
     "morgan": "^1.10.1",
     "nodemon": "^3.1.11",
     "prettier": "^3.7.4",
-    "sass": "^1.96.0"
+    "sass": "^1.98.0"
   }
 }

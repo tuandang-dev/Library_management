@@ -24,9 +24,10 @@ app.use(morgan('combined'))
 // Template engine
 app.engine('handlebars', engine({
   helpers: {
-    eq: (a, b) => {
-      // So sánh lỏng (==) để '1' bằng 1, hoặc convert sang string để khớp với ObjectId
-      return a == b;
+    sum: (a, b) => a + b,
+
+    currentYear: () => {
+      return new Date().getFullYear();
     }
   }
 }))
