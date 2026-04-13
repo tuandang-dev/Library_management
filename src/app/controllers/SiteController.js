@@ -7,8 +7,32 @@ class SiteController {
     // [GET] /
     async index(req, res) {
         try {
-            const [books, categories, totalCopiesResult] = await Promise.all([
-                Book.find({}).populate('categoryId').lean(),
+            let keyword = req.query.searchbook;
+            let category = req.query.category;
+            let status = req.query.status;
+            let filterConditions = {};
+
+            if (status === 'avaiable') {
+                filterConditions.availableQuantity = { $gt: 0 }
+            } else if (status === 'borrow') {
+                filterConditions.availableQuantity = { $lte: 0 }
+            }
+
+            if (category) {
+                filterConditions.categoryId = category;
+            }
+
+            if (keyword) {
+                filterConditions.$or = [
+                    { title: { $regex: keyword, $options: 'i' } },
+                    { isbn: { $regex: keyword, $options: 'i' } },
+                    { accessionNumber: { $regex: keyword, $options: 'i' } },
+                    { author: { $regex: keyword, $options: 'i' } }
+                ];
+            }
+
+            const [books, categories, totalCopiesResult, countDocuments, availableQuantityTotal] = await Promise.all([
+                Book.find(filterConditions).populate('categoryId').lean(),
                 Category.find({}).lean(),
                 Book.aggregate([
                     {
@@ -17,26 +41,25 @@ class SiteController {
                             totalCopies: { $sum: "$totalQuantity" }
                         }
                     }
-                ])
+                ]),
+                Book.countDocuments({}).lean(),
+                Book.countDocuments({ availableQuantity: { $gt: 0 } }).lean(),
             ])
 
             const totalCopies = totalCopiesResult.length > 0 ? totalCopiesResult[0].totalCopies : 0;
 
             res.render('home', {
-                categories,
                 books,
+                categories,
                 totalCopies,
+                countDocuments,
+                availableQuantityTotal,
                 layout: false
             });
         } catch (error) {
             console.log(error);
             res.status(500).send('Lỗi server!');
         }
-    }
-
-    // [GET] /search
-    search(req, res, next) {
-
     }
 }
 

@@ -10,6 +10,9 @@
     --text-dark: #1a1a1a;
     --text-muted: #666;
     --card-radius: 14px;
+    --primary-orange: #e65100;
+    --primary-orange-hover: #cc4800;
+    --bg-light: #f9f9f9;
 }
 
 *,
@@ -27,7 +30,6 @@ body {
     min-height: 100vh;
 }
 
-/* ── HERO ── */
 .hero-card {
     background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange-mid) 55%, var(--orange-light) 100%);
     border-radius: 20px;
@@ -91,7 +93,6 @@ body {
     color: var(--orange-dark);
 }
 
-/* ── SEARCH PANEL ── */
 .search-panel {
     background: #fff;
     border-radius: 18px;
@@ -174,7 +175,6 @@ body {
     border-color: var(--orange-mid);
 }
 
-/* ── RESULTS HEADER ── */
 .results-icon-box {
     width: 44px;
     height: 44px;
@@ -221,7 +221,6 @@ body {
     background: #fff8f0;
 }
 
-/* ── BOOK GRID ── */
 .books-grid {
     display: grid;
     grid-template-columns: repeat(6, minmax(160px, 1fr));
@@ -317,6 +316,45 @@ body {
     font-weight: 700;
 }
 
+.empty-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 42px 21px 21px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    margin-top: 40px;
+}
+
+.empty-icon-wrap {
+    width: 68px;
+    height: 68px;
+    background: #fef3e2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.empty-icon-wrap i {
+    font-size: 30px;
+    color: #f97316;
+}
+
+.empty-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.empty-sub {
+    font-size: 14px;
+    color: #f97316;
+    margin: 0;
+}
+
 .cat-cs {
     color: #d35400;
 }
@@ -337,7 +375,6 @@ body {
     color: #c0392b;
 }
 
-/* ── CTA ── */
 .cta-section {
     background: linear-gradient(135deg, var(--green-start), var(--green-end));
     border-radius: 20px;
@@ -396,7 +433,6 @@ body {
     color: #1a8a4a;
 }
 
-/* ── FOOTER ── */
 footer {
     text-align: center;
     padding: 36px 20px 24px;
@@ -452,7 +488,109 @@ footer {
     color: var(--orange-mid);
 }
 
-/* ── RESPONSIVE ── */
+dialog {
+    margin: auto;
+    border: none;
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    max-width: 450px;
+    background: linear-gradient(to bottom, #ffffff, var(--bg-light));
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Styling cho backdrop (nền mờ phía sau dialog) */
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+}
+
+/* Nút Close */
+.btn-close-custom {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-close-custom:hover {
+    color: var(--text-dark);
+}
+
+.dialog-title {
+    color: var(--text-dark);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    padding-right: 20px;
+}
+
+.dialog-subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+}
+
+.book-image-container {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.book-image {
+    width: 200px;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Cấu trúc lưới thông tin */
+.info-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.info-value {
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 500;
+    display: block;
+}
+
+.text-orange {
+    color: var(--primary-orange);
+    font-weight: 700;
+}
+
+/* Nút Sign In */
+.btn-signin {
+    background-color: var(--primary-orange);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s;
+}
+
+.btn-signin:hover {
+    background-color: var(--primary-orange-hover);
+    color: white;
+}
+
 @media (max-width: 768px) {
     .hero-card {
         padding: 24px 20px;
