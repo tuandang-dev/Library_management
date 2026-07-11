@@ -1,0 +1,44 @@
+<main class="auth-page">
+    <div class="card auth-card">
+        <div class="card__header auth-card__header">
+            <div class="auth-card__icon">
+                <a href="/" class="fa-solid fa-xmark auth-card__xmark"></a>
+            </div>
+            <img src="/img/logo-small.png" alt="LMS Logo" class="auth-card__logo">
+            <h1 class="auth-card__title">Library Management System</h1>
+            <p class="auth-card__subtitle">Sign in to access your dashboard</p>
+        </div>
+
+        <div class="card__body">
+            <form action="/login" method="POST" class="auth-form">
+                {{> input type="text" id="email" name="email" label="Username / Student Number"
+                placeholder="Enter your username or student number" required=true }}
+                {{> input type="password" id="password" name="password" label="Password"
+                placeholder="Enter your password" required=true }}
+
+                {{> button type="submit" text="Sign In" modifier="btn--primary btn--block" }}
+            </form>
+
+            <div class="auth-card__links">
+                <a href="/forgot-password" class="auth-card__link">Forgot Password?</a>
+            </div>
+
+            <div class="auth-card__demo-creds">
+                <p>Demo credentials:</p>
+                <ul>
+                    <li>Student: 123 / 123</li>
+                    <li>Librarian: librarian / 123</li>
+                    <li>Admin: admin / 123</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {{{footer}}}
+</main>
+
+{{#if errorMessage}}
+<script>
+    alert('{{errorMessage}}')
+</script>
+{{/if}}

@@ -1,0 +1,92 @@
+.auth-layout {
+    background-color: $color-bg-auth;
+    font-family: $font-family-base;
+    color: $color-text-main;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-page {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-lg;
+    width: 100%;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 40px;
+
+    &__header {
+        text-align: center;
+        border-bottom: none; // Ghi đè _card.scss vì thiết kế không có line
+        padding-bottom: 0;
+    }
+
+    &__logo {
+        width: 64px;
+        margin-bottom: $spacing-md;
+    }
+
+    &__icon {
+        text-align: right;
+    }
+
+    &__xmark {
+        padding: 6px;
+        color: #000;
+
+        &:hover {
+            background-color: $color-primary-hover;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+    }
+
+    &__title {
+        font-size: 1.5rem;
+        margin-bottom: $spacing-sm;
+        color: $color-text-main;
+    }
+
+    &__subtitle {
+        color: $color-text-muted;
+        font-size: 0.9rem;
+    }
+
+    &__links {
+        text-align: center;
+        margin-top: $spacing-lg;
+    }
+
+    &__link {
+        color: $color-text-main;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+
+        &:hover {
+            color: $color-primary;
+            text-decoration: underline;
+        }
+    }
+
+    &__demo-creds {
+        margin-top: $spacing-lg;
+        text-align: center;
+        font-size: 0.85rem;
+        color: $color-text-muted;
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: $spacing-sm;
+            line-height: 1.6;
+        }
+    }
+}

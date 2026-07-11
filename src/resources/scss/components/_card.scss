@@ -1,0 +1,15 @@
+.card {
+    background-color: $color-white;
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-card;
+    overflow: hidden;
+
+    &__header {
+        padding: $spacing-lg;
+        border-bottom: 1px solid $color-border;
+    }
+
+    &__body {
+        padding: $spacing-lg;
+    }
+}

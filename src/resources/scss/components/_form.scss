@@ -1,0 +1,33 @@
+.form-group {
+    margin-bottom: $spacing-lg;
+
+    &__label {
+        display: block;
+        font-size: $font-size-base;
+        font-weight: 600;
+        color: $color-text-main;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__input {
+        width: 100%;
+        padding: 12px $spacing-md;
+        background-color: $color-bg-input;
+        border: 1px solid transparent; // Chuẩn bị cho state focus/error
+        border-radius: $border-radius-sm;
+        font-family: $font-family-base;
+        color: $color-text-main;
+        transition: border-color 0.3s ease;
+
+        &::placeholder {
+            color: $color-text-muted;
+            font-size: 0.9em;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: $color-primary;
+            background-color: $color-white;
+        }
+    }
+}

@@ -49,6 +49,7 @@ class SiteController {
             const totalCopies = totalCopiesResult.length > 0 ? totalCopiesResult[0].totalCopies : 0;
 
             res.render('home', {
+                keyword,
                 books,
                 categories,
                 totalCopies,

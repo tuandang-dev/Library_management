@@ -1,0 +1,51 @@
+.auth-footer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: $color-text-muted;
+    border-top: 2px solid $color-border;
+
+    &__logo-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-sm;
+        margin-bottom: $spacing-md;
+    }
+
+    &__logo {
+        height: 24px;
+    }
+
+    &__brand {
+        font-weight: 600;
+        color: $color-text-main;
+        font-size: 1rem;
+    }
+
+    &__text {
+        margin-bottom: $spacing-sm;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    &__meta {
+        margin-top: $spacing-lg;
+        padding-top: $spacing-lg;
+        border-top: 2px solid $color-border;
+    }
+
+    &__links {
+        margin-top: $spacing-sm;
+
+        a {
+            color: $color-primary;
+            text-decoration: none;
+            margin: 0 $spacing-sm;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

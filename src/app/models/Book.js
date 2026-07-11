@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
+// TODO: Khi làm chức năng Book cần tạo URL thân thiện (slug).
+// LÝ DO: Không dùng 'mongoose-slug-generator' vì bị lỗi 'next is not a function' do Mongoose 9+ bỏ hỗ trợ callback.
+// GIẢI PHÁP: Cân nhắc đổi sang 'mongoose-slug-updater' hoặc tự viết hàm tạo slug bằng JavaScript thuần.
+// const slug = require('mongoose-slug-generator');
 const mongooseDelete = require('mongoose-delete');
 const Schema = mongoose.Schema;
 
 // Cấp quyền cho mongoose sử dụng plugin tạo slug
-mongoose.plugin(slug);
+// mongoose.plugin(slug);
 
 const Book = new Schema({
     title: { type: String, required: true },
@@ -19,7 +22,7 @@ const Book = new Schema({
     accessionNumber: { type: String },
 
     // Tự động generate từ trường 'title'. VD: "Đắc Nhân Tâm" -> "dac-nhan-tam"
-    slug: { type: String, slug: 'title', unique: true }
+    // slug: { type: String, slug: 'title', unique: true }
 }, {
     timestamps: true
 });

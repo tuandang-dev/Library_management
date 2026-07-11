@@ -33,9 +33,9 @@
                     Tìm kiếm sách, kiểm tra tình trạng còn hay hết và thêm sách vào giỏ mượn một cách dễ dàng
                 </p>
             </div>
-            <button class="btn-sign-in">
+            <a href="/login" class="btn-sign-in">
                 <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để mượn sách
-            </button>
+            </a>
         </div>
 
         <div class="search-panel mb-4">
@@ -50,7 +50,7 @@
             <form class="d-flex flex-wrap gap-3 align-items-center mt-3" action="/" method="get">
                 <div class="search-wrap">
                     <i class="bi bi-search"></i>
-                    <input class="search-input" type="text" name="searchbook"
+                    <input class="search-input" type="text" name="searchbook" value="{{keyword}}"
                         placeholder="Tìm theo tên sách, tác giả, ISBN, Số đăng ký..." />
                 </div>
                 <select class="filter-select" id="categorySelect" name="category" onchange="this.form.submit()">
@@ -125,33 +125,12 @@
                 mượn
                 Truy cập hàng ngàn tài nguyên học thuật ngay lập tức
             </p>
-            <button class="btn-get-started">
+            <a href="/login" class="btn-get-started">
                 <i class="bi bi-box-arrow-in-right"></i> Bắt Đầu Ngay
-            </button>
+            </a>
         </div>
 
-        <footer>
-            <div class="footer-brand">
-                <span style="font-size:1.4rem;">🏫</span>
-                <span style="font-size:1.3rem;">📖</span>
-                Thư Viện UCC
-            </div>
-            <p class="footer-vision">
-                Tầm nhìn của chúng tôi là tạo ra không gian học tập hiện đại, nơi kiến thức, công nghệ và cộng đồng
-                hội
-                tụ
-            </p>
-            <p class="footer-vision2">Chúng tôi hỗ trợ sinh viên và giảng viên đạt được thành tích học thuật xuất
-                sắc
-            </p>
-            <hr class="footer-divider" />
-            <p class="footer-copy">© {{currentYear}} Hệ Thống Quản Lý Thư Viện UCC. Bảo lưu mọi quyền</p>
-            <div class="footer-links">
-                <a href="#">Quyền Riêng Tư</a>
-                <a href="#">Điều Khoản</a>
-                <a href="#">Khả năng tiếp cận</a>
-            </div>
-        </footer>
+        {{>footer}}
     </div>
 
     <dialog id="bookDialog">
