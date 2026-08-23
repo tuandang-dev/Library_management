@@ -3,15 +3,12 @@ const bcrypt = require('bcryptjs');
 
 const seedAdmin = async () => {
     try {
-        // 1. Tìm xem tài khoản admin đã tồn tại trong DB chưa
         const adminExists = await User.findOne({ email: 'admin@library.com' });
 
         if (!adminExists) {
-            // 2. Hash mật khẩu
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash('admin123', salt);
 
-            // 3. Tạo mới tài khoản
             await User.create({
                 fullname: 'System Admin',
                 email: 'admin@library.com',

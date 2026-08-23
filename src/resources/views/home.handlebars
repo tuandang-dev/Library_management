@@ -23,18 +23,17 @@
                         <i class="bi bi-building-fill-check"></i>
                     </div>
                     <div>
-                        <h1 class="hero-title">Bộ Sưu Tập Sách</h1>
-                        <p class="hero-subtitle"><i class="bi bi-stars me-1"></i>Khám phá cuốn sách hay tiếp theo của
-                            bạn</p>
+                        <h1 class="hero-title">Book Collections</h1>
+                        <p class="hero-subtitle"><i class="bi bi-stars me-1"></i>Discover your next great read</p>
                     </div>
                 </div>
                 <p class="hero-desc">
-                    Hãy duyệt qua bộ sưu tập tài nguyên học thuật toàn diện của chúng tôi <br />
-                    Tìm kiếm sách, kiểm tra tình trạng còn hay hết và thêm sách vào giỏ mượn một cách dễ dàng
+                    Browse our comprehensive collection of academic resources <br />
+                    Find books, check availability, and seamlessly add them to your borrowing cart
                 </p>
             </div>
             <a href="/login" class="btn-sign-in">
-                <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để mượn sách
+                <i class="bi bi-box-arrow-in-right"></i> Sign In to Borrow
             </a>
         </div>
 
@@ -42,8 +41,8 @@
             <div class="d-flex gap-3 mb-1">
                 <div class="search-icon-box"><i class="bi bi-search"></i></div>
                 <div>
-                    <h2 class="panel-title">Tìm Kiếm &amp; Khám Phá</h2>
-                    <p class="panel-sub">Tìm chính xác những gì bạn cần với các công cụ tìm kiếm nâng cao của chúng tôi
+                    <h2 class="panel-title">Search &amp; Discover</h2>
+                    <p class="panel-sub">Find exactly what you're looking for with our advanced search tools
                     </p>
                 </div>
             </div>
@@ -51,18 +50,18 @@
                 <div class="search-wrap">
                     <i class="bi bi-search"></i>
                     <input class="search-input" type="text" name="searchbook" value="{{keyword}}"
-                        placeholder="Tìm theo tên sách, tác giả, ISBN, Số đăng ký..." />
+                        placeholder="Search by title, author, ISBN, Accession Number..." />
                 </div>
                 <select class="filter-select" id="categorySelect" name="category" onchange="this.form.submit()">
-                    <option value="">Tất Cả Danh Mục</option>
+                    <option value="">All Categories</option>
                     {{#each categories}}
                     <option value="{{this._id}}">{{this.name}}</option>
                     {{/each}}
                 </select>
                 <select class="filter-select" id="statusSelect" name="status" onchange="this.form.submit()">
-                    <option value="">Tất Cả Trạng Thái</option>
-                    <option value="avaiable">Còn Sẵn</option>
-                    <option value="borrow">Đang Mượn</option>
+                    <option value="">All Status</option>
+                    <option value="avaiable">Available</option>
+                    <option value="borrow">Borrowed</option>
                 </select>
             </form>
         </div>
@@ -98,7 +97,7 @@
                 </div>
                 <div class="book-info">
                     <p class="book-title">{{this.title}}</p>
-                    <p class="book-author">bởi {{this.author}}</p>
+                    <p class="book-author">by {{this.author}}</p>
                     <span class="book-cat cat-cs">{{this.categoryId.name}}</span>
                 </div>
             </div>
@@ -109,8 +108,8 @@
             <div class="empty-icon-wrap">
                 <i class="bi bi-book-half"></i>
             </div>
-            <p class="empty-title">Không tìm thấy sách nào</p>
-            <p class="empty-sub">Hãy thử điều chỉnh tiêu chí tìm kiếm của bạn hoặc duyệt qua tất cả các danh mục.
+            <p class="empty-title">No books found</p>
+            <p class="empty-sub">Try adjusting your search criteria or browse all categories
             </p>
         </div>
         {{/if}}
@@ -119,14 +118,13 @@
             <div class="cta-icon-box">
                 <i class="bi bi-stars"></i>
             </div>
-            <h2 class="cta-title">Sẵn sàng để bắt đầu đọc?</h2>
+            <h2 class="cta-title">Ready to Start Reading?</h2>
             <p class="cta-desc">
-                Đăng nhập bằng thông tin tài khoản sinh viên của bạn để thêm sách vào giỏ hàng và tạo mã QR phiếu
-                mượn
-                Truy cập hàng ngàn tài nguyên học thuật ngay lập tức
+                Sign in with your student credentials to add books to your cart and generate QR borrow tickets
+                Access thousands of academic resources instantly
             </p>
             <a href="/login" class="btn-get-started">
-                <i class="bi bi-box-arrow-in-right"></i> Bắt Đầu Ngay
+                <i class="bi bi-box-arrow-in-right"></i> Get Started Now
             </a>
         </div>
 
@@ -165,9 +163,9 @@
             </div>
         </div>
 
-        <button class="btn btn-signin w-100">
+        <a href="/login" class="btn btn-signin w-100">
             <i class="fas fa-sign-in-alt"></i> Sign In
-        </button>
+        </a>
     </dialog>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

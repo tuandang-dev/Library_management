@@ -10,24 +10,26 @@ const User = new Schema(
         role: { type: String, enum: ['user', 'admin'], default: 'user' },
         status: { type: String, enum: ['active', 'inactive'], default: 'active' },
         avatar: { type: String, default: '/img/default-avatar.png' },
+        resetPasswordToken: {
+            type: String,
+            default: null,
+        },
+        resetPasswordExpires: {
+            type: Date,
+            default: null,
+        },
     },
     {
         timestamps: true,
     }
 );
 
-// Mongoose Pre-hook: Chạy tự động TRƯỚC KHI lưu vào DB
 User.pre('save', async function () {
-    // "this" đại diện cho tài khoản người dùng đang chuẩn bị được lưu
-
-    // Nếu mật khẩu không bị thay đổi (ví dụ: chỉ đổi tên), thì bỏ qua không hash lại
     if (!this.isModified('password')) return;
 
     try {
-        // Sinh ra "muối" (độ phức tạp là 10 vòng)
         const salt = await bcrypt.genSalt(10);
 
-        // Hash mật khẩu kết hợp với muối
         this.password = await bcrypt.hash(this.password, salt);
     } catch (error) {
         throw new Error('Lỗi khi mã hóa mật khẩu');

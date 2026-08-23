@@ -3,13 +3,25 @@ const router = express.Router();
 const authController = require('../app/controllers/AuthController');
 const { requireAuth } = require('../app/middlewares/authMiddleware');
 
-// Route 1: Nhận yêu cầu GET và hiển thị giao diện Login
+// Route hiển thị giao diện Login
 router.get('/login', authController.showLogin);
 
-// Route 2: Nhận yêu cầu POST từ Form HTML và xử lý dữ liệu
+// Route hiển thị trang Quên mật khẩu
+router.get('/forgot-password', authController.showForgotPassword);
+
+// Route hiển thị form nhập mật khẩu mới
+router.get('/reset-password/:token', authController.showResetPassword);
+
+// Route xử lý dữ liệu
 router.post('/login', authController.processLogin);
 
-// Route 3: Đăng xuất (Chỉ người ĐÃ đăng nhập mới được gọi route này)
+// Route xử lý quên mật khẩu
+router.post('/forgot-password', authController.processForgotPassword);
+
+// Route xử lý việc submit mật khẩu mới
+router.post('/reset-password/:token', authController.updatePassword);
+
+// Route đăng xuất
 router.get('/logout', requireAuth, authController.logout);
 
 module.exports = router;

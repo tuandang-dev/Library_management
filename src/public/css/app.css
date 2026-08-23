@@ -36,6 +36,69 @@
   padding: 24px;
 }
 
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 40px;
+}
+.auth-card__header {
+  text-align: center;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.auth-card__logo {
+  width: 64px;
+  margin-bottom: 16px;
+}
+.auth-card__icon {
+  text-align: right;
+}
+.auth-card__xmark {
+  padding: 6px;
+  color: #000;
+}
+.auth-card__xmark:hover {
+  background-color: #cc5200;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.auth-card__title {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: #333333;
+}
+.auth-card__subtitle {
+  color: #777777;
+  font-size: 0.9rem;
+}
+.auth-card__links {
+  text-align: center;
+  margin-top: 24px;
+}
+.auth-card__link {
+  color: #333333;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.auth-card__link:hover {
+  color: #e65c00;
+  text-decoration: underline;
+}
+.auth-card__demo-creds {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777777;
+}
+.auth-card__demo-creds ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
 .form-group {
   margin-bottom: 24px;
 }
@@ -126,69 +189,6 @@
   justify-content: center;
   padding: 24px;
   width: 100%;
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 480px;
-  margin-bottom: 40px;
-}
-.auth-card__header {
-  text-align: center;
-  border-bottom: none;
-  padding-bottom: 0;
-}
-.auth-card__logo {
-  width: 64px;
-  margin-bottom: 16px;
-}
-.auth-card__icon {
-  text-align: right;
-}
-.auth-card__xmark {
-  padding: 6px;
-  color: #000;
-}
-.auth-card__xmark:hover {
-  background-color: #cc5200;
-  color: #fff;
-  border-radius: 6px;
-  text-decoration: none;
-}
-.auth-card__title {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-  color: #333333;
-}
-.auth-card__subtitle {
-  color: #777777;
-  font-size: 0.9rem;
-}
-.auth-card__links {
-  text-align: center;
-  margin-top: 24px;
-}
-.auth-card__link {
-  color: #333333;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-.auth-card__link:hover {
-  color: #e65c00;
-  text-decoration: underline;
-}
-.auth-card__demo-creds {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 0.85rem;
-  color: #777777;
-}
-.auth-card__demo-creds ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 8px;
-  line-height: 1.6;
 }
 
 :root {

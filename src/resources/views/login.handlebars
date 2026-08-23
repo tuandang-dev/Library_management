@@ -16,6 +16,10 @@
                 {{> input type="password" id="password" name="password" label="Password"
                 placeholder="Enter your password" required=true }}
 
+                {{#if errorMessage}}
+                <div>{{errorMessage}}</div>
+                {{/if}}
+
                 {{> button type="submit" text="Sign In" modifier="btn--primary btn--block" }}
             </form>
 
@@ -37,8 +41,19 @@
     {{{footer}}}
 </main>
 
-{{#if errorMessage}}
+{{#if successMessage}}
 <script>
-    alert('{{errorMessage}}')
+    // 1. Lắng nghe sự kiện trình duyệt đã tải và phân tích xong cấu trúc HTML
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // 2. Dùng setTimeout tạo một độ trễ nhỏ (100ms). 
+        // Việc này nhường quyền cho trình duyệt "vẽ" (paint) toàn bộ CSS và hình ảnh ra màn hình trước.
+        setTimeout(function () {
+
+            // 3. Hiển thị thông báo. Lúc này giao diện phía sau đã hiện đầy đủ.
+            alert("{{successMessage}}");
+
+        }, 100);
+    });
 </script>
 {{/if}}
