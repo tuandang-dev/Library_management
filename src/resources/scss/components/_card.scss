@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as *;
+
 .card {
     background-color: $color-white;
     border-radius: $border-radius-md;

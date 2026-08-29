@@ -1,0 +1,37 @@
+@use '../abstracts/variables' as *;
+
+.floating-guide {
+    position: fixed;
+    bottom: $spacing-lg;
+    right: $spacing-lg;
+    z-index: 1050;
+
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-sm;
+        background-color: $color-primary;
+        color: $color-white;
+        padding: 10px 20px;
+        border-radius: $border-radius-pill;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        border: none;
+        box-shadow: $shadow-floating;
+        text-decoration: none;
+        cursor: pointer;
+        transition: $transition-base;
+
+        &:hover {
+            background-color: $color-primary-hover;
+            color: $color-white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(230, 92, 0, 0.45);
+        }
+    }
+
+    &__icon {
+        font-size: $font-size-md;
+    }
+}

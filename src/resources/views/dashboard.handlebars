@@ -1,0 +1,142 @@
+<div class="user-dashboard">
+    <section class="welcome-banner">
+        <h1 class="welcome-banner__title">
+            Welcome back, {{#if user.fullname}}{{user.fullname}}{{else}}Alex Johnson{{/if}}!
+        </h1>
+        <p class="welcome-banner__subtitle">Here's your library overview for today.</p>
+    </section>
+
+    <section class="user-dashboard__stats mb-4">
+        <div class="row">
+            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                <div class="stat-card">
+                    <div class="stat-card__icon-box stat-card__icon-box--warning">
+                        <i class="fa-solid fa-book-open stat-card__icon"></i>
+                    </div>
+                    <div class="stat-card__value">{{#if stats.borrowedCount}}{{stats.borrowedCount}}{{else}}3{{/if}}
+                    </div>
+                    <div class="stat-card__title">Books Borrowed</div>
+                    <div class="stat-card__desc">Currently borrowed</div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                <div class="stat-card">
+                    <div class="stat-card__icon-box stat-card__icon-box--success">
+                        <i class="fa-regular fa-calendar-check stat-card__icon"></i>
+                    </div>
+                    <div class="stat-card__value">{{#if stats.daysVisited}}{{stats.daysVisited}}{{else}}12{{/if}}</div>
+                    <div class="stat-card__title">Days Visited</div>
+                    <div class="stat-card__desc">This month</div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="stat-card">
+                    <div class="stat-card__icon-box stat-card__icon-box--danger">
+                        <i class="fa-solid fa-triangle-exclamation stat-card__icon"></i>
+                    </div>
+                    <div class="stat-card__value">{{#if stats.overdueCount}}{{stats.overdueCount}}{{else}}1{{/if}}</div>
+                    <div class="stat-card__title">Overdue Books</div>
+                    <div class="stat-card__desc">Need attention</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="user-dashboard__content">
+        <div class="row">
+            <div class="col-12 col-lg-7 mb-4 mb-lg-0">
+                <div class="borrow-panel">
+                    <div class="borrow-panel__header">
+                        <h2 class="borrow-panel__title">Currently Borrowed Books</h2>
+                        <p class="borrow-panel__subtitle">Books you need to return</p>
+                    </div>
+
+                    <div class="borrow-panel__list">
+                        {{#if borrowedBooks.length}}
+                        {{#each borrowedBooks}}
+                        <div class="borrow-item">
+                            <div class="borrow-item__info">
+                                <span class="borrow-item__title">{{this.title}}</span>
+                                <span class="borrow-item__author">by {{this.author}}</span>
+                                <span class="borrow-item__due">Due: {{this.dueDate}}</span>
+                            </div>
+                            <span class="badge badge--{{this.statusType}}">{{this.statusText}}</span>
+                        </div>
+                        {{/each}}
+                        {{else}}
+                        <div class="borrow-item">
+                            <div class="borrow-item__info">
+                                <span class="borrow-item__title">Introduction to Computer Science</span>
+                                <span class="borrow-item__author">by John Smith</span>
+                                <span class="borrow-item__due">Due: 2025-08-15</span>
+                            </div>
+                            <span class="badge badge--borrowed">Borrowed</span>
+                        </div>
+
+                        <div class="borrow-item">
+                            <div class="borrow-item__info">
+                                <span class="borrow-item__title">Data Structures and Algorithms</span>
+                                <span class="borrow-item__author">by Jane Doe</span>
+                                <span class="borrow-item__due">Due: 2025-08-10</span>
+                            </div>
+                            <span class="badge badge--overdue">Overdue</span>
+                        </div>
+
+                        <div class="borrow-item">
+                            <div class="borrow-item__info">
+                                <span class="borrow-item__title">Database Management Systems</span>
+                                <span class="borrow-item__author">by Mike Johnson</span>
+                                <span class="borrow-item__due">Due: 2025-08-20</span>
+                            </div>
+                            <span class="badge badge--borrowed">Borrowed</span>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <div class="quick-panel">
+                    <div class="quick-panel__header">
+                        <h2 class="quick-panel__title">Quick Actions</h2>
+                        <p class="quick-panel__subtitle">Common tasks</p>
+                    </div>
+
+                    <div class="quick-panel__list">
+                        <a href="/books" class="action-card action-card--search">
+                            <div class="action-card__icon-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <div class="action-card__content">
+                                <span class="action-card__title">Search Books</span>
+                                <span class="action-card__desc">Find books in our catalog</span>
+                            </div>
+                        </a>
+
+                        <a href="/scanner" class="action-card action-card--qr">
+                            <div class="action-card__icon-box">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <div class="action-card__content">
+                                <span class="action-card__title">Generate QR Ticket</span>
+                                <span class="action-card__desc">For borrowing books</span>
+                            </div>
+                        </a>
+
+                        <a href="/history" class="action-card action-card--history">
+                            <div class="action-card__icon-box">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                            <div class="action-card__content">
+                                <span class="action-card__title">View History</span>
+                                <span class="action-card__desc">Check your borrowing history</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

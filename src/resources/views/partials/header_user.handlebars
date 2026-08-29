@@ -1,0 +1,77 @@
+<header class="user-header">
+    <div class="">
+        <div class="user-header__top px-4">
+            <a href="/" class="user-header__brand">
+                <div class="">
+                    <img src="/img/logo-small.png" class="auth-footer__logo"></img>
+                </div>
+                <div class="user-header__brand-text">
+                    <span class="user-header__title">UCC Library</span>
+                    <span class="user-header__subtitle">Student Portal</span>
+                </div>
+            </a>
+
+            <div class="user-header__meta">
+                <div class="user-header__actions">
+                    <button class="user-header__icon-btn" title="Tin nhắn">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </button>
+                    <button class="user-header__icon-btn" title="Cài đặt">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </div>
+
+                <div class="user-header__profile">
+                    <div class="user-header__details">
+                        <span class="user-header__name">{{#if user.fullname}}{{user.fullname}}{{else}}Alex
+                            Johnson{{/if}}</span>
+                        <span class="user-header__email">{{#if
+                            user.email}}{{user.email}}{{else}}alex.johnson@student.university.edu{{/if}}</span>
+                    </div>
+                    <div class="user-header__avatar">
+                        {{#if user.avatar}}
+                        <img src="{{user.avatar}}" alt="Avatar" class="user-header__avatar-img">
+                        {{else}}
+                        <span class="user-header__avatar-char">A</span>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="user-header__nav px-4">
+            <ul class="user-header__nav-list">
+                <li class="user-header__nav-item">
+                    <a href="/" class="user-header__nav-link user-header__nav-link--active">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="user-header__nav-item">
+                    <a href="/attendance" class="user-header__nav-link">
+                        <i class="fa-solid fa-user-check"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+                <li class="user-header__nav-item">
+                    <a href="/books" class="user-header__nav-link">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>Books</span>
+                    </a>
+                </li>
+                <li class="user-header__nav-item">
+                    <a href="/history" class="user-header__nav-link">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>History</span>
+                    </a>
+                </li>
+                <li class="user-header__nav-item">
+                    <a href="/scanner" class="user-header__nav-link">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>QR Scanner</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>

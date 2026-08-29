@@ -1,16 +1,79 @@
-<div class="header">
-  <div class="header-content">
-    <div class="header-top">
-      <div class="logo-icon">
-        <img src="/img/1.png" alt="" width="70px">
-      </div>
-      <div class="header-title">
-        <h2>Thư viện đại học công nghiệp hà nội</h2>
+<header class="header">
+  <div class="container">
+    <div class="header__top">
+      <a href="/" class="header__brand">
+        <div class="header__logo-wrapper">
+          <i class="fa-solid fa-shield-halved header__logo-icon"></i>
+        </div>
+        <div class="header__brand-info">
+          <span class="header__title">UCC Library</span>
+          <span class="header__subtitle">Student Portal</span>
+        </div>
+      </a>
+
+      <!-- User Utilities & Profile -->
+      <div class="header__meta">
+        <!-- Action Icons -->
+        <div class="header__actions">
+          <button class="header__action-btn" title="Tin nhắn">
+            <i class="fa-regular fa-envelope"></i>
+          </button>
+          <button class="header__action-btn" title="Cài đặt">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+        </div>
+
+        <!-- User Profile -->
+        <div class="header__user">
+          <div class="header__user-text">
+            <span class="header__user-name">{{#if user.fullname}}{{user.fullname}}{{else}}Alex Johnson{{/if}}</span>
+            <span class="header__user-email">{{#if
+              user.email}}{{user.email}}{{else}}alex.johnson@student.university.edu{{/if}}</span>
+          </div>
+          <div class="header__avatar">
+            {{#if user.avatar}}
+            <img src="{{user.avatar}}" alt="User Avatar" class="header__avatar-img">
+            {{else}}
+            <span class="header__avatar-text">A</span>
+            {{/if}}
+          </div>
+        </div>
       </div>
     </div>
-    <button class="btn-login">
-      <i class="fas fa-sign-in-alt"></i>
-      Đăng Nhập
-    </button>
+
+    <nav class="header__nav">
+      <ul class="header__nav-list">
+        <li class="header__nav-item">
+          <a href="/" class="header__nav-link header__nav-link--active">
+            <i class="fa-solid fa-house header__nav-icon"></i>
+            <span>Home</span>
+          </a>
+        </li>
+        <li class="header__nav-item">
+          <a href="/attendance" class="header__nav-link">
+            <i class="fa-solid fa-user-check header__nav-icon"></i>
+            <span>Attendance</span>
+          </a>
+        </li>
+        <li class="header__nav-item">
+          <a href="/books" class="header__nav-link">
+            <i class="fa-solid fa-book-open header__nav-icon"></i>
+            <span>Books</span>
+          </a>
+        </li>
+        <li class="header__nav-item">
+          <a href="/history" class="header__nav-link">
+            <i class="fa-solid fa-clock-rotate-left header__nav-icon"></i>
+            <span>History</span>
+          </a>
+        </li>
+        <li class="header__nav-item">
+          <a href="/scanner" class="header__nav-link">
+            <i class="fa-solid fa-qrcode header__nav-icon"></i>
+            <span>QR Scanner</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
   </div>
-</div>
+</header>

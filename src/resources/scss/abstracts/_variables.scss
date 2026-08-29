@@ -1,25 +1,72 @@
-$red-color: red;
+// ==========================================
+// 1. COLORS
+// ==========================================
 
-// Colors
+// Brand Colors
 $color-primary: #e65c00;
 $color-primary-hover: #cc5200;
-$color-bg-auth: #fcfaf5;
-$color-bg-input: #fff5eb; // Màu cam siêu nhạt của ô input
 $color-white: #ffffff;
-$color-text-main: #333333;
-$color-text-muted: #777777;
-$color-border: #f0e6d5;
 
-// Typography
+// Backgrounds
+$color-bg-page: #f8faf9;
+$color-bg-auth: #fcfaf5;
+$color-bg-input: #fff5eb;
+$color-border: #ede8df;
+
+// Text Colors
+$color-text-main: #2d3748;
+$color-text-muted: #718096;
+$color-text-light: #a0aec0;
+
+// Status & Dashboard Accents
+$color-warning: #d97706;
+$color-warning-bg: #fffbeb;
+$color-warning-badge: #fef3c7;
+
+$color-success: #16a34a;
+$color-success-bg: #f0fdf4;
+$color-success-badge: #dcfce7;
+
+$color-danger: #dc2626;
+$color-danger-bg: #fef2f2;
+$color-danger-badge: #fee2e2;
+
+$color-info-bg: #fefce8;
+
+// Gradients
+$gradient-banner: linear-gradient(90deg, #c49a45 0%, #265c50 100%);
+
+// ==========================================
+// 2. TYPOGRAPHY 
+// ==========================================
 $font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 13px;
 $font-size-base: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+$font-size-2xl: 28px;
 
-// Spacing & Layout
+// ==========================================
+// 3. SPACING & SIZING 
+// ==========================================
+$spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 16px;
 $spacing-lg: 24px;
-$border-radius-sm: 4px;
-$border-radius-md: 8px;
+$spacing-xl: 32px;
 
-// Shadows
-$shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
+$border-radius-sm: 6px;
+$border-radius-md: 12px;
+$border-radius-lg: 16px;
+$border-radius-pill: 50px;
+
+// ==========================================
+// 4. SHADOWS & TRANSITIONS 
+// ==========================================
+$shadow-card: 0 4px 12px rgba(0, 0, 0, 0.04);
+$shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+$shadow-floating: 0 6px 20px rgba(230, 92, 0, 0.35);
+
+$transition-base: all 0.25s ease-in-out;

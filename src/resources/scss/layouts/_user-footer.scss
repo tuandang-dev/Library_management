@@ -1,0 +1,71 @@
+@use '../abstracts/variables' as *;
+
+.user-layout {
+    background-color: #fcfaf7;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    &__main {
+        flex: 1;
+    }
+}
+
+.user-footer {
+    background-color: transparent;
+    padding: 10.5px 218px;
+    border-top: 1px solid #ede8df;
+
+    &__inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__logo {
+        width: 24px;
+        height: 24px;
+        background-color: #fef3c7;
+        color: #d97706;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+
+    &__name {
+        font-size: 12px;
+        font-weight: 600;
+        color: #718096;
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 12px;
+        color: #a0aec0;
+    }
+
+    &__copyright {
+        color: #718096;
+    }
+
+    &__link {
+        color: #718096;
+        text-decoration: none;
+        transition: all 0.2s ease;
+
+        &:hover {
+            color: #2d3748;
+            text-decoration: underline;
+        }
+    }
+}

@@ -1,0 +1,67 @@
+@use '../abstracts/variables' as *;
+
+.borrow-panel {
+    background-color: $color-white;
+    border: 1px solid $color-border;
+    border-top: 3px solid $color-primary; // Viền trên màu cam nhận diện theo thiết kế
+    border-radius: $border-radius-md;
+    padding: $spacing-lg;
+    box-shadow: $shadow-card;
+    height: 100%;
+
+    &__header {
+        margin-bottom: $spacing-md;
+    }
+
+    &__title {
+        font-size: $font-size-md;
+        font-weight: 700;
+        color: $color-text-main;
+        margin-bottom: 2px;
+    }
+
+    &__subtitle {
+        font-size: $font-size-xs;
+        color: $color-text-muted;
+        margin-bottom: 0;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+}
+
+.borrow-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fdfbf7; // Nền kem sữa ấm nhẹ
+    border: 1px solid #f5ede0;
+    border-radius: $border-radius-sm;
+    padding: $spacing-sm $spacing-md;
+    transition: $transition-base;
+
+    &:hover {
+        background-color: #f9f4ea;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__title {
+        font-size: $font-size-sm;
+        font-weight: 600;
+        color: $color-text-main;
+    }
+
+    &__author,
+    &__due {
+        font-size: $font-size-xs;
+        color: $color-text-muted;
+    }
+}

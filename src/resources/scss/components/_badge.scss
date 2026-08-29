@@ -1,0 +1,28 @@
+@use '../abstracts/variables' as *;
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    font-size: $font-size-xs;
+    font-weight: 600;
+    border-radius: $border-radius-pill;
+    line-height: 1.2;
+    text-transform: capitalize;
+
+    &--borrowed {
+        background-color: $color-warning-badge;
+        color: #b45309;
+    }
+
+    &--overdue {
+        background-color: $color-danger-badge;
+        color: #b91c1c;
+    }
+
+    &--success {
+        background-color: $color-success-badge;
+        color: #15803d;
+    }
+}

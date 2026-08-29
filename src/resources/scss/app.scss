@@ -1,12 +1,21 @@
-@import 'abstracts/variables';
+@use 'abstracts/variables';
 
-@import 'components/button';
-@import 'components/card';
-@import 'components/form';
+@use 'layouts/header';
+@use 'layouts/footer';
+@use 'layouts/user-header';
+@use 'layouts/user-footer';
 
-@import 'layouts/footer';
+@use 'components/button';
+@use 'components/card';
+@use 'components/form';
+@use 'components/banner';
+@use 'components/stat-card';
+@use 'components/badge';
+@use 'components/borrow-panel';
+@use 'components/quick-panel';
+@use 'components/floating-btn';
 
-@import 'pages/login';
+@use 'pages/login';
 
 :root {
     --orange-dark: #c9530a;

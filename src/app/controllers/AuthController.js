@@ -6,14 +6,14 @@ const bcrypt = require('bcryptjs');
 class AuthController {
     // [GET] /login 
     showLogin(req, res) {
-        res.render('login', {
+        res.render('auth/login', {
             layout: 'auth'
         });
     }
 
     // [GET] /forgot-password
     showForgotPassword(req, res) {
-        res.render('forgot-password', {
+        res.render('auth/forgot-password', {
             layout: 'auth'
         });
     }
@@ -26,7 +26,7 @@ class AuthController {
             const user = await User.findOne({ email: email });
 
             if (!user) {
-                return res.render('login', {
+                return res.render('auth/login', {
                     layout: 'auth',
                     errorMessage: 'Tài khoản hoặc mật khẩu không chính xác!'
                 });
@@ -35,7 +35,7 @@ class AuthController {
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (!isMatch) {
-                return res.render('login', {
+                return res.render('auth/login', {
                     layout: 'auth',
                     errorMessage: 'Tài khoản hoặc mật khẩu không chính xác!'
                 });
@@ -54,7 +54,7 @@ class AuthController {
             if (user.role === 'admin') {
                 res.redirect('/admin/dashboard');
             } else {
-                res.redirect('/profile');
+                res.redirect('/');
             }
 
         } catch (error) {
@@ -71,7 +71,7 @@ class AuthController {
             const user = await User.findOne({ email: email });
 
             if (!user) {
-                return res.render('forgot-password', {
+                return res.render('auth/forgot-password', {
                     layout: 'auth',
                     successMessage: 'Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi một đường link khôi phục.'
                 });
@@ -97,14 +97,14 @@ class AuthController {
 
             await sendEmail(user.email, emailSubject, emailHtml);
 
-            return res.render('forgot-password', {
+            return res.render('auth/forgot-password', {
                 layout: 'auth',
                 successMessage: 'Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi một đường link khôi phục.'
             });
 
         } catch (error) {
             console.error('Lỗi khi xử lý quên mật khẩu:', error);
-            return res.render('forgot-password', {
+            return res.render('auth/forgot-password', {
                 layout: 'auth',
                 errorMessage: 'Đã có lỗi xảy ra từ phía máy chủ. Vui lòng thử lại sau.'
             });
@@ -118,7 +118,7 @@ class AuthController {
             const { token } = req.params;
 
             if (password !== confirmPassword) {
-                return res.render('reset-password', {
+                return res.render('auth/reset-password', {
                     layout: 'auth',
                     token: token,
                     errorMessage: 'Mật khẩu xác nhận không khớp. Vui lòng nhập lại.'
@@ -131,7 +131,7 @@ class AuthController {
             });
 
             if (!user) {
-                return res.render('forgot-password', {
+                return res.render('auth/forgot-password', {
                     layout: 'auth',
                     errorMessage: 'Token không hợp lệ hoặc đã quá hạn 15 phút. Vui lòng yêu cầu link mới.'
                 });
@@ -142,7 +142,7 @@ class AuthController {
             user.resetPasswordExpires = undefined;
             await user.save();
 
-            return res.render('login', {
+            return res.render('auth/login', {
                 layout: 'auth',
                 successMessage: 'Mật khẩu của bạn đã được cập nhật thành công! Vui lòng đăng nhập lại.'
             });
@@ -162,13 +162,13 @@ class AuthController {
             });
 
             if (!user) {
-                return res.render('forgot-password', {
+                return res.render('auth/forgot-password', {
                     layout: 'auth',
                     errorMessage: 'Đường link khôi phục không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu link mới.'
                 });
             }
 
-            res.render('reset-password', {
+            res.render('auth/reset-password', {
                 layout: 'auth',
                 title: 'Đặt lại mật khẩu',
                 token: req.params.token

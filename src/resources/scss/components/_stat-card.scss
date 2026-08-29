@@ -1,0 +1,66 @@
+@use '../abstracts/variables' as *;
+
+.stat-card {
+    background-color: $color-white;
+    border-radius: $border-radius-md;
+    padding: $spacing-lg;
+    border: 1px solid $color-border;
+    box-shadow: $shadow-card;
+    height: 100%;
+    transition: $transition-base;
+
+    &:hover {
+        box-shadow: $shadow-card-hover;
+        transform: translateY(-2px);
+    }
+
+    &__icon-box {
+        width: 44px;
+        height: 44px;
+        border-radius: $border-radius-sm;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: $spacing-md;
+
+        &--warning {
+            background-color: $color-warning-bg;
+            color: $color-warning;
+        }
+
+        &--success {
+            background-color: $color-success-bg;
+            color: $color-success;
+        }
+
+        &--danger {
+            background-color: $color-danger-bg;
+            color: $color-danger;
+        }
+    }
+
+    &__icon {
+        font-size: 20px;
+    }
+
+    &__value {
+        font-size: $font-size-2xl;
+        font-weight: 700;
+        color: $color-text-main;
+        line-height: 1.1;
+        margin-bottom: $spacing-xs;
+    }
+
+    &__title {
+        font-size: $font-size-sm;
+        font-weight: 600;
+        color: $color-text-main;
+        margin-bottom: 2px;
+    }
+
+    &__desc {
+        font-size: $font-size-xs;
+        color: $color-text-muted;
+        margin-bottom: 0;
+    }
+}

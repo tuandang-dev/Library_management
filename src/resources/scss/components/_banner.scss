@@ -1,0 +1,24 @@
+@use '../abstracts/variables' as *;
+
+.welcome-banner {
+    background: $gradient-banner;
+    border-radius: $border-radius-md;
+    padding: $spacing-lg $spacing-xl;
+    color: $color-white;
+    margin-bottom: $spacing-lg;
+    box-shadow: $shadow-card;
+
+    &__title {
+        font-size: $font-size-xl;
+        font-weight: 700;
+        margin-bottom: $spacing-xs;
+        line-height: 1.2;
+    }
+
+    &__subtitle {
+        font-size: $font-size-base;
+        color: rgba($color-white, 0.9);
+        margin-bottom: 0;
+        font-weight: 400;
+    }
+}
