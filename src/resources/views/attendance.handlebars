@@ -1,0 +1,153 @@
+<div class="attendance-page">
+    <header class="attendance-page__header mb-4">
+        <h1 class="attendance-page__title">
+            <i class="fa-regular fa-calendar attendance-page__title-icon"></i>
+            <span>My Attendance</span>
+        </h1>
+        <p class="attendance-page__subtitle">Track your library visits using QR code check-ins.</p>
+    </header>
+
+    <section class="attendance-card mb-4">
+        <div class="attendance-card__header">
+            <h2 class="attendance-card__header-title">
+                <i class="fa-regular fa-user attendance-card__header-icon"></i>
+                <span>Student Settings</span>
+            </h2>
+        </div>
+        <div class="attendance-card__body">
+            <div class="student-overview">
+                <div class="student-overview__field">
+                    <span class="student-overview__label">Student ID</span>
+                    <div class="student-overview__badge">
+                        {{#if studentId}}
+                        {{studentId}}
+                        {{else}}
+                        <span class="text-muted">Chưa cập nhật</span>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <div class="student-overview__stats">
+                    <div class="student-overview__stat-title">
+                        <i class="fa-solid fa-arrow-right-to-bracket student-overview__stat-icon"></i>
+                        <span>Total Visits</span>
+                    </div>
+                    <div class="student-overview__stat-value">{{totalVisits}}</div>
+                    <div class="student-overview__stat-subtitle">All time</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="attendance-card mb-4">
+        <div class="attendance-card__header attendance-card__header--stacked">
+            <h2 class="attendance-card__header-title">QR Attendance History</h2>
+            <p class="attendance-card__header-desc">View your library QR code check-ins by time period</p>
+        </div>
+
+        <div class="attendance-card__body">
+            <nav class="time-filter mb-4" aria-label="Lọc lịch sử theo thời gian">
+                <ul class="time-filter__list">
+                    <li class="time-filter__item">
+                        <a href="/attendance?period=day"
+                            class="time-filter__link {{#if isDay}}time-filter__link--active{{/if}}">Day</a>
+                    </li>
+                    <li class="time-filter__item">
+                        <a href="/attendance?period=week"
+                            class="time-filter__link {{#if isWeek}}time-filter__link--active{{/if}}">Week</a>
+                    </li>
+                    <li class="time-filter__item">
+                        <a href="/attendance?period=month"
+                            class="time-filter__link {{#if isMonth}}time-filter__link--active{{/if}}">Month</a>
+                    </li>
+                    <li class="time-filter__item">
+                        <a href="/attendance?period=year"
+                            class="time-filter__link {{#if isYear}}time-filter__link--active{{/if}}">Year</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <p class="attendance-card__status-text">
+                Your library visits for this {{#if selectedPeriod}}{{selectedPeriod}}{{else}}month{{/if}} ({{#if
+                records.length}}{{records.length}}{{else}}0{{/if}} records)
+            </p>
+
+            {{#if records.length}}
+            <div class="attendance-table-responsive">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Địa điểm</th>
+                            <th>Phương thức</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each records}}
+                        <tr>
+                            <td>{{this.formattedTime}}</td>
+                            <td>{{this.location}}</td>
+                            <td><span class="badge badge--success">{{this.method}}</span></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+            {{else}}
+            <div class="empty-state">
+                <div class="empty-state__icon-box">
+                    <i class="fa-regular fa-calendar empty-state__icon"></i>
+                </div>
+                <h3 class="empty-state__title">No attendance records</h3>
+                <p class="empty-state__desc">No visits found for the selected time period.</p>
+            </div>
+            {{/if}}
+        </div>
+    </section>
+
+    <section class="attendance-card">
+        <div class="attendance-card__header">
+            <h2 class="attendance-card__header-title">How to Check In</h2>
+        </div>
+        <div class="attendance-card__body">
+            <div class="row">
+                <div class="col-12 col-md-6 mb-3 mb-md-0">
+                    <div class="guide-block">
+                        <div class="guide-block__heading guide-block__heading--success">
+                            <i class="fa-solid fa-check guide-block__icon"></i>
+                            <span>QR Code Check-In:</span>
+                        </div>
+                        <ul class="guide-block__list">
+                            <li class="guide-block__item">Use the QR Attendance Scanner from your student dashboard</li>
+                            <li class="guide-block__item">Point your device camera at the library QR code</li>
+                            <li class="guide-block__item">Your attendance will be recorded automatically</li>
+                            <li class="guide-block__item">Check your attendance history in this section</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="guide-block">
+                        <div class="guide-block__heading guide-block__heading--info">
+                            <i class="fa-solid fa-circle-info guide-block__icon"></i>
+                            <span>Important Notes:</span>
+                        </div>
+                        <ul class="guide-block__list">
+                            <li class="guide-block__item">QR codes are located at library entrance</li>
+                            <li class="guide-block__item">Each scan records date, time, and your student ID</li>
+                            <li class="guide-block__item">Only QR-based attendance is supported</li>
+                            <li class="guide-block__item">Contact library staff if you need assistance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="floating-guide">
+        <a href="#demo-guide" class="floating-guide__btn">
+            <i class="fa-regular fa-circle-question floating-guide__icon"></i>
+            <span>Demo Guide</span>
+        </a>
+    </div>
+</div>

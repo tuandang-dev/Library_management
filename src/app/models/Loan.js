@@ -9,11 +9,7 @@ const Loan = new Schema({
     dueDate: { type: Date, required: true },
     returnDate: { type: Date },
 
-    status: {
-        type: String,
-        enum: ['borrowing', 'returned', 'overdue', 'lost'],
-        default: 'borrowing'
-    }
+    status: { type: String, enum: ['borrowing', 'returned', 'overdue', 'lost'], default: 'borrowing' }
 }, {
     timestamps: true
 });

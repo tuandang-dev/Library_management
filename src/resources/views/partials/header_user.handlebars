@@ -42,13 +42,15 @@
         <nav class="user-header__nav px-4">
             <ul class="user-header__nav-list">
                 <li class="user-header__nav-item">
-                    <a href="/" class="user-header__nav-link user-header__nav-link--active">
+                    <a href="/"
+                        class="user-header__nav-link {{#unless isAttendancePage}}user-header__nav-link--active{{/unless}}">
                         <i class="fa-solid fa-house"></i>
                         <span>Home</span>
                     </a>
                 </li>
                 <li class="user-header__nav-item">
-                    <a href="/attendance" class="user-header__nav-link">
+                    <a href="/attendance"
+                        class="user-header__nav-link {{#if isAttendancePage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-user-check"></i>
                         <span>Attendance</span>
                     </a>
