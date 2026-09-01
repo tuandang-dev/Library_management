@@ -11,6 +11,7 @@ class SiteController {
                     title: 'Trang chủ sinh viên - UCC Library',
                     layout: 'user',
                     user: req.session.user,
+                    isHomePage: true,
                     stats: {
                         borrowedCount: 3,
                         daysVisited: 12,

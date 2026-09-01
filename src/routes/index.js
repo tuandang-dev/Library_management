@@ -9,8 +9,8 @@ const { requireAuth, requireAdmin } = require('../app/middlewares/authMiddleware
 function route(app) {
     app.use('/admin', adminRouter);
     app.use('/book', bookRouter);
-    app.use('/', authRouter);
     app.use('/attendance', attendanceRouter);
+    app.use('/', authRouter);
     app.use('/', siteRouter);
 
     app.get('/profile', requireAuth, (req, res) => {

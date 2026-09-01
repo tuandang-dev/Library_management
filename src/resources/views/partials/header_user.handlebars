@@ -3,7 +3,7 @@
         <div class="user-header__top px-4">
             <a href="/" class="user-header__brand">
                 <div class="">
-                    <img src="/img/logo-small.png" class="auth-footer__logo"></img>
+                    <img src="/img/logo-small.png" class="auth-footer__logo" alt="Logo">
                 </div>
                 <div class="user-header__brand-text">
                     <span class="user-header__title">UCC Library</span>
@@ -16,9 +16,9 @@
                     <button class="user-header__icon-btn" title="Tin nhắn">
                         <i class="fa-solid fa-bag-shopping"></i>
                     </button>
-                    <button class="user-header__icon-btn" title="Cài đặt">
+                    <a href="/logout" class="user-header__icon-btn" title="Cài đặt">
                         <i class="fa-solid fa-gear"></i>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="user-header__profile">
@@ -42,8 +42,7 @@
         <nav class="user-header__nav px-4">
             <ul class="user-header__nav-list">
                 <li class="user-header__nav-item">
-                    <a href="/"
-                        class="user-header__nav-link {{#unless isAttendancePage}}user-header__nav-link--active{{/unless}}">
+                    <a href="/" class="user-header__nav-link {{#if isHomePage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-house"></i>
                         <span>Home</span>
                     </a>
@@ -56,19 +55,22 @@
                     </a>
                 </li>
                 <li class="user-header__nav-item">
-                    <a href="/books" class="user-header__nav-link">
+                    <a href="/book"
+                        class="user-header__nav-link {{#if isBooksPage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-book-open"></i>
                         <span>Books</span>
                     </a>
                 </li>
                 <li class="user-header__nav-item">
-                    <a href="/history" class="user-header__nav-link">
+                    <a href="/history"
+                        class="user-header__nav-link {{#if isHistoryPage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                         <span>History</span>
                     </a>
                 </li>
                 <li class="user-header__nav-item">
-                    <a href="/scanner" class="user-header__nav-link">
+                    <a href="/scanner"
+                        class="user-header__nav-link {{#if isScannerPage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-qrcode"></i>
                         <span>QR Scanner</span>
                     </a>
