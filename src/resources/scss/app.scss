@@ -14,8 +14,11 @@
 @use 'components/borrow-panel';
 @use 'components/quick-panel';
 @use 'components/floating-btn';
+@use 'components/ticket-modal';
 
 @use 'pages/login';
 @use 'pages/attendance';
 @use 'pages/home';
 @use 'pages/catalog';
+@use 'pages/cart';
+@use 'pages/ticket-details';

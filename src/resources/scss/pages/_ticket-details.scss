@@ -1,0 +1,345 @@
+@use '../abstracts/variables' as *;
+
+.ticket-header {
+    &__title {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 1.5rem;
+        color: $color-text-main;
+        margin-bottom: 4px;
+    }
+
+    &__icon {
+        font-size: 1.6rem;
+        margin-right: 8px;
+    }
+
+    &__desc {
+        font-size: 1rem;
+        color: $color-brown;
+    }
+}
+
+.ticket-card {
+    background-color: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-lg;
+    padding: 24px 28px;
+    box-shadow: $shadow-card;
+
+    &__title {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 1rem;
+        color: $color-text-main;
+        margin-bottom: 4px;
+    }
+
+    &__desc {
+        font-size: 1rem;
+        color: $color-brown;
+    }
+}
+
+.ticket-qr-wrap {
+    background-color: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    padding: 14px;
+    display: inline-block;
+    max-width: 250px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.ticket-qr-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.ticket-qr-meta {
+    .ticket-qr-id {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: $color-text-main;
+    }
+
+    .ticket-qr-time {
+        font-size: 0.75rem;
+        color: $color-brown;
+    }
+}
+
+.btn-download-ticket {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8faf9;
+    border: 1.5px solid #e2e8f0;
+    color: $color-text-main;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 8px 24px;
+    border-radius: $border-radius-md;
+    text-decoration: none;
+    transition: $transition-base;
+
+    &:hover {
+        background-color: #ede8df;
+        color: $color-text-main;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    i {
+        margin-right: 8px;
+    }
+}
+
+.ticket-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ticket-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+}
+
+.ticket-info-label {
+    color: $color-brown;
+    font-weight: 500;
+}
+
+.ticket-info-val {
+    color: $color-text-main;
+}
+
+.ticket-status-badge {
+    background-color: $color-primary;
+    color: $color-white;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 12px;
+    border-radius: $border-radius-pill;
+    letter-spacing: 0.5px;
+}
+
+.ticket-guide-box {
+    background-color: #f0f7ff;
+    border: 1px solid #cce3fe;
+    border-radius: $border-radius-md;
+    padding: 14px 18px;
+
+    .ticket-guide-title {
+        font-size: 0.875rem;
+    }
+
+    .ticket-guide-list {
+        font-size: 0.75rem;
+        color: $color-brown;
+        line-height: 1.6;
+    }
+}
+
+.checked-items-bar {
+    background-color: #fff9f0;
+    border: 1px solid #fed7aa;
+    border-radius: $border-radius-lg;
+    padding: 16px 24px;
+
+    .checked-items-icon {
+        width: 44px;
+        height: 44px;
+        background-color: $color-orange;
+        color: $color-white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .checked-items-title {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 1.05rem;
+        color: #9a3412;
+    }
+
+    .checked-items-desc {
+        font-size: 0.82rem;
+        color: #c2410c;
+    }
+
+    .checked-items-count {
+        font-size: 0.95rem;
+        color: $color-orange;
+    }
+}
+
+.ready-checkout-banner {
+    background-color: #fff9f0;
+    border: 1px solid #fed7aa;
+    border-radius: $border-radius-lg;
+    padding: 16px 24px;
+
+    .ready-checkout-icon {
+        width: 44px;
+        height: 44px;
+        background-color: #ea580c;
+        color: $color-white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .ready-checkout-title {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #9a3412;
+    }
+
+    .ready-checkout-desc {
+        font-size: 0.875rem;
+        color: #c2410c;
+    }
+
+    .ready-checkout-meta {
+        font-size: 0.75rem;
+        color: #9a3412;
+    }
+
+    .ready-checkout-number {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #9a3412;
+        line-height: 1;
+    }
+}
+
+.ticket-books-title {
+    font-family: 'Nunito', $font-family-base;
+    font-size: 1.2rem;
+    color: $color-green;
+}
+
+.ticket-books-tags {
+    gap: 8px;
+}
+
+.ticket-book-item {
+    background-color: $color-white;
+    border: 1px solid #a7f3d0;
+    border-left: 4px solid #10b981;
+    border-radius: $border-radius-md;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+
+    .ticket-book-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #ecfdf5;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #10b981;
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-right: 8px;
+    }
+
+    .ticket-book-name {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: $color-text-main;
+        margin-bottom: 2px;
+    }
+
+    .ticket-book-author {
+        font-size: 0.82rem;
+        color: $color-text-muted;
+        margin-bottom: 6px;
+    }
+
+    .ticket-book-isbn {
+        font-size: 0.78rem;
+        color: $color-text-light;
+    }
+
+    .ticket-tag {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: $border-radius-pill;
+
+        &--cat {
+            background-color: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+
+        &--loc {
+            background-color: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+    }
+
+    .ticket-badge-num {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #059669;
+    }
+
+    .ticket-index-circle {
+        width: 26px;
+        height: 26px;
+        background-color: #10b981;
+        color: $color-white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 800;
+    }
+}
+
+.ticket-notes-card {
+    background-color: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-lg;
+    padding: 22px 28px;
+    box-shadow: $shadow-card;
+
+    .ticket-notes-title {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 1.1rem;
+        color: $color-text-main;
+    }
+
+    .notes-col-heading {
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .notes-list {
+        font-size: 0.82rem;
+        color: $color-brown;
+        line-height: 1.8;
+        margin-left: 16px;
+    }
+}

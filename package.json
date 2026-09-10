@@ -41,7 +41,8 @@
     "mongoose": "^9.0.1",
     "mongoose-delete": "^1.0.7",
     "mongoose-slug-generator": "^1.0.4",
-    "nodemailer": "^9.0.3"
+    "nodemailer": "^9.0.3",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "husky": "^9.1.7",

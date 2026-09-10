@@ -13,9 +13,13 @@
 
             <div class="user-header__meta">
                 <div class="user-header__actions">
-                    <button class="user-header__icon-btn" title="Tin nhắn">
+                    <a href="/cart" class="user-header__icon-btn" title="Giỏ sách">
                         <i class="fa-solid fa-bag-shopping"></i>
-                    </button>
+                        <span class="user-header__cart-badge" id="headerCartBadge" {{#unless
+                            cartCount}}style="display: none;" {{/unless}}>
+                            {{#if cartCount}}{{cartCount}}{{else}}0{{/if}}
+                        </span>
+                    </a>
                     <a href="/logout" class="user-header__icon-btn" title="Cài đặt">
                         <i class="fa-solid fa-gear"></i>
                     </a>

@@ -1,4 +1,4 @@
-<div class="catalog-page">
+<div class="catalog-page pb-5">
     <div class="catalog-header mb-4">
         <h1 class="catalog-header__title">Book Catalog</h1>
         <p class="catalog-header__desc">Browse and add books to your cart</p>
@@ -33,10 +33,10 @@
                 <i class="fa-solid fa-book-open"></i>
             </div>
             <div>
-                <p class="results-title mb-0">
+                <p class="results-title">
                     {{#if books.length}}{{books.length}}{{else}}0{{/if}} Books Found
                 </p>
-                <p class="results-sub mb-0">
+                <p class="results-sub">
                     Total collection: {{#if countDocuments}}{{countDocuments}}{{else}}0{{/if}} books
                 </p>
             </div>
@@ -47,7 +47,7 @@
                 Available: {{#if availableQuantityTotal}}{{availableQuantityTotal}}{{else}}0{{/if}}
             </span>
             <button type="button" class="btn-cart-summary" id="openCartBtn" title="Xem giỏ sách">
-                <i class="fa-solid fa-cart-shopping"></i>
+                <i class="fa-solid fa-cart-shopping me-1"></i>
                 <span id="cartCountBadge">0 in cart</span>
             </button>
         </div>
@@ -56,10 +56,11 @@
     {{#if books.length}}
     <div class="books-grid mb-4">
         {{#each books}}
-        <div class="book-card" data-id="{{this._id}}" data-title="{{this.title}}" data-author="{{this.author}}"
-            data-image="{{this.image}}" data-accession-number="{{this.accessionNumber}}"
-            data-category="{{this.categoryId.name}}" data-isbn="{{this.isbn}}"
-            data-total-quantity="{{this.totalQuantity}}" data-available-quantity="{{this.availableQuantity}}"
+        <div class="book-card" data-id="{{this._id}}" data-in-cart="{{#if this.isInCart}}true{{else}}false{{/if}}"
+            data-title="{{this.title}}" data-author="{{this.author}}" data-image="{{this.image}}"
+            data-accession-number="{{this.accessionNumber}}" data-category="{{this.categoryId.name}}"
+            data-isbn="{{this.isbn}}" data-total-quantity="{{this.totalQuantity}}"
+            data-available-quantity="{{this.availableQuantity}}"
             data-location="{{#if this.location}}{{this.location}}{{else}}Section A, Shelf 2{{/if}}"
             data-description="{{#if this.description}}{{this.description}}{{else}}A comprehensive introduction to computer science fundamentals.{{/if}}">
             <div class="book-img-wrap">
@@ -70,11 +71,15 @@
                 {{else}}
                 <span class="badge-status borrowed">borrowed</span>
                 {{/if}}
+
+                {{#if this.isInCart}}
+                <span class="badge-in-cart">In Cart</span>
+                {{/if}}
             </div>
             <div class="book-info">
                 <p class="book-title" title="{{this.title}}">{{this.title}}</p>
                 <p class="book-author">by {{this.author}}</p>
-                <span class="book-cat cat-cs">{{this.categoryId.name}}</span>
+                <span class="book-cat">{{this.categoryId.name}}</span>
             </div>
         </div>
         {{/each}}
@@ -101,8 +106,8 @@
             </div>
             <div class="book-modal__header-info">
                 <span class="book-modal__header-badge dialog-badge-status">available</span>
-                <h2 class="book-modal__title dialog-title">Introduction to Computer Science</h2>
-                <p class="book-modal__author">by <span class="dialog-author">John Smith</span></p>
+                <h2 class="book-modal__title dialog-title">Book Title</h2>
+                <p class="book-modal__author">by <span class="dialog-author">Author</span></p>
             </div>
         </div>
     </div>
@@ -111,7 +116,7 @@
         <div class="book-modal__stats-row">
             <div class="book-modal__stat-card">
                 <span class="book-modal__stat-label">Availability</span>
-                <p class="book-modal__stat-value dialog-availability">3 of 5</p>
+                <p class="book-modal__stat-value dialog-availability">0 of 0</p>
                 <span class="book-modal__stat-sub">copies available</span>
             </div>
             <div class="book-modal__stat-card">
@@ -152,115 +157,223 @@
         <div class="book-modal__desc-card">
             <span class="book-modal__desc-label">Description</span>
             <p class="book-modal__desc-text dialog-description">
-                A comprehensive introduction to computer science fundamentals.
+                Book description...
             </p>
         </div>
-
-        <button type="button" class="book-modal__btn-add-cart" id="dialogAddToCartBtn">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span>Add to Cart</span>
-        </button>
     </div>
+    <button type="button" class="book-modal__btn-add-cart" id="dialogAddToCartBtn">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Add to Cart</span>
+    </button>
 </dialog>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryId = urlParams.get('category');
-    const status = urlParams.get('status');
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryId = urlParams.get('category');
+        const status = urlParams.get('status');
 
-    if (categoryId) {
-        const selectCategory = document.getElementById('categorySelect');
-        if (selectCategory) selectCategory.value = categoryId;
-    }
+        if (categoryId) {
+            const selectCategory = document.getElementById('categorySelect');
+            if (selectCategory) selectCategory.value = categoryId;
+        }
 
-    if (status) {
-        const selectStatus = document.getElementById('statusSelect');
-        if (selectStatus) selectStatus.value = status;
-    }
+        if (status) {
+            const selectStatus = document.getElementById('statusSelect');
+            if (selectStatus) selectStatus.value = status;
+        }
 
-    const dialog = document.getElementById('bookDialog');
-    const bookCards = document.querySelectorAll('.book-card');
-    const closeBtn = document.getElementById('closeDialogBtn');
+        const cartCountBadge = document.getElementById('cartCountBadge');
+        const headerCartBadge = document.getElementById('headerCartBadge');
 
-    const dialogNextAvailableBox = document.getElementById('dialogNextAvailableBox');
-    const dialogAddToCartBtn = document.getElementById('dialogAddToCartBtn');
-    const dialogAvailability = document.querySelector('.dialog-availability');
-    const badgeStatus = document.querySelector('.dialog-badge-status');
-
-    bookCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const bookId = card.dataset.id || '';
-            const title = card.dataset.title || 'Untitled';
-            const author = card.dataset.author || 'Unknown';
-            const image = card.dataset.image || '';
-            const accessionNumber = card.dataset.accessionNumber || card.dataset.id || '-';
-            const category = card.dataset.category || 'General';
-            const isbn = card.dataset.isbn || '-';
-            const totalQuantity = parseInt(card.dataset.totalQuantity || '0', 10);
-            const availableQuantity = parseInt(card.dataset.availableQuantity || '0', 10);
-            const location = card.dataset.location || 'Section A, Shelf 2';
-            const description = card.dataset.description || 'A comprehensive introduction to computer science fundamentals.';
-
-            document.querySelector('.dialog-title').textContent = title;
-            document.querySelector('.dialog-author').textContent = author;
-            document.querySelector('.dialog-image').src = image;
-            document.querySelector('.dialog-location').textContent = location;
-            document.querySelector('.dialog-book-id').textContent = accessionNumber;
-            document.querySelector('.dialog-isbn').textContent = isbn;
-            document.querySelector('.dialog-category').textContent = category;
-            document.querySelector('.dialog-description').textContent = description;
-            dialogAvailability.textContent = `${availableQuantity} of ${totalQuantity}`;
-
-            if (dialogAddToCartBtn) {
-                dialogAddToCartBtn.dataset.bookId = bookId;
+        function updateCartBadgeUI(count) {
+            if (cartCountBadge) {
+                cartCountBadge.textContent = `${count} in cart`;
             }
-
-            if (availableQuantity > 0) {
-                badgeStatus.textContent = 'available';
-                badgeStatus.className = 'book-modal__header-badge book-modal__header-badge--available';
-
-                dialogAvailability.className = 'book-modal__stat-value book-modal__stat-value--available dialog-availability';
-
-                if (dialogAddToCartBtn) dialogAddToCartBtn.style.display = 'flex';
-                if (dialogNextAvailableBox) dialogNextAvailableBox.style.display = 'none';
-            } else {
-                badgeStatus.textContent = 'borrowed';
-                badgeStatus.className = 'book-modal__header-badge book-modal__header-badge--borrowed';
-
-                dialogAvailability.className = 'book-modal__stat-value book-modal__stat-value--unavailable dialog-availability';
-
-                if (dialogAddToCartBtn) dialogAddToCartBtn.style.display = 'none';
-                if (dialogNextAvailableBox) {
-                    dialogNextAvailableBox.style.display = 'flex';
-                    const nextDate = new Date();
-                    nextDate.setDate(nextDate.getDate() + 7);
-                    document.querySelector('.dialog-next-date').textContent = nextDate.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                    });
+            if (headerCartBadge) {
+                if (count > 0) {
+                    headerCartBadge.textContent = count;
+                    headerCartBadge.style.display = 'flex';
+                } else {
+                    headerCartBadge.style.display = 'none';
                 }
             }
+        }
 
-            dialog.showModal();
-        });
-    });
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => dialog.close());
-    }
-
-    if (dialog) {
-        dialog.addEventListener('click', (e) => {
-            const rect = dialog.getBoundingClientRect();
-            if (
-                e.clientX < rect.left ||
-                e.clientX > rect.right ||
-                e.clientY < rect.top ||
-                e.clientY > rect.bottom
-            ) {
-                dialog.close();
+        async function syncCartCount() {
+            try {
+                const res = await fetch('/cart/count');
+                const data = await res.json();
+                if (data.success) {
+                    updateCartBadgeUI(data.cartCount);
+                }
+            } catch (err) {
+                console.error('Không thể lấy số lượng giỏ hàng:', err);
             }
+        }
+        syncCartCount();
+
+        const openCartBtn = document.getElementById('openCartBtn');
+        if (openCartBtn) {
+            openCartBtn.addEventListener('click', () => {
+                window.location.href = '/cart';
+            });
+        }
+
+        const dialog = document.getElementById('bookDialog');
+        const bookCards = document.querySelectorAll('.book-card');
+        const closeBtn = document.getElementById('closeDialogBtn');
+
+        const dialogNextAvailableBox = document.getElementById('dialogNextAvailableBox');
+        const dialogAddToCartBtn = document.getElementById('dialogAddToCartBtn');
+        const dialogAvailability = document.querySelector('.dialog-availability');
+        const badgeStatus = document.querySelector('.dialog-badge-status');
+
+        bookCards.forEach((card) => {
+            card.addEventListener('click', () => {
+                const bookId = card.dataset.id || '';
+                const title = card.dataset.title || 'Untitled';
+                const author = card.dataset.author || 'Unknown';
+                const image = card.dataset.image || '';
+                const accessionNumber = card.dataset.accessionNumber || card.dataset.id || '-';
+                const category = card.dataset.category || 'General';
+                const isbn = card.dataset.isbn || '-';
+                const totalQuantity = parseInt(card.dataset.totalQuantity || '0', 10);
+                const availableQuantity = parseInt(card.dataset.availableQuantity || '0', 10);
+                const location = card.dataset.location || 'Section A, Shelf 2';
+                const description = card.dataset.description || 'A comprehensive introduction to computer science fundamentals.';
+                const isInCart = card.dataset.inCart === 'true';
+
+                document.querySelector('.dialog-title').textContent = title;
+                document.querySelector('.dialog-author').textContent = author;
+                document.querySelector('.dialog-image').src = image;
+                document.querySelector('.dialog-location').textContent = location;
+                document.querySelector('.dialog-book-id').textContent = accessionNumber;
+                document.querySelector('.dialog-isbn').textContent = isbn;
+                document.querySelector('.dialog-category').textContent = category;
+                document.querySelector('.dialog-description').textContent = description;
+                dialogAvailability.textContent = `${availableQuantity} of ${totalQuantity}`;
+
+                if (dialogAddToCartBtn) {
+                    dialogAddToCartBtn.dataset.bookId = bookId;
+                }
+
+                if (isInCart) {
+                    badgeStatus.textContent = 'available';
+                    badgeStatus.className = 'book-modal__header-badge book-modal__header-badge--available';
+                    dialogAvailability.className = 'book-modal__stat-value book-modal__stat-value--available dialog-availability';
+
+                    if (dialogAddToCartBtn) {
+                        dialogAddToCartBtn.style.display = 'flex';
+                        dialogAddToCartBtn.disabled = true;
+                        dialogAddToCartBtn.classList.add('book-modal__btn-add-cart--in-cart');
+                        dialogAddToCartBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i><span>Already in Cart</span>';
+                    }
+                    if (dialogNextAvailableBox) dialogNextAvailableBox.style.display = 'none';
+                } else if (availableQuantity > 0) {
+                    badgeStatus.textContent = 'available';
+                    badgeStatus.className = 'book-modal__header-badge book-modal__header-badge--available';
+                    dialogAvailability.className = 'book-modal__stat-value book-modal__stat-value--available dialog-availability';
+
+                    if (dialogAddToCartBtn) {
+                        dialogAddToCartBtn.style.display = 'flex';
+                        dialogAddToCartBtn.disabled = false;
+                        dialogAddToCartBtn.classList.remove('book-modal__btn-add-cart--in-cart');
+                        dialogAddToCartBtn.innerHTML = '<i class="fa-solid fa-cart-shopping"></i><span>Add to Cart</span>';
+                    }
+                    if (dialogNextAvailableBox) dialogNextAvailableBox.style.display = 'none';
+                } else {
+                    badgeStatus.textContent = 'borrowed';
+                    badgeStatus.className = 'book-modal__header-badge book-modal__header-badge--borrowed';
+                    dialogAvailability.className = 'book-modal__stat-value book-modal__stat-value--unavailable dialog-availability';
+
+                    if (dialogAddToCartBtn) dialogAddToCartBtn.style.display = 'none';
+                    if (dialogNextAvailableBox) {
+                        dialogNextAvailableBox.style.display = 'flex';
+                        const nextDate = new Date();
+                        nextDate.setDate(nextDate.getDate() + 7);
+                        document.querySelector('.dialog-next-date').textContent = nextDate.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                        });
+                    }
+                }
+
+                dialog.showModal();
+            });
         });
-    }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => dialog.close());
+        }
+
+        if (dialog) {
+            dialog.addEventListener('click', (e) => {
+                const rect = dialog.getBoundingClientRect();
+                if (
+                    e.clientX < rect.left ||
+                    e.clientX > rect.right ||
+                    e.clientY < rect.top ||
+                    e.clientY > rect.bottom
+                ) {
+                    dialog.close();
+                }
+            });
+        }
+
+        if (dialogAddToCartBtn) {
+            dialogAddToCartBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const bookId = dialogAddToCartBtn.dataset.bookId;
+
+                if (!bookId) {
+                    alert('Không tìm thấy thông tin sách!');
+                    return;
+                }
+
+                try {
+                    dialogAddToCartBtn.disabled = true;
+                    dialogAddToCartBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Adding...</span>';
+
+                    const response = await fetch('/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ bookId }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        updateCartBadgeUI(data.cartCount);
+
+                        const activeCard = document.querySelector(`.book-card[data-id="${bookId}"]`);
+                        if (activeCard) {
+                            activeCard.dataset.inCart = 'true';
+                            const imgWrap = activeCard.querySelector('.book-img-wrap');
+                            if (imgWrap && !imgWrap.querySelector('.badge-in-cart')) {
+                                const inCartBadge = document.createElement('span');
+                                inCartBadge.className = 'badge-in-cart';
+                                inCartBadge.textContent = 'In Cart';
+                                imgWrap.appendChild(inCartBadge);
+                            }
+                        }
+
+                        dialog.close();
+                        alert(data.message || 'Đã thêm sách vào giỏ mượn thành công!');
+                    } else {
+                        alert(data.message || 'Không thể thêm sách vào giỏ!');
+                    }
+                } catch (err) {
+                    console.error('Lỗi khi thêm sách vào giỏ:', err);
+                    alert('Có lỗi xảy ra khi kết nối máy chủ!');
+                } finally {
+                    dialogAddToCartBtn.disabled = false;
+                    dialogAddToCartBtn.innerHTML = '<i class="fa-solid fa-cart-shopping"></i><span>Add to Cart</span>';
+                }
+            });
+        }
+    });
 </script>

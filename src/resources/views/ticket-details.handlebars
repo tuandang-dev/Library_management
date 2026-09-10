@@ -1,0 +1,175 @@
+<div class="ticket-page">
+    <div class="ticket-header mb-4">
+        <h1 class="ticket-header__title d-flex align-items-center gap-2">
+            <i class="fa-solid fa-qrcode ticket-header__icon"></i>
+            <span>QR Borrow Ticket</span>
+        </h1>
+        <p class="ticket-header__desc">Your QR code for book borrowing and library access.</p>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="ticket-card text-center h-100">
+                <h2 class="ticket-card__title">Your QR Ticket</h2>
+                <p class="ticket-card__desc">Present this to the librarian</p>
+
+                <div class="ticket-qr-wrap my-3">
+                    <img src="{{ticket.qrCodeDataUrl}}" alt="QR Ticket Code" class="ticket-qr-img">
+                </div>
+
+                <div class="ticket-qr-meta mb-3">
+                    <p class="ticket-qr-id mb-1">Ticket ID: {{ticket.ticketId}}</p>
+                    <p class="ticket-qr-time mb-0">Generated: {{ticket.generatedAtFormatted}}</p>
+                </div>
+
+                <a href="{{ticket.qrCodeDataUrl}}" download="Ticket-{{ticket.ticketId}}.png"
+                    class="btn-download-ticket">
+                    <i class="fa-solid fa-download me-2"></i>
+                    <span>Download</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+            <div class="ticket-card h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h2 class="ticket-card__title">Ticket Details</h2>
+                    <p class="ticket-card__desc mb-3">Information encoded in your QR ticket</p>
+
+                    <div class="ticket-info-list mb-4">
+                        <div class="ticket-info-row">
+                            <span class="ticket-info-label">Student ID:</span>
+                            <span class="ticket-info-val">{{#if
+                                user.accessionNumber}}{{user.accessionNumber}}{{else}}4{{/if}}</span>
+                        </div>
+                        <div class="ticket-info-row">
+                            <span class="ticket-info-label">Name:</span>
+                            <span class="ticket-info-val">{{user.fullname}}</span>
+                        </div>
+                        <div class="ticket-info-row">
+                            <span class="ticket-info-label">Email:</span>
+                            <span class="ticket-info-val">{{user.email}}</span>
+                        </div>
+                        <div class="ticket-info-row">
+                            <span class="ticket-info-label">Purpose:</span>
+                            <span class="ticket-info-val">Book Checkout</span>
+                        </div>
+                        <div class="ticket-info-row">
+                            <span class="ticket-info-label">Books:</span>
+                            <span class="ticket-info-val">{{ticket.totalBooks}} book(s)</span>
+                        </div>
+                        <div class="ticket-info-row">
+                            <span class="ticket-info-label">Expires:</span>
+                            <span class="ticket-info-val">{{ticket.expiresAtFormatted}}</span>
+                        </div>
+                        <div class="ticket-info-row">
+                            <span class="ticket-info-label">Status:</span>
+                            <span class="ticket-status-badge ticket-status-badge--active">{{ticket.status}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticket-guide-box">
+                    <h3 class="ticket-guide-title mb-2">How to use:</h3>
+                    <ol class="ticket-guide-list mb-0 ps-3">
+                        <li>Show this QR code to the librarian</li>
+                        <li>They will scan it to verify your identity</li>
+                        <li>Proceed with book borrowing or return</li>
+                        <li>Use cart checkout for specific book borrowing</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="checked-items-bar d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="checked-items-icon">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <div>
+                <h3 class="checked-items-title mb-0">Checked Out Items</h3>
+                <p class="checked-items-desc mb-0">Items included in this QR checkout ticket</p>
+            </div>
+        </div>
+        <span class="checked-items-count">{{ticket.totalBooks}} Total Items</span>
+    </div>
+
+    <div class="ticket-books-section mb-4">
+        <h2 class="ticket-books-title mb-3">
+            <i class="fa-solid fa-book-open me-2 text-primary"></i>
+            <span>Books ({{ticket.totalBooks}})</span>
+        </h2>
+
+        <div class="d-flex flex-column gap-3 mb-2">
+            {{#each ticket.items}}
+            <div class="ticket-book-item">
+                <div class="ticket-book-left d-flex align-items-start gap-3">
+                    <div class="ticket-book-icon">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div class="ticket-book-info">
+                        <h4 class="ticket-book-name">{{this.title}}</h4>
+                        <p class="ticket-book-author">by {{this.author}}</p>
+                        <div class="ticket-book-tags d-flex flex-wrap align-items-center gap-2">
+                            <span class="ticket-book-isbn">ISBN: {{this.isbn}}</span>
+                            <span class="ticket-tag ticket-tag--cat">{{this.category}}</span>
+                            <span class="ticket-tag ticket-tag--loc">{{this.location}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticket-book-right d-flex align-items-center gap-2 flex-column">
+                    <span class="ticket-badge-num">Book #{{this.index}}</span>
+                    <span class="ticket-index-circle">{{this.index}}</span>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="ready-checkout-banner d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="ready-checkout-icon">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <div>
+                <h3 class="ready-checkout-title mb-0">Ready for Checkout</h3>
+                <p class="ready-checkout-desc mb-0">Present QR code to librarian</p>
+            </div>
+        </div>
+        <div class="text-end">
+            <span class="ready-checkout-meta">Total Items</span>
+            <span
+                class="ready-checkout-number d-flex justify-content-center align-item-center">{{ticket.totalBooks}}</span>
+        </div>
+    </div>
+
+    <div class="ticket-notes-card">
+        <h3 class="ticket-notes-title mb-3">Important Notes</h3>
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <h4 class="notes-col-heading text-success mb-2">
+                    <i class="fa-solid fa-check me-1"></i> Valid for:
+                </h4>
+                <ul class="notes-list ps-3">
+                    <li>Book borrowing and returns</li>
+                    <li>Library access verification</li>
+                    <li>Attendance recording</li>
+                    <li>Study room reservations</li>
+                </ul>
+            </div>
+            <div class="col-12 col-md-6">
+                <h4 class="notes-col-heading text-warning mb-2">
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i> Remember:
+                </h4>
+                <ul class="notes-list mb-0 ps-3">
+                    <li>Use cart checkout for specific books</li>
+                    <li>Don't share your QR code with others</li>
+                    <li>Have your student ID as backup</li>
+                    <li>Checkout tickets expire in 15 minutes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

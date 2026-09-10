@@ -1,0 +1,294 @@
+@use '../abstracts/variables' as *;
+
+dialog.ticket-modal {
+    margin: auto;
+    border: none;
+    border-radius: $border-radius-lg;
+    padding: 0;
+    width: calc(100% - 32px);
+    max-width: 480px;
+    max-height: 90vh;
+    background-color: $color-white;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    &::backdrop {
+        background-color: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(4px);
+    }
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #fdfaf6;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #fed7aa;
+        border-radius: 4px;
+
+        &:hover {
+            background: $color-primary;
+        }
+    }
+}
+
+dialog.ticket-modal:not([open]) {
+    display: none;
+}
+
+.ticket-modal {
+    &__content {
+        padding: 28px 24px 24px;
+        position: relative;
+    }
+
+    &__close-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: transparent;
+        border: none;
+        color: $color-text-light;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: $transition-base;
+
+        &:hover {
+            color: $color-text-main;
+            background-color: #f3f4f6;
+        }
+    }
+
+    &__icon-badge {
+        width: 52px;
+        height: 52px;
+        background-color: #ffedd5;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: $color-primary;
+        font-size: 22px;
+    }
+
+    &__title {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #7c2d12;
+        margin-bottom: 4px;
+    }
+
+    &__desc {
+        font-size: 0.85rem;
+        color: $color-brown;
+        margin-bottom: 0;
+    }
+
+    &__qr-wrap {
+        background-color: #ffffff;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-md;
+        padding: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 250px;
+        margin: 18px auto 20px;
+        box-shadow: $shadow-card;
+    }
+
+    &__qr-img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    &__summary-bar {
+        background-color: #fffaf0;
+        border: 1px solid #fed7aa;
+        border-radius: $border-radius-md;
+        padding: 10px 14px;
+    }
+
+    &__summary-icon {
+        color: $color-orange;
+        font-size: 14px;
+    }
+
+    &__summary-text {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #9a3412;
+    }
+
+    &__summary-badge {
+        background-color: $color-white;
+        border: 1px solid #fdba74;
+        border-radius: $border-radius-pill;
+        padding: 2px 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #c2410c;
+    }
+
+    &__items-title {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 0.9rem;
+        color: $color-green;
+
+        i {
+            color: $color-primary;
+            font-size: 13px;
+            margin-right: 8px;
+        }
+    }
+
+    &__item {
+        background-color: #fbfbfb;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-sm;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    &__item-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    &__item-idx {
+        width: 22px;
+        height: 22px;
+        background-color: #10b981;
+        color: $color-white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    &__item-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: $color-text-main;
+        margin-bottom: 0;
+        line-height: 1.2;
+    }
+
+    &__item-author {
+        font-size: 0.72rem;
+        color: $color-text-muted;
+        margin-bottom: 0;
+    }
+
+    &__item-tag {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #059669;
+        background-color: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: $border-radius-pill;
+        padding: 2px 8px;
+    }
+
+    &__details-card {
+        background-color: #fffdfa;
+        border: 1px solid #fed7aa;
+        border-radius: $border-radius-md;
+        padding: 14px 16px;
+    }
+
+    &__field-label {
+        font-size: 0.72rem;
+        color: $color-text-muted;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    &__field-val {
+        font-family: 'Nunito', $font-family-base;
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: $color-text-main;
+        letter-spacing: 0.5px;
+    }
+
+    &__status-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        border-radius: $border-radius-pill;
+        letter-spacing: 0.5px;
+
+        &--active {
+            background-color: $color-primary;
+            color: $color-white;
+        }
+    }
+
+    &__timestamps {
+        border-top: 1px dashed #fcd34d;
+    }
+
+    &__time-item {
+        font-size: 0.75rem;
+        color: $color-text-muted;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        i {
+            font-size: 11px;
+            color: #d97706;
+        }
+
+        strong {
+            color: $color-text-main;
+            font-weight: 600;
+        }
+    }
+
+    &__btn-complete {
+        width: 100%;
+        background-color: $color-primary;
+        color: $color-white;
+        border: none;
+        border-radius: $border-radius-md;
+        padding: 13px 20px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: $transition-base;
+        box-shadow: $shadow-floating;
+
+        &:hover {
+            background-color: $color-primary-hover;
+            transform: translateY(-1px);
+        }
+
+        i {
+            font-size: 1.1rem;
+        }
+    }
+}

@@ -66,6 +66,7 @@
     }
 
     &__icon-btn {
+        position: relative;
         background: none;
         border: none;
         color: #718096;
@@ -176,5 +177,24 @@
                 color: #b45309;
             }
         }
+    }
+
+    &__cart-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background-color: $color-primary;
+        color: $color-white;
+        font-size: 10px;
+        font-weight: 700;
+        min-width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #ffffff;
+        line-height: 1;
+        box-shadow: 0 2px 5px rgba(234, 88, 12, 0.4);
     }
 }
