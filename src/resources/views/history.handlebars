@@ -1,0 +1,174 @@
+<div class="history-page">
+    <header class="history-page__header mb-4">
+        <h1 class="history-page__title">
+            <i class="fa-solid fa-book-open history-page__title-icon"></i>
+            <span>My Borrowing History</span>
+        </h1>
+        <p class="history-page__subtitle">Complete record of your library borrowing activity with detailed information.
+        </p>
+    </header>
+
+    <section class="history-stats mb-4">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-xl-3 mb-3 mb-xl-0">
+                <div class="metric-card metric-card--total">
+                    <div class="metric-card__inner">
+                        <div class="metric-card__content">
+                            <span class="metric-card__title">Total Borrowed</span>
+                            <span class="metric-card__value">{{#if
+                                stats.totalBorrowed}}{{stats.totalBorrowed}}{{else}}0{{/if}}</span>
+                            <span class="metric-card__subtext">All time</span>
+                        </div>
+                        <div class="metric-card__icon-box">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3 mb-3 mb-xl-0">
+                <div class="metric-card metric-card--active">
+                    <div class="metric-card__inner">
+                        <div class="metric-card__content">
+                            <span class="metric-card__title">Currently Borrowed</span>
+                            <span class="metric-card__value">{{#if
+                                stats.currentlyBorrowed}}{{stats.currentlyBorrowed}}{{else}}0{{/if}}</span>
+                            <span class="metric-card__subtext">Active books</span>
+                        </div>
+                        <div class="metric-card__icon-box">
+                            <i class="fa-regular fa-eye"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3 mb-3 mb-xl-0">
+                <div class="metric-card metric-card--overdue">
+                    <div class="metric-card__inner">
+                        <div class="metric-card__content">
+                            <span class="metric-card__title">Overdue</span>
+                            <span class="metric-card__value text-danger">{{#if
+                                stats.overdue}}{{stats.overdue}}{{else}}0{{/if}}</span>
+                            <span class="metric-card__subtext">Need attention</span>
+                        </div>
+                        <div class="metric-card__icon-box">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="metric-card metric-card--returned">
+                    <div class="metric-card__inner">
+                        <div class="metric-card__content">
+                            <span class="metric-card__title">Returned</span>
+                            <span class="metric-card__value">{{#if
+                                stats.returned}}{{stats.returned}}{{else}}0{{/if}}</span>
+                            <span class="metric-card__subtext">Completed</span>
+                        </div>
+                        <div class="metric-card__icon-box">
+                            <i class="fa-regular fa-circle-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="borrow-records">
+        <div class="borrow-records__header mb-3">
+            <div class="borrow-records__header-left">
+                <i class="fa-regular fa-calendar-check borrow-records__header-icon"></i>
+                <h2 class="borrow-records__title">Borrowing Records</h2>
+            </div>
+            <p class="borrow-records__subtitle">Complete history of your book borrowings with detailed information</p>
+        </div>
+
+        <div class="borrow-records__list">
+            {{#if records.length}}
+            {{#each records}}
+            <article class="history-card mb-3" data-id="{{this._id}}">
+                <div class="history-card__header">
+                    <div class="history-card__book-info">
+                        <div class="history-card__title-row">
+                            <i class="fa-solid fa-book-open history-card__book-icon"></i>
+                            <h3 class="history-card__book-title">{{this.bookTitle}}</h3>
+                        </div>
+                        <div class="history-card__author-row">
+                            <i class="fa-regular fa-user history-card__author-icon"></i>
+                            <span class="history-card__author">by {{this.bookAuthor}}</span>
+                        </div>
+                    </div>
+                    <div class="history-card__badge-wrap">
+                        <span class="badge {{this.badgeClass}}">
+                            {{#if this.isReturned}}
+                            <i class="fa-regular fa-circle-check mr-1"></i>
+                            {{else if this.isOverdue}}
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                            {{else}}
+                            <i class="fa-regular fa-clock mr-1"></i>
+                            {{/if}}
+                            {{this.badgeText}}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="history-card__meta-grid">
+                    <div class="meta-chip meta-chip--borrowed">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-regular fa-calendar-days meta-chip__icon"></i>
+                            <span class="meta-chip__label">Borrowed</span>
+                        </div>
+                        <span class="meta-chip__val">{{this.borrowDateFormatted}}</span>
+                    </div>
+
+                    <div class="meta-chip meta-chip--due">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-regular fa-clock meta-chip__icon"></i>
+                            <span class="meta-chip__label">Due Date</span>
+                        </div>
+                        <span class="meta-chip__val">{{this.dueDateFormatted}}</span>
+                    </div>
+
+                    <div
+                        class="meta-chip meta-chip--returned {{#unless this.isReturned}}meta-chip--not-returned{{/unless}}">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-regular fa-circle-check meta-chip__icon"></i>
+                            <span class="meta-chip__label">Returned</span>
+                        </div>
+                        <span class="meta-chip__val">{{this.returnDateFormatted}}</span>
+                    </div>
+
+                    <div class="meta-chip meta-chip--staff">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-regular fa-user meta-chip__icon"></i>
+                            <span class="meta-chip__label">Staff</span>
+                        </div>
+                        <span class="meta-chip__val">{{this.staffName}}</span>
+                    </div>
+                </div>
+            </article>
+            {{/each}}
+            {{else}}
+            <div class="empty-state bg-white rounded-lg p-5 text-center border">
+                <div class="empty-state__icon-box mb-3">
+                    <i class="fa-solid fa-book-open text-muted" style="font-size: 40px;"></i>
+                </div>
+                <h3 class="h5 font-weight-bold text-dark mb-1">No Borrowing History Found</h3>
+                <p class="text-muted mb-3">You have not borrowed any books from UCC Library yet.</p>
+                <a href="/book" class="btn btn-primary px-4">
+                    <i class="fa-solid fa-magnifying-glass mr-1"></i> Browse Books
+                </a>
+            </div>
+            {{/if}}
+        </div>
+    </section>
+
+    <div class="floating-guide">
+        <a href="#demo-guide" class="floating-guide__btn">
+            <i class="fa-regular fa-circle-question floating-guide__icon"></i>
+            <span>Demo Guide</span>
+        </a>
+    </div>
+</div>
