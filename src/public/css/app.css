@@ -3523,5 +3523,263 @@ dialog.book-modal:not([open]) {
     padding: 16px;
   }
 }
+.scanner-page__header {
+  margin-bottom: 24px;
+}
+.scanner-page__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.scanner-page__title-icon {
+  font-size: 24px;
+  color: #2d3748;
+}
+.scanner-page__subtitle {
+  font-size: 13px;
+  color: #92400e;
+  margin-bottom: 0;
+}
+
+.status-card {
+  background-color: #ffffff;
+  border: 1px solid #ede8df;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+}
+.status-card__header {
+  margin-bottom: 16px;
+}
+.status-card__header-title {
+  font-size: 16px;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+}
+.status-card__header-icon {
+  font-size: 16px;
+  color: #718096;
+}
+.status-card__session-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1.5px solid #ede8df;
+  background-color: #fcfaf5;
+  transition: all 0.25s ease-in-out;
+}
+.status-card__session-box--inactive {
+  border-color: #ede8df;
+  background-color: #fdfbf7;
+}
+.status-card__session-box--inactive .status-card__session-icon {
+  color: #8c5835;
+}
+.status-card__session-box--inactive .status-card__badge {
+  background-color: #f3f4f6;
+  color: #718096;
+}
+.status-card__session-box--active {
+  border-color: #bbf7d0;
+  background-color: #f0fdf4;
+}
+.status-card__session-box--active .status-card__session-icon {
+  color: #16a34a;
+}
+.status-card__session-box--active .status-card__badge {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+.status-card__session-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.status-card__session-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+}
+.status-card__session-icon {
+  font-size: 20px;
+  transition: all 0.25s ease-in-out;
+}
+.status-card__session-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.status-card__session-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2d3748;
+  line-height: 1.3;
+}
+.status-card__session-sub {
+  font-size: 12px;
+  color: #718096;
+  line-height: 1.2;
+}
+.status-card__badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 50px;
+  text-transform: capitalize;
+  line-height: 1;
+  transition: all 0.25s ease-in-out;
+}
+
+.scanner-panel {
+  background-color: #ffffff;
+  border: 1px solid #ede8df;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  padding: 24px 32px;
+}
+.scanner-panel__header {
+  margin-bottom: 24px;
+  text-align: left;
+}
+.scanner-panel__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 2px;
+}
+.scanner-panel__desc {
+  font-size: 12px;
+  color: #92400e;
+  margin-bottom: 0;
+}
+.scanner-panel__viewport {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  min-height: 280px;
+  margin: 0 auto;
+  background-color: #fcf8f2;
+  border: 2px dashed #e8ded1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.25s ease-in-out;
+}
+.scanner-panel__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+.scanner-panel__placeholder-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #f3ece0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.scanner-panel__placeholder-icon {
+  font-size: 28px;
+  color: #8c5835;
+}
+.scanner-panel__placeholder-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 0;
+}
+.scanner-panel__reader {
+  width: 100%;
+  min-height: 280px;
+}
+.scanner-panel__reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 12px;
+}
+.scanner-panel__btn-scan {
+  background-color: #e65c00;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 32px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(230, 92, 0, 0.35);
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+.scanner-panel__btn-scan i {
+  font-size: 15px;
+}
+.scanner-panel__btn-scan:hover {
+  background-color: #cc5200;
+  transform: translateY(-2px);
+  color: #ffffff;
+}
+.scanner-panel__btn-scan:active {
+  transform: translateY(0);
+}
+.scanner-panel__btn-scan:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.scanner-panel__instructions {
+  max-width: 480px;
+  margin: 0 auto;
+}
+.scanner-panel__instruction-line {
+  font-size: 12px;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+@media (max-width: 576px) {
+  .scanner-panel {
+    padding: 16px;
+  }
+  .scanner-panel__viewport {
+    min-height: 220px;
+  }
+  .scanner-panel__btn-scan {
+    width: 100%;
+  }
+  .status-card__session-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .status-card__session-box .status-card__session-right {
+    align-self: flex-start;
+  }
+}
 
 /*# sourceMappingURL=app.css.map */

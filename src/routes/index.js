@@ -5,6 +5,7 @@ const adminRouter = require('./admin');
 const attendanceRouter = require('./attendance');
 const cartRouter = require('./cart');
 const historyRouter = require('./history');
+const scannerRouter = require('./scanner');
 
 const { requireAuth, requireAdmin } = require('../app/middlewares/authMiddleware');
 
@@ -17,15 +18,11 @@ function route(app) {
     app.use('/admin', adminRouter);
     app.use('/cart', cartRouter);
     app.use('/history', historyRouter);
+    app.use('/scanner', scannerRouter);
     app.use('/book', bookRouter);
     app.use('/attendance', attendanceRouter);
     app.use('/', authRouter);
     app.use('/', siteRouter);
-
-    app.get('/profile', requireAuth, (req, res) => {
-        const user = req.session.user;
-        res.send(`<h1>Chào mừng ${user.fullname} đã vào trang cá nhân bí mật!</h1>`);
-    });
 }
 
 module.exports = route;

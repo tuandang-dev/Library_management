@@ -1,0 +1,195 @@
+<div class="scanner-page">
+    <header class="scanner-page__header mb-4">
+        <h1 class="scanner-page__title">
+            <i class="fa-solid fa-qrcode scanner-page__title-icon"></i>
+            <span>Attendance QR Scanner</span>
+        </h1>
+        <p class="scanner-page__subtitle">Scan QR codes for library attendance tracking.</p>
+    </header>
+
+    <section class="status-card mb-4">
+        <div class="status-card__header">
+            <h2 class="status-card__header-title">
+                <i class="fa-regular fa-user status-card__header-icon"></i>
+                <span>Current Status</span>
+            </h2>
+        </div>
+        <div class="status-card__body">
+            <div id="sessionStatusBox"
+                class="status-card__session-box {{#if hasActiveSession}}status-card__session-box--active{{else}}status-card__session-box--inactive{{/if}}">
+                <div class="status-card__session-left">
+                    <div class="status-card__session-icon-wrap">
+                        <i id="sessionStatusIcon"
+                            class="{{#if hasActiveSession}}fa-solid fa-circle-check{{else}}fa-regular fa-clock{{/if}} status-card__session-icon"></i>
+                    </div>
+                    <div class="status-card__session-info">
+                        <span class="status-card__session-text" id="sessionStatusText">
+                            {{#if hasActiveSession}}
+                            Signed in at {{activeSessionTime}}
+                            {{else}}
+                            Not currently signed in
+                            {{/if}}
+                        </span>
+                        <span class="status-card__session-sub" id="sessionStatusSub">
+                            {{#if hasActiveSession}}
+                            Active Session
+                            {{else}}
+                            No Active Session
+                            {{/if}}
+                        </span>
+                    </div>
+                </div>
+                <div class="status-card__session-right">
+                    <span
+                        class="status-card__badge {{#if hasActiveSession}}status-card__badge--active{{else}}status-card__badge--inactive{{/if}}"
+                        id="sessionBadge">
+                        {{#if hasActiveSession}}Active{{else}}Inactive{{/if}}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="scanner-panel mb-4">
+        <div class="scanner-panel__header">
+            <h2 class="scanner-panel__title">QR Code Scanner</h2>
+            <p class="scanner-panel__desc">Scan your student QR code for library check-in</p>
+        </div>
+
+        <div class="scanner-panel__body text-center">
+            <div class="scanner-panel__viewport" id="scannerViewport">
+                <div class="scanner-panel__placeholder" id="scannerPlaceholder">
+                    <div class="scanner-panel__placeholder-icon-wrap">
+                        <i class="fa-solid fa-camera scanner-panel__placeholder-icon"></i>
+                    </div>
+                    <p class="scanner-panel__placeholder-text">Click to start scanning</p>
+                </div>
+
+                <div id="qrReader" class="scanner-panel__reader d-none"></div>
+            </div>
+
+            <div class="scanner-panel__actions my-4">
+                <button type="button" class="scanner-panel__btn-scan" id="btnStartScan">
+                    <i class="fa-solid fa-camera mr-2"></i>
+                    <span id="btnScanText">Start Scanning for Check-In</span>
+                </button>
+            </div>
+
+            <div class="scanner-panel__instructions">
+                <p class="scanner-panel__instruction-line mb-1">
+                    Place your student QR code in front of the camera to scan
+                </p>
+                <p class="scanner-panel__instruction-line mb-0 text-muted small">
+                    All attendance tracking is done through QR code scanning
+                </p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnStartScan = document.getElementById('btnStartScan');
+        const scannerPlaceholder = document.getElementById('scannerPlaceholder');
+        const qrReader = document.getElementById('qrReader');
+        const btnScanText = document.getElementById('btnScanText');
+
+        const sessionStatusBox = document.getElementById('sessionStatusBox');
+        const sessionStatusIcon = document.getElementById('sessionStatusIcon');
+        const sessionStatusText = document.getElementById('sessionStatusText');
+        const sessionStatusSub = document.getElementById('sessionStatusSub');
+        const sessionBadge = document.getElementById('sessionBadge');
+
+        let html5QrCode = null;
+        let isScanning = false;
+
+        if (btnStartScan) {
+            btnStartScan.addEventListener('click', async () => {
+                if (!isScanning) {
+                    scannerPlaceholder.classList.add('d-none');
+                    qrReader.classList.remove('d-none');
+                    btnScanText.textContent = 'Stop Scanning';
+                    btnStartScan.style.backgroundColor = '#dc2626';
+                    isScanning = true;
+
+                    try {
+                        html5QrCode = new Html5Qrcode("qrReader");
+                        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+                        await html5QrCode.start(
+                            { facingMode: "environment" },
+                            config,
+                            async (decodedText, decodedResult) => {
+                                console.log(`QR Decoded: ${decodedText}`);
+
+                                await stopScanning();
+
+                                await sendCheckInRequest(decodedText);
+                            },
+                            (errorMessage) => {
+                            }
+                        );
+                    } catch (err) {
+                        console.error("Không thể khởi động camera:", err);
+                        alert("Không thể truy cập camera! Vui lòng cấp quyền camera cho trình duyệt.");
+                        await stopScanning();
+                    }
+                } else {
+                    await stopScanning();
+                }
+            });
+        }
+
+        async function stopScanning() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                try {
+                    await html5QrCode.stop();
+                    await html5QrCode.clear();
+                } catch (e) {
+                    console.error("Lỗi khi dừng camera:", e);
+                }
+            }
+            isScanning = false;
+            scannerPlaceholder.classList.remove('d-none');
+            qrReader.classList.add('d-none');
+            btnScanText.textContent = 'Start Scanning for Check-In';
+            btnStartScan.style.backgroundColor = '';
+        }
+
+        async function sendCheckInRequest(qrData) {
+            try {
+                const response = await fetch('/scanner/check-in', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        qrData: qrData,
+                        location: 'Library Entrance'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const timeStr = result.data.formattedTime;
+
+                    sessionStatusBox.className = 'status-card__session-box status-card__session-box--active';
+                    sessionStatusIcon.className = 'fa-solid fa-circle-check status-card__session-icon';
+                    sessionStatusText.textContent = `Signed in at ${timeStr}`;
+                    sessionStatusSub.textContent = 'Active Session';
+                    sessionBadge.className = 'status-card__badge status-card__badge--active';
+                    sessionBadge.textContent = 'Active';
+
+                    alert(result.message || 'Điểm danh thư viện thành công!');
+                } else {
+                    alert(result.message || 'Không thể ghi nhận điểm danh!');
+                }
+            } catch (error) {
+                console.error('Lỗi kết nối API check-in:', error);
+                alert('Lỗi kết nối máy chủ khi thực hiện điểm danh!');
+            }
+        }
+    });
+</script>
