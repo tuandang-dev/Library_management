@@ -6,6 +6,7 @@ const attendanceRouter = require('./attendance');
 const cartRouter = require('./cart');
 const historyRouter = require('./history');
 const scannerRouter = require('./scanner');
+const profileRouter = require('./profile');
 
 const { requireAuth, requireAdmin } = require('../app/middlewares/authMiddleware');
 
@@ -19,6 +20,7 @@ function route(app) {
     app.use('/cart', cartRouter);
     app.use('/history', historyRouter);
     app.use('/scanner', scannerRouter);
+    app.use('/profile', profileRouter);
     app.use('/book', bookRouter);
     app.use('/attendance', attendanceRouter);
     app.use('/', authRouter);

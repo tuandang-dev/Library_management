@@ -20,9 +20,53 @@
                             {{#if cartCount}}{{cartCount}}{{else}}0{{/if}}
                         </span>
                     </a>
-                    <a href="/logout" class="user-header__icon-btn" title="Cài đặt">
-                        <i class="fa-solid fa-gear"></i>
-                    </a>
+
+                    <div class="user-header__profile-menu" id="userProfileMenu">
+                        <div class="user-header__profile" id="userProfileTrigger" tabindex="0" role="button"
+                            aria-haspopup="true" aria-expanded="false">
+                            <div class="user-header__icon-btn" title="Cài đặt">
+                                <i class="fa-solid fa-gear"></i>
+                            </div>
+                        </div>
+
+                        <div class="user-dropdown" id="userProfileDropdown">
+                            <div class="user-dropdown__header">
+                                <div class="user-dropdown__avatar">
+                                    {{#if user.avatar}}
+                                    <img src="{{user.avatar}}" alt="Avatar" class="user-dropdown__avatar-img">
+                                    {{else}}
+                                    <span class="user-dropdown__avatar-char">A</span>
+                                    {{/if}}
+                                </div>
+                                <div class="user-dropdown__info">
+                                    <span class="user-dropdown__name">{{#if user.fullname}}{{user.fullname}}{{else}}Alex
+                                        Johnson{{/if}}</span>
+                                    <span class="user-dropdown__email"
+                                        title="{{#if user.email}}{{user.email}}{{else}}alex.johnson@student.university.edu{{/if}}">
+                                        {{#if
+                                        user.email}}{{user.email}}{{else}}alex.johnson@student.university.edu{{/if}}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="user-dropdown__divider"></div>
+
+                            <ul class="user-dropdown__list">
+                                <li class="user-dropdown__item">
+                                    <a href="/profile" class="user-dropdown__link">
+                                        <i class="fa-regular fa-user"></i>
+                                        <span>Manage Profile</span>
+                                    </a>
+                                </li>
+                                <li class="user-dropdown__item">
+                                    <a href="/logout" class="user-dropdown__link user-dropdown__link--danger">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        <span>Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="user-header__profile">
@@ -83,3 +127,33 @@
         </nav>
     </div>
 </header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const trigger = document.getElementById('userProfileTrigger');
+        const dropdown = document.getElementById('userProfileDropdown');
+
+        if (trigger && dropdown) {
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('user-dropdown--show');
+                const isExpanded = dropdown.classList.contains('user-dropdown--show');
+                trigger.setAttribute('aria-expanded', isExpanded);
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
+                    dropdown.classList.remove('user-dropdown--show');
+                    trigger.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    dropdown.classList.remove('user-dropdown--show');
+                    trigger.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    });
+</script>

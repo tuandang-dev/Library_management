@@ -1,0 +1,112 @@
+<div class="profile-page">
+    <header class="profile-page__header">
+        <h1 class="profile-page__title">
+            <i class="fa-solid fa-lock profile-page__title-icon"></i>
+            <span>Change Password</span>
+        </h1>
+        <p class="profile-page__desc">Update your account password to keep your account secure.</p>
+    </header>
+
+    {{#if errorMessage}}
+    <div class="alert alert-danger profile-page__alert" role="alert">
+        <i class="fa-solid fa-circle-exclamation mr-2"></i>
+        <span>{{errorMessage}}</span>
+    </div>
+    {{/if}}
+
+    {{#if successMessage}}
+    <div class="alert alert-success profile-page__alert" role="alert">
+        <i class="fa-solid fa-circle-check mr-2"></i>
+        <span>{{successMessage}}</span>
+    </div>
+    {{/if}}
+
+    <section class="password-card">
+        <div class="password-card__header">
+            <div class="password-card__title-wrap">
+                <i class="fa-solid fa-shield-halved password-card__title-icon"></i>
+                <h2 class="password-card__title">Update Password</h2>
+            </div>
+            <p class="password-card__desc">Choose a strong password to protect your account</p>
+        </div>
+
+        <form action="/profile" method="POST" class="password-form" id="changePasswordForm">
+            <div class="password-form__group">
+                <label for="currentPassword" class="password-form__label">
+                    Current Password <span class="password-form__required">*</span>
+                </label>
+                <div class="password-input-wrap">
+                    <input type="password" id="currentPassword" name="currentPassword"
+                        class="password-input-wrap__input" placeholder="Enter your current password" required
+                        autocomplete="current-password">
+                </div>
+            </div>
+
+            <div class="password-form__group">
+                <label for="newPassword" class="password-form__label">
+                    New Password <span class="password-form__required">*</span>
+                </label>
+                <div class="password-input-wrap">
+                    <input type="password" id="newPassword" name="newPassword" class="password-input-wrap__input"
+                        placeholder="Enter new password (min. 6 characters)" minlength="6" required
+                        autocomplete="new-password">
+                </div>
+            </div>
+
+            <div class="password-form__group">
+                <label for="confirmPassword" class="password-form__label">
+                    Confirm New Password <span class="password-form__required">*</span>
+                </label>
+                <div class="password-input-wrap">
+                    <input type="password" id="confirmPassword" name="confirmPassword"
+                        class="password-input-wrap__input" placeholder="Confirm your new password" minlength="6"
+                        required autocomplete="new-password">
+                </div>
+            </div>
+
+            <div class="password-form__action">
+                <button type="submit" class="password-form__btn-submit">
+                    <i class="fa-regular fa-circle-check"></i>
+                    <span>Change Password</span>
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <section class="tips-card">
+        <div class="tips-card__header">
+            <i class="fa-regular fa-shield-halved tips-card__header-icon"></i>
+            <h2 class="tips-card__title">Password Security Tips</h2>
+        </div>
+
+        <div class="tips-card__grid row">
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                <div class="tips-block tips-block--rules">
+                    <h3 class="tips-block__heading">
+                        <span class="tips-block__mark">✓</span> Use a strong password:
+                    </h3>
+                    <ul class="tips-block__list">
+                        <li class="tips-block__item">At least 6 characters long</li>
+                        <li class="tips-block__item">Mix of letters, numbers, and symbols</li>
+                        <li class="tips-block__item">Avoid common words or phrases</li>
+                        <li class="tips-block__item">Don't use personal information</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <div class="tips-block tips-block--reminders">
+                    <h3 class="tips-block__heading">
+                        <span class="tips-block__mark">ℹ</span> Security reminders:
+                    </h3>
+                    <ul class="tips-block__list">
+                        <li class="tips-block__item">Never share your password</li>
+                        <li class="tips-block__item">Log out from public computers</li>
+                        <li class="tips-block__item">Change password if compromised</li>
+                        <li class="tips-block__item">Use different passwords for different accounts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
