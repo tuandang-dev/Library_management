@@ -1,0 +1,368 @@
+<div class="admin-dashboard">
+    <section class="admin-welcome mb-4">
+        <h1 class="admin-welcome__title">
+            Welcome back, {{#if user.fullname}}{{user.fullname}}{{else}}John Smith{{/if}}!
+        </h1>
+        <p class="admin-welcome__subtitle">Here's your library system overview.</p>
+    </section>
+
+    <section class="admin-actions mb-4">
+        <div class="admin-actions__header mb-3">
+            <div class="admin-actions__heading">
+                <i class="fa-solid fa-gear admin-actions__heading-icon"></i>
+                <h2 class="admin-actions__title">Quick Admin Actions</h2>
+            </div>
+            <p class="admin-actions__desc">Common administrative tasks</p>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-sm-6 col-lg-3 mb-3 mb-lg-0">
+                <a href="/admin/users" class="admin-action-card admin-action-card--inventory">
+                    <i class="fa-solid fa-user-group admin-action-card__icon"></i>
+                    <span class="admin-action-card__label">Manage Users</span>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3 mb-3 mb-lg-0">
+                <a href="/admin/books" class="admin-action-card admin-action-card--inventory">
+                    <i class="fa-solid fa-book-open admin-action-card__icon"></i>
+                    <span class="admin-action-card__label">Book Inventory</span>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3 mb-3 mb-lg-0">
+                <a href="/admin/alerts" class="admin-action-card admin-action-card--inventory">
+                    <i class="fa-solid fa-triangle-exclamation admin-action-card__icon"></i>
+                    <span class="admin-action-card__label">System Alerts</span>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="/admin/analytics" class="admin-action-card admin-action-card--inventory">
+                    <i class="fa-solid fa-chart-line admin-action-card__icon"></i>
+                    <span class="admin-action-card__label">Analytics</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-metrics mb-4">
+        <div class="row">
+            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                <div class="admin-metric-card admin-metric-card--users">
+                    <div class="admin-metric-card__header">
+                        <span class="admin-metric-card__title">Total Users</span>
+                        <div class="admin-metric-card__icon-wrap">
+                            <i class="fa-solid fa-user-group admin-metric-card__icon"></i>
+                        </div>
+                    </div>
+                    <div class="admin-metric-card__value">
+                        {{#if metrics.totalUsers.value}}{{metrics.totalUsers.value}}{{else}}234{{/if}}
+                    </div>
+                    <div class="admin-metric-card__sub">
+                        <i class="fa-solid fa-arrow-trend-up admin-metric-card__trend-icon"></i>
+                        <span>{{#if metrics.totalUsers.growth}}{{metrics.totalUsers.growth}}{{else}}+12 this
+                            month{{/if}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                <div class="admin-metric-card admin-metric-card--books">
+                    <div class="admin-metric-card__header">
+                        <span class="admin-metric-card__title">Active Books</span>
+                        <div class="admin-metric-card__icon-wrap">
+                            <i class="fa-solid fa-book-open admin-metric-card__icon"></i>
+                        </div>
+                    </div>
+                    <div class="admin-metric-card__value">
+                        {{#if metrics.activeBooks.value}}{{metrics.activeBooks.value}}{{else}}1,247{{/if}}
+                    </div>
+                    <div class="admin-metric-card__sub">
+                        <i class="fa-solid fa-arrow-trend-up admin-metric-card__trend-icon"></i>
+                        <span>{{#if metrics.activeBooks.availability}}{{metrics.activeBooks.availability}}{{else}}89%
+                            available{{/if}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="admin-metric-card admin-metric-card--visitors">
+                    <div class="admin-metric-card__header">
+                        <span class="admin-metric-card__title">Daily Visitors</span>
+                        <div class="admin-metric-card__icon-wrap">
+                            <i class="fa-solid fa-user-check admin-metric-card__icon"></i>
+                        </div>
+                    </div>
+                    <div class="admin-metric-card__value">
+                        {{#if metrics.dailyVisitors.value}}{{metrics.dailyVisitors.value}}{{else}}47{{/if}}
+                    </div>
+                    <div class="admin-metric-card__sub">
+                        <i class="fa-solid fa-arrow-trend-up admin-metric-card__trend-icon"></i>
+                        <span>{{#if
+                            metrics.dailyVisitors.timeLabel}}{{metrics.dailyVisitors.timeLabel}}{{else}}Today{{/if}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-charts">
+        <div class="row">
+            <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                <div class="admin-chart-card admin-chart-card--top-visitors">
+                    <div class="admin-chart-card__header">
+                        <div class="admin-chart-card__title-group">
+                            <h2 class="admin-chart-card__title">
+                                <i class="fa-solid fa-chart-simple admin-chart-card__title-icon"></i>
+                                <span>Top Visitors</span>
+                            </h2>
+                            <p class="admin-chart-card__subtitle">Most frequent library visitors</p>
+                        </div>
+                        <div class="admin-chart-card__filter">
+                            <select class="admin-chart-card__select" id="topVisitorsFilter"
+                                aria-label="Bộ lọc thời gian">
+                                <option value="month" selected>This Month</option>
+                                <option value="week">This Week</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="admin-chart-card__body">
+                        <div class="admin-chart-card__canvas-wrap">
+                            <canvas id="topVisitorsChart" data-chart='{{{topVisitorsJson}}}'></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="admin-chart-card admin-chart-card--weekly-activity">
+                    <div class="admin-chart-card__header">
+                        <div class="admin-chart-card__title-group">
+                            <h2 class="admin-chart-card__title">
+                                <i class="fa-solid fa-chart-line admin-chart-card__title-icon"></i>
+                                <span>Weekly Activity</span>
+                            </h2>
+                            <p class="admin-chart-card__subtitle">Daily visitors and book checkouts</p>
+                        </div>
+                    </div>
+                    <div class="admin-chart-card__body">
+                        <div class="admin-chart-card__canvas-wrap">
+                            <canvas id="weeklyActivityChart" data-chart='{{{weeklyActivityJson}}}'></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="floating-guide">
+        <a href="#demo-guide" class="floating-guide__btn">
+            <i class="fa-regular fa-circle-question floating-guide__icon"></i>
+            <span>Demo Guide</span>
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const topVisitorsCanvas = document.getElementById('topVisitorsChart');
+        if (topVisitorsCanvas) {
+            let visitorsData = {
+                labels: ['Alex Johnson', 'Maria Garcia', 'David Wilson', 'Emma Davis', 'Michael Brown'],
+                data: [24, 21, 20, 18, 16]
+            };
+
+            const rawVisitors = topVisitorsCanvas.getAttribute('data-chart');
+            if (rawVisitors) {
+                try {
+                    visitorsData = JSON.parse(rawVisitors);
+                } catch (e) {
+                    console.warn('Sử dụng dữ liệu mặc định cho Top Visitors:', e);
+                }
+            }
+
+            new Chart(topVisitorsCanvas, {
+                type: 'bar',
+                data: {
+                    labels: visitorsData.labels,
+                    datasets: [{
+                        label: 'visits',
+                        data: visitorsData.data,
+                        backgroundColor: '#0d9488',
+                        borderRadius: 4,
+                        barPercentage: 0.75,
+                        categoryPercentage: 0.85
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1e293b',
+                            titleFont: { size: 13, weight: '700', family: "'Segoe UI', sans-serif" },
+                            bodyColor: '#64748b',
+                            bodyFont: { size: 12, family: "'Segoe UI', sans-serif" },
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            cornerRadius: 6,
+                            displayColors: false,
+                            callbacks: {
+                                title: function (items) {
+                                    return items[0].label;
+                                },
+                                label: function (context) {
+                                    const val = context.raw !== undefined ? context.raw : context.parsed.y;
+                                    return 'visits : ' + val;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#64748b',
+                                font: { size: 11 },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 24,
+                            ticks: {
+                                stepSize: 12,
+                                color: '#64748b',
+                                font: { size: 11 }
+                            },
+                            grid: {
+                                color: '#f1f5f9',
+                                drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        const weeklyActivityCanvas = document.getElementById('weeklyActivityChart');
+        if (weeklyActivityCanvas) {
+            let activityData = {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                visitors: [48, 52, 48, 64, 58, 38, 24],
+                borrowed: [12, 18, 15, 22, 19, 8, 4]
+            };
+
+            const rawActivity = weeklyActivityCanvas.getAttribute('data-chart');
+            if (rawActivity) {
+                try {
+                    activityData = JSON.parse(rawActivity);
+                } catch (e) {
+                    console.warn('Sử dụng dữ liệu mặc định cho Weekly Activity:', e);
+                }
+            }
+
+            new Chart(weeklyActivityCanvas, {
+                type: 'line',
+                data: {
+                    labels: activityData.labels,
+                    datasets: [
+                        {
+                            label: 'Books Borrowed',
+                            data: activityData.borrowed,
+                            borderColor: '#f59e0b',
+                            backgroundColor: '#f59e0b',
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#f59e0b',
+                            pointBorderWidth: 2,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Visitors',
+                            data: activityData.visitors,
+                            borderColor: '#0284c7',
+                            backgroundColor: '#0284c7',
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#0284c7',
+                            pointBorderWidth: 2,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#0f172a',
+                            titleFont: { size: 13, weight: '700', family: "'Segoe UI', sans-serif" },
+                            bodyColor: '#334155',
+                            bodyFont: { size: 12, weight: '600', family: "'Segoe UI', sans-serif" },
+                            borderColor: '#cbd5e1',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                title: function (items) {
+                                    return items[0].label;
+                                },
+                                label: function (context) {
+                                    const val = context.raw !== undefined ? context.raw : context.parsed.y;
+                                    const labelName = context.datasetIndex === 0 ? 'Books Borrowed' : 'Visitors';
+                                    return labelName + ' : ' + val;
+                                },
+                                labelTextColor: function (context) {
+                                    return context.datasetIndex === 0 ? '#d97706' : '#64748b';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#64748b',
+                                font: { size: 11 }
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 80,
+                            ticks: {
+                                stepSize: 20,
+                                color: '#64748b',
+                                font: { size: 11 }
+                            },
+                            grid: {
+                                color: '#f1f5f9',
+                                drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>

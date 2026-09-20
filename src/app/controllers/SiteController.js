@@ -5,6 +5,10 @@ const { mutipleMongooseToObject } = require('../../util/mongoose');
 class SiteController {
     // [GET] /
     async index(req, res) {
+        if (req.session.user && req.session.user.role === 'admin') {
+            return res.redirect('/admin/dashboard');
+        }
+
         try {
             if (req.session && req.session.user) {
                 return res.render('dashboard', {

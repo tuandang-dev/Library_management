@@ -7,12 +7,13 @@
                 </div>
                 <div class="user-header__brand-text">
                     <span class="user-header__title">UCC Library</span>
-                    <span class="user-header__subtitle">Student Portal</span>
+                    <span class="user-header__subtitle">{{#if isAdmin}}Admin Portal{{else}}Student Portal{{/if}}</span>
                 </div>
             </a>
 
             <div class="user-header__meta">
                 <div class="user-header__actions">
+                    {{#unless isAdmin}}
                     <a href="/cart" class="user-header__icon-btn" title="Giỏ sách">
                         <i class="fa-solid fa-bag-shopping"></i>
                         <span class="user-header__cart-badge" id="headerCartBadge" {{#unless
@@ -20,6 +21,7 @@
                             {{#if cartCount}}{{cartCount}}{{else}}0{{/if}}
                         </span>
                     </a>
+                    {{/unless}}
 
                     <div class="user-header__profile-menu" id="userProfileMenu">
                         <div class="user-header__profile" id="userProfileTrigger" tabindex="0" role="button"
@@ -90,7 +92,8 @@
         <nav class="user-header__nav px-4">
             <ul class="user-header__nav-list">
                 <li class="user-header__nav-item">
-                    <a href="/" class="user-header__nav-link {{#if isHomePage}}user-header__nav-link--active{{/if}}">
+                    <a href="{{#if isAdmin}}/admin/dashboard{{else}}/{{/if}}"
+                        class="user-header__nav-link {{#if isHomePage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-house"></i>
                         <span>Home</span>
                     </a>

@@ -9,13 +9,10 @@ const scannerRouter = require('./scanner');
 const profileRouter = require('./profile');
 
 const { requireAuth, requireAdmin } = require('../app/middlewares/authMiddleware');
+const viewLocalsMiddleware = require('../app/middlewares/viewLocalsMiddleware');
 
 function route(app) {
-    app.use((req, res, next) => {
-        res.locals.cartCount = req.session.cart ? req.session.cart.length : 0;
-        next();
-    });
-
+    app.use(viewLocalsMiddleware);
     app.use('/admin', adminRouter);
     app.use('/cart', cartRouter);
     app.use('/history', historyRouter);
