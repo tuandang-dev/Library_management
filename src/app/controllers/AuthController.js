@@ -32,6 +32,12 @@ class AuthController {
                 });
             }
 
+            if (user.status === 'disable') {
+                return res.render('auth/login', {
+                    error: 'Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ Quản trị viên.',
+                });
+            }
+
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (!isMatch) {

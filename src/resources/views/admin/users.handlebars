@@ -1,0 +1,663 @@
+<div class="user-mgmt">
+    <!-- Header Block (Ảnh 1) -->
+    <div class="user-mgmt__header">
+        <div class="user-mgmt__title-group">
+            <h1 class="user-mgmt__title">
+                <i class="fa-solid fa-users"></i> User Management
+            </h1>
+            <p class="user-mgmt__subtitle">Manage students, librarians, and system access.</p>
+        </div>
+        <div class="user-mgmt__header-actions">
+            <button type="button" class="user-mgmt__btn user-mgmt__btn--outline" id="btnOpenBulkImport">
+                <i class="fa-solid fa-arrow-up-from-bracket"></i> Bulk Import
+            </button>
+            <button type="button" class="user-mgmt__btn user-mgmt__btn--primary" id="btnOpenAddUser" data-toggle="modal"
+                data-target="#addUserModal">
+                <i class="fa-solid fa-plus"></i> Add User
+            </button>
+        </div>
+    </div>
+
+    <!-- Card Bảng Dữ Liệu -->
+    <div class="user-mgmt__card">
+        <div class="user-mgmt__card-header">
+            <div class="user-mgmt__card-title-group">
+                <h2 class="user-mgmt__card-title">User Database</h2>
+                <p class="user-mgmt__card-subtitle">All registered users in the system</p>
+            </div>
+
+            <!-- Toolbar Tìm Kiếm & Bộ Lọc -->
+            <form class="user-mgmt__toolbar" method="GET" action="/admin/users" id="userFilterForm">
+                <div class="user-mgmt__search">
+                    <i class="fa-solid fa-magnifying-glass user-mgmt__search-icon"></i>
+                    <input type="text" name="search" class="user-mgmt__search-input" placeholder="Search users..."
+                        value="{{filters.search}}">
+                </div>
+                <div class="user-mgmt__filter-group">
+                    <select name="role" class="user-mgmt__filter-select" onchange="this.form.submit()">
+                        <option value="all" {{#if filters.isRoleAll}}selected{{/if}}>All Roles</option>
+                        <option value="user" {{#if filters.isRoleUser}}selected{{/if}}>User</option>
+                        <option value="admin" {{#if filters.isRoleAdmin}}selected{{/if}}>Admin</option>
+                    </select>
+                </div>
+                <div class="user-mgmt__filter-group">
+                    <select name="status" class="user-mgmt__filter-select" onchange="this.form.submit()">
+                        <option value="all" {{#if filters.isStatusAll}}selected{{/if}}>All Status</option>
+                        <option value="active" {{#if filters.isStatusActive}}selected{{/if}}>Active</option>
+                        <option value="disable" {{#if filters.isStatusDisable}}selected{{/if}}>Disable</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bảng Danh Sách 6 Cột -->
+        <div class="user-mgmt__table-responsive">
+            <table class="user-mgmt__table">
+                <thead>
+                    <tr>
+                        <th class="user-mgmt__th">User</th>
+                        <th class="user-mgmt__th">Role</th>
+                        <th class="user-mgmt__th">Status</th>
+                        <th class="user-mgmt__th">Join Date</th>
+                        <th class="user-mgmt__th">Last Active</th>
+                        <th class="user-mgmt__th">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each users}}
+                    <tr class="user-mgmt__tr" data-user-id="{{this._id}}">
+                        <!-- Cột 1: Thông tin User -->
+                        <td class="user-mgmt__td user-mgmt__td--user">
+                            <div class="user-mgmt__user-info">
+                                <span class="user-mgmt__user-name">{{this.fullname}}</span>
+                                <span class="user-mgmt__user-email">{{this.email}}</span>
+                            </div>
+                        </td>
+                        <!-- Cột 2: Badge Role -->
+                        <td class="user-mgmt__td user-mgmt__td--role">
+                            {{#if this.isAdmin}}
+                            <span class="user-mgmt__badge user-mgmt__badge--role-admin">Admin</span>
+                            {{else}}
+                            <span class="user-mgmt__badge user-mgmt__badge--role-user">User</span>
+                            {{/if}}
+                        </td>
+                        <!-- Cột 3: Badge Status -->
+                        <td class="user-mgmt__td user-mgmt__td--status">
+                            {{#if this.isActive}}
+                            <span class="user-mgmt__badge user-mgmt__badge--status-active">Active</span>
+                            {{else}}
+                            <span class="user-mgmt__badge user-mgmt__badge--status-disable">Disable</span>
+                            {{/if}}
+                        </td>
+                        <!-- Cột 4: Join Date -->
+                        <td class="user-mgmt__td user-mgmt__td--date">{{this.formattedJoinDate}}</td>
+                        <!-- Cột 5: Last Active -->
+                        <td class="user-mgmt__td user-mgmt__td--date">{{this.formattedLastActive}}</td>
+                        <!-- Cột 6: Actions -->
+                        <td class="user-mgmt__td user-mgmt__td--actions">
+                            <div class="user-mgmt__action-cell">
+                                <select class="user-mgmt__select-status" data-user-id="{{this._id}}">
+                                    <option value="active" {{#if this.isActive}}selected{{/if}}>Active</option>
+                                    <option value="disable" {{#unless this.isActive}}selected{{/unless}}>Disable
+                                    </option>
+                                </select>
+                                <button type="button" class="user-mgmt__btn-delete" title="Xóa tài khoản"
+                                    data-user-id="{{this._id}}">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="6" class="user-mgmt__td--empty text-center py-4">
+                            Không tìm thấy người dùng nào phù hợp với điều kiện tìm kiếm.
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm Mới Người Dùng (Add New User) -->
+<div class="modal fade user-modal" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg user-modal__dialog" role="document">
+        <div class="modal-content user-modal__content">
+            <form action="/admin/users" method="POST" id="addUserForm">
+                <!-- Modal Header -->
+                <div class="user-modal__header">
+                    <div class="user-modal__header-info">
+                        <h3 class="user-modal__title" id="addUserModalLabel">
+                            <i class="fa-solid fa-plus"></i> Add New User
+                        </h3>
+                        <p class="user-modal__subtitle">Create a new user account with specific permissions.</p>
+                    </div>
+                    <button type="button" class="user-modal__close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="user-modal__body">
+                    <!-- Phần Thông Tin Cơ Bản (Basic Information) -->
+                    <div class="user-modal__section">
+                        <h4 class="user-modal__section-title">Basic Information</h4>
+                        <div class="form-row">
+                            <div class="form-group col-md-6 user-modal__field">
+                                <label class="user-modal__label" for="addFullname">Full Name <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control user-modal__input" id="addFullname"
+                                    name="fullname" placeholder="Enter full name" required>
+                            </div>
+                            <div class="form-group col-md-6 user-modal__field">
+                                <label class="user-modal__label" for="addEmail">Email <span
+                                        class="text-danger">*</span></label>
+                                <input type="email" class="form-control user-modal__input" id="addEmail" name="email"
+                                    placeholder="user@university.edu" required>
+                            </div>
+                        </div>
+                        <div class="form-group user-modal__field">
+                            <label class="user-modal__label" for="addRole">Role</label>
+                            <select class="form-control user-modal__select" id="addRole" name="role">
+                                <option value="user" selected>Student</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Phần Ma Trận Phân Quyền (Permissions Matrix) -->
+                    <div class="user-modal__section user-modal__section--perms">
+                        <div class="user-modal__perm-title-group">
+                            <i class="fa-regular fa-circle-check user-modal__perm-icon"></i>
+                            <h4 class="user-modal__section-title">Permissions</h4>
+                        </div>
+                        <p class="user-modal__section-subtitle">
+                            Select the functions this user should have access to. Checking a function grants full access
+                            to that feature.
+                        </p>
+
+                        <!-- Lưới 6 Phân Khu Quyền Hạn -->
+                        <div class="user-modal__matrix-grid">
+                            <!-- 1. Archives -->
+                            <div class="user-modal__category-card">
+                                <h5 class="user-modal__category-title">Archives</h5>
+                                <div class="user-modal__checklist">
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="archives.view">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">View archives</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="archives.add">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Add new archives</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="archives.edit">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Edit archives</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="archives.delete">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Delete archives</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 2. Inventory -->
+                            <div class="user-modal__category-card">
+                                <h5 class="user-modal__category-title">Inventory</h5>
+                                <div class="user-modal__checklist">
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="inventory.view">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">View items</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="inventory.add">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Add items</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="inventory.edit">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Edit items</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="inventory.delete">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Delete items</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 3. Borrowing System -->
+                            <div class="user-modal__category-card">
+                                <h5 class="user-modal__category-title">Borrowing System</h5>
+                                <div class="user-modal__checklist">
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="borrowing.borrow">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Borrow item</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="borrowing.return">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Return item</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="borrowing.history">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">View borrowed history</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 4. User Management -->
+                            <div class="user-modal__category-card">
+                                <h5 class="user-modal__category-title">User Management</h5>
+                                <div class="user-modal__checklist">
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="users.view">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">View users</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="users.add">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Add users</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="users.edit">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Edit users</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="users.delete">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Delete users</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 5. Reports -->
+                            <div class="user-modal__category-card">
+                                <h5 class="user-modal__category-title">Reports</h5>
+                                <div class="user-modal__checklist">
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="reports.generate">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Generate report</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="reports.export">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Export report</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 6. System Settings -->
+                            <div class="user-modal__category-card">
+                                <h5 class="user-modal__category-title">System Settings</h5>
+                                <div class="user-modal__checklist">
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="system.config">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Update system configuration</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="system.backup">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Manage backup</span>
+                                    </label>
+                                    <label class="user-modal__checkbox-label">
+                                        <input type="checkbox" name="permissions" value="system.restore">
+                                        <span class="user-modal__checkbox-custom"></span>
+                                        <span class="user-modal__checkbox-text">Restore data</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer (Nút Add User & Cancel) -->
+                <div class="user-modal__footer">
+                    <button type="submit" class="user-modal__btn-submit">Add User</button>
+                    <button type="button" class="user-modal__btn-cancel" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nhập Hàng Loạt (Bulk Import Users - Ảnh 2) -->
+<div class="modal fade import-modal" id="bulkImportModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered import-modal__dialog" role="document">
+        <div class="modal-content import-modal__content">
+            <!-- Header Modal -->
+            <div class="import-modal__header">
+                <div class="import-modal__header-info">
+                    <h3 class="import-modal__title">Bulk Import Users</h3>
+                    <p class="import-modal__subtitle">Import multiple users from a CSV file or use sample data.</p>
+                </div>
+                <button type="button" class="import-modal__close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Body Modal -->
+            <div class="import-modal__body">
+                <!-- Vùng Kéo Thả File CSV (Dropzone) -->
+                <div class="import-modal__dropzone" id="csvDropzone">
+                    <input type="file" id="csvFileInput" accept=".csv" class="import-modal__file-input" hidden>
+                    <i class="fa-solid fa-arrow-up-from-bracket import-modal__upload-icon"></i>
+                    <p class="import-modal__drop-title">Drop CSV file here or click to browse</p>
+                    <span class="import-modal__drop-hint">Expected format: Name, Email, Role</span>
+                </div>
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="import-modal__footer">
+                <button type="button" class="import-modal__btn-cancel" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // -------------------------------------------------------------
+        // 1. QUẢN LÝ MODAL GENERIC (Native DOM Fallback)
+        // -------------------------------------------------------------
+        function openCustomModal(modalEl) {
+            if (!modalEl) return;
+            if (window.jQuery && typeof window.jQuery.fn.modal === 'function') {
+                window.jQuery(modalEl).modal('show');
+            } else {
+                modalEl.style.display = 'block';
+                modalEl.classList.add('show');
+                document.body.classList.add('modal-open');
+
+                if (!document.getElementById('customModalBackdrop')) {
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    backdrop.id = 'customModalBackdrop';
+                    document.body.appendChild(backdrop);
+                }
+            }
+        }
+
+        function closeCustomModal(modalEl) {
+            if (!modalEl) return;
+            if (window.jQuery && typeof window.jQuery.fn.modal === 'function') {
+                window.jQuery(modalEl).modal('hide');
+            } else {
+                modalEl.style.display = 'none';
+                modalEl.classList.remove('show');
+                document.body.classList.remove('modal-open');
+
+                const backdrop = document.getElementById('customModalBackdrop');
+                if (backdrop) backdrop.remove();
+            }
+        }
+
+        // Đăng ký sự kiện đóng chung cho tất cả các modal
+        document.querySelectorAll('.modal').forEach(function (modal) {
+            modal.querySelectorAll('[data-dismiss="modal"], .user-modal__close, .import-modal__close, .user-modal__btn-cancel, .import-modal__btn-cancel').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    closeCustomModal(modal);
+                });
+            });
+
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeCustomModal(modal);
+            });
+        });
+
+        // Hỗ trợ phím Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.show').forEach(closeCustomModal);
+            }
+        });
+
+        // -------------------------------------------------------------
+        // 2. KÍCH HOẠT CÁC NÚT MỞ MODAL
+        // -------------------------------------------------------------
+        const btnOpenAddUser = document.getElementById('btnOpenAddUser');
+        const addUserModal = document.getElementById('addUserModal');
+        if (btnOpenAddUser) {
+            btnOpenAddUser.addEventListener('click', function (e) {
+                e.preventDefault();
+                openCustomModal(addUserModal);
+            });
+        }
+
+        const btnOpenBulkImport = document.getElementById('btnOpenBulkImport');
+        const bulkImportModal = document.getElementById('bulkImportModal');
+        if (btnOpenBulkImport) {
+            btnOpenBulkImport.addEventListener('click', function (e) {
+                e.preventDefault();
+                openCustomModal(bulkImportModal);
+            });
+        }
+
+        // -------------------------------------------------------------
+        // 3. XỬ LÝ KÉO THẢ & ĐỌC FILE CSV BẰNG FILEREADER
+        // -------------------------------------------------------------
+        const csvDropzone = document.getElementById('csvDropzone');
+        const csvFileInput = document.getElementById('csvFileInput');
+
+        if (csvDropzone && csvFileInput) {
+            csvDropzone.addEventListener('click', function () {
+                csvFileInput.click();
+            });
+
+            csvDropzone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                csvDropzone.classList.add('import-modal__dropzone--active');
+            });
+
+            csvDropzone.addEventListener('dragleave', function () {
+                csvDropzone.classList.remove('import-modal__dropzone--active');
+            });
+
+            csvDropzone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                csvDropzone.classList.remove('import-modal__dropzone--active');
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    handleCSVFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            csvFileInput.addEventListener('change', function () {
+                if (csvFileInput.files && csvFileInput.files.length > 0) {
+                    handleCSVFile(csvFileInput.files[0]);
+                }
+            });
+        }
+
+        function handleCSVFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                alert('Vui lòng chọn tập tin có định dạng .csv');
+                return;
+            }
+
+            const reader = new FileReader();
+            // Đọc dạng ArrayBuffer để chủ động kiểm soát bộ giải mã Encoding
+            reader.readAsArrayBuffer(file);
+
+            reader.onload = async function (e) {
+                const buffer = e.target.result;
+
+                // 1. Thử giải mã chuẩn UTF-8 trước
+                let decoder = new TextDecoder('utf-8');
+                let text = decoder.decode(buffer);
+
+                // 2. Fallback: Nếu văn bản chứa ký tự lỗi U+FFFD (), thử giải mã lại bằng Windows-1258 (tiếng Việt ANSI)
+                if (text.includes('\uFFFD')) {
+                    try {
+                        const fallbackDecoder = new TextDecoder('windows-1258');
+                        text = fallbackDecoder.decode(buffer);
+                    } catch (err) {
+                        console.warn('Trình duyệt không hỗ trợ windows-1258, giữ nguyên bản mã utf-8');
+                    }
+                }
+
+                // 3. Loại bỏ ký tự BOM (\uFEFF) do Excel tự chèn vào đầu file nếu có
+                if (text.charCodeAt(0) === 0xFEFF) {
+                    text = text.slice(1);
+                }
+
+                const lines = text.split(/\r\n|\n/).filter((line) => line.trim() !== '');
+                if (lines.length <= 1) {
+                    alert('File CSV không có dữ liệu người dùng.');
+                    return;
+                }
+
+                // Dòng đầu là tiêu đề (Name, Email, Role) -> Duyệt từ dòng 1 trở đi
+                const parsedUsers = [];
+                for (let i = 1; i < lines.length; i++) {
+                    // Tách cột theo dấu phẩy hoặc chấm phẩy (Excel tiếng Việt đôi khi dùng ;)
+                    const delimiter = lines[i].includes(';') ? ';' : ',';
+                    const cols = lines[i].split(delimiter).map((item) => item.trim().replace(/^["']|["']$/g, ''));
+
+                    if (cols.length >= 2 && cols[0] && cols[1]) {
+                        parsedUsers.push({
+                            fullname: cols[0],
+                            email: cols[1],
+                            role: cols[2] ? cols[2].toLowerCase() : 'user',
+                        });
+                    }
+                }
+
+                if (parsedUsers.length === 0) {
+                    alert('Không tìm thấy dữ liệu hợp lệ trong file CSV.');
+                    return;
+                }
+
+                // Gửi request JSON lên server
+                try {
+                    const response = await fetch('/admin/users/bulk-import', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ users: parsedUsers }),
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(`Đã nạp thành công ${result.count} người dùng mới!`);
+                        window.location.reload();
+                    } else {
+                        alert(result.message || 'Có lỗi xảy ra khi nạp người dùng.');
+                    }
+                } catch (err) {
+                    console.error('Fetch error:', err);
+                    alert('Không thể kết nối đến máy chủ.');
+                }
+            };
+        }
+
+        // -------------------------------------------------------------
+        // 4. XỬ LÝ ĐỔI TRẠNG THÁI NHANH (SELECT STATUS TẠI CỘT ACTIONS)
+        // -------------------------------------------------------------
+        const statusSelects = document.querySelectorAll('.user-mgmt__select-status');
+        statusSelects.forEach(function (select) {
+            // Lưu lại giá trị ban đầu để rollback nếu server báo lỗi
+            let previousValue = select.value;
+
+            select.addEventListener('focus', function () {
+                previousValue = select.value;
+            });
+
+            select.addEventListener('change', async function () {
+                const userId = select.getAttribute('data-user-id');
+                const newStatus = select.value;
+                const row = select.closest('.user-mgmt__tr');
+                const badgeContainer = row ? row.querySelector('.user-mgmt__td--status') : null;
+
+                try {
+                    const response = await fetch(`/admin/users/${userId}/status`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: newStatus }),
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        previousValue = newStatus;
+                        // Cập nhật giao diện Badge tức thì
+                        if (badgeContainer) {
+                            if (newStatus === 'active') {
+                                badgeContainer.innerHTML = '<span class="user-mgmt__badge user-mgmt__badge--status-active">Active</span>';
+                            } else {
+                                badgeContainer.innerHTML = '<span class="user-mgmt__badge user-mgmt__badge--status-disable">Disable</span>';
+                            }
+                        }
+                    } else {
+                        alert(result.message || 'Không thể cập nhật trạng thái.');
+                        select.value = previousValue; // Rollback
+                    }
+                } catch (err) {
+                    console.error('Fetch error:', err);
+                    alert('Lỗi kết nối khi cập nhật trạng thái.');
+                    select.value = previousValue; // Rollback
+                }
+            });
+        });
+
+        // -------------------------------------------------------------
+        // 5. XỬ LÝ XÓA TÀI KHOẢN (NÚT THÙNG RÁC TẠI CỘT ACTIONS)
+        // -------------------------------------------------------------
+        const deleteButtons = document.querySelectorAll('.user-mgmt__btn-delete');
+        deleteButtons.forEach(function (btn) {
+            btn.addEventListener('click', async function () {
+                const userId = btn.getAttribute('data-user-id');
+                const row = btn.closest('.user-mgmt__tr');
+                const userNameEl = row ? row.querySelector('.user-mgmt__user-name') : null;
+                const userName = userNameEl ? userNameEl.textContent.trim() : 'người dùng này';
+
+                const isConfirm = confirm(`Bạn có chắc chắn muốn xóa tài khoản "${userName}" không? Thao tác này không thể hoàn tác.`);
+                if (!isConfirm) return;
+
+                try {
+                    const response = await fetch(`/admin/users/${userId}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Hiệu ứng mờ dần và loại bỏ hàng khỏi bảng
+                        if (row) {
+                            row.style.transition = 'all 0.3s ease';
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateX(20px)';
+                            setTimeout(function () {
+                                row.remove();
+                                // Nếu không còn dòng nào thì hiển thị dòng thông báo trống
+                                const tbody = document.querySelector('.user-mgmt__table tbody');
+                                if (tbody && tbody.querySelectorAll('.user-mgmt__tr').length === 0) {
+                                    tbody.innerHTML = '<tr><td colspan="6" class="user-mgmt__td--empty text-center py-4">Không tìm thấy người dùng nào trong hệ thống.</td></tr>';
+                                }
+                            }, 300);
+                        }
+                    } else {
+                        alert(result.message || 'Không thể xóa người dùng.');
+                    }
+                } catch (err) {
+                    console.error('Fetch error:', err);
+                    alert('Lỗi kết nối khi xóa tài khoản.');
+                }
+            });
+        });
+    });
+</script>

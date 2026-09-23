@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const Loan = new Schema({
     bookId: { type: Schema.Types.ObjectId, ref: 'Book', required: true },
-    readerId: { type: Schema.Types.ObjectId, ref: 'Reader', required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 
     borrowDate: { type: Date, default: Date.now },
     dueDate: { type: Date, required: true },

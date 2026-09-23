@@ -1,0 +1,691 @@
+@use '../abstracts/variables' as *;
+
+.user-mgmt {
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-lg;
+        flex-wrap: wrap;
+        gap: $spacing-md;
+    }
+
+    &__title {
+        font-size: 1.5rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+
+    &__subtitle {
+        font-size: 1rem;
+        color: $color-brown;
+        margin: $spacing-xs 0 0 0;
+    }
+
+    &__header-actions {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+    }
+
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-sm;
+        padding: 9px 18px;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        border-radius: $border-radius-sm;
+        cursor: pointer;
+        transition: $transition-base;
+        border: 1px solid transparent;
+
+        &--outline {
+            background-color: $color-white;
+            border-color: $color-border;
+            color: $color-text-main;
+
+            &:hover {
+                background-color: #f9fafb;
+                border-color: $color-text-muted;
+            }
+        }
+
+        &--primary {
+            background-color: $color-orange;
+            color: $color-white;
+
+            &:hover {
+                background-color: darken($color-orange, 6%);
+                box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+            }
+        }
+    }
+
+    // Card chính bao bọc bảng dữ liệu
+    &__card {
+        background-color: $color-white;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-md;
+        box-shadow: $shadow-card;
+        overflow: hidden;
+    }
+
+    &__card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-md $spacing-lg;
+        border-bottom: 1px solid $color-border;
+        flex-wrap: wrap;
+        gap: $spacing-md;
+    }
+
+    &__card-title {
+        font-size: $font-size-md;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    &__card-subtitle {
+        font-size: $font-size-xs;
+        color: $color-brown;
+        margin: 2px 0 0 0;
+    }
+
+    // Thanh công cụ: Search & Select Filter
+    &__toolbar {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        flex-wrap: wrap;
+    }
+
+    &__search {
+        position: relative;
+        min-width: 250px;
+    }
+
+    &__search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: $font-size-xs;
+        color: $color-text-light;
+        pointer-events: none;
+    }
+
+    &__search-input {
+        width: 100%;
+        padding: 7px 12px 7px 34px;
+        font-size: $font-size-sm;
+        color: $color-text-main;
+        background-color: $color-bg-page;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-sm;
+        outline: none;
+        transition: $transition-base;
+
+        &:focus {
+            background-color: $color-white;
+            border-color: $color-orange;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+        }
+
+        &::placeholder {
+            color: $color-text-light;
+        }
+    }
+
+    &__filter-select {
+        padding: 7px 28px 7px 12px;
+        font-size: $font-size-sm;
+        color: $color-text-main;
+        background-color: $color-bg-page;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-sm;
+        outline: none;
+        cursor: pointer;
+        transition: $transition-base;
+
+        &:focus {
+            border-color: $color-orange;
+        }
+    }
+
+    // Bảng dữ liệu 6 cột
+    &__table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    &__table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    &__th {
+        padding: 14px $spacing-lg;
+        font-size: $font-size-xs;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        background-color: #fff9f3;
+        border-bottom: 1px solid $color-border;
+    }
+
+    &__tr {
+        border-bottom: 1px solid $color-border;
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background-color: #fdfcf9;
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    &__td {
+        padding: $spacing-md $spacing-lg;
+        font-size: $font-size-base;
+        color: $color-text-main;
+        vertical-align: middle;
+
+        &--date {
+            font-size: $font-size-sm;
+            white-space: nowrap;
+        }
+    }
+
+    // Cột 1: User info
+    &__user-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__user-email {
+        font-size: 0.875rem;
+        color: $color-brown;
+        margin-top: 2px;
+    }
+
+    // Cột 2 & 3: Badges
+    &__badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3px 12px;
+        font-size: $font-size-xs;
+        font-weight: 600;
+        border-radius: $border-radius-pill;
+        line-height: 1.4;
+
+        &--role-student,
+        &--role-user {
+            background-color: $color-white;
+            border: 1px solid #d1d5db;
+            color: #4b5563;
+        }
+
+        &--role-librarian {
+            background-color: $color-success;
+            color: $color-white;
+        }
+
+        &--role-admin {
+            background-color: $color-orange;
+            color: $color-white;
+        }
+
+        &--status-active {
+            background-color: $color-orange;
+            color: $color-white;
+        }
+
+        &--status-disable {
+            background-color: #9ca3af;
+            color: $color-white;
+        }
+    }
+
+    // Cột 6: Thao tác Actions
+    &__action-cell {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+    }
+
+    &__select-status {
+        padding: 4px 22px 4px 10px;
+        font-size: $font-size-xs;
+        font-weight: 500;
+        color: $color-text-main;
+        background-color: $color-white;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-sm;
+        cursor: pointer;
+        outline: none;
+        transition: $transition-base;
+
+        &:focus {
+            border-color: $color-orange;
+        }
+    }
+
+    &__btn-delete {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: $font-size-base;
+        padding: $spacing-xs;
+        border-radius: $border-radius-sm;
+        transition: $transition-base;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            color: $color-danger;
+            background-color: $color-danger-bg;
+        }
+    }
+}
+
+// ==========================================
+// MODAL THÊM NGƯỜI DÙNG & MA TRẬN PHÂN QUYỀN
+// ==========================================
+.user-modal {
+    &__dialog {
+        max-width: 680px;
+        margin: 1.75rem auto;
+    }
+
+    &__content {
+        background-color: $color-white;
+        border-radius: $border-radius-md;
+        border: 1px solid $color-border;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: $spacing-lg $spacing-lg $spacing-md;
+        border-bottom: 1px solid $color-border;
+    }
+
+    &__title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+    }
+
+    &__subtitle {
+        font-size: 0.875rem;
+        color: $color-brown;
+        margin: $spacing-xs 0 0;
+    }
+
+    &__close {
+        background: transparent;
+        border: none;
+        font-size: $font-size-md;
+        color: $color-text-light;
+        cursor: pointer;
+        padding: 4px;
+        line-height: 1;
+        transition: $transition-base;
+
+        &:hover {
+            color: $color-danger;
+        }
+    }
+
+    &__body {
+        padding: $spacing-lg;
+        max-height: calc(85vh - 140px);
+        overflow-y: auto;
+    }
+
+    &__section {
+        margin-bottom: $spacing-lg;
+
+        &--perms {
+            margin-bottom: 0;
+        }
+    }
+
+    &__section-title {
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: $color-text-main;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__perm-title-group {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        margin-bottom: $spacing-xs;
+
+        .user-modal__section-title {
+            margin-bottom: 0;
+        }
+    }
+
+    &__perm-icon {
+        font-size: $font-size-sm;
+        color: $color-orange;
+    }
+
+    &__section-subtitle {
+        font-size: $font-size-xs;
+        color: $color-brown;
+        margin-bottom: $spacing-md;
+        line-height: 1.4;
+    }
+
+    &__label {
+        font-size: $font-size-xs;
+        font-weight: 600;
+        color: $color-text-main;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    &__input,
+    &__select {
+        height: 38px;
+        font-size: $font-size-sm;
+        border: 1px solid $color-border;
+        background-color: #fffaf5;
+        border-radius: $border-radius-sm;
+        color: $color-text-main;
+        transition: $transition-base;
+
+        &:focus {
+            background-color: $color-white;
+            border-color: $color-orange;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+        }
+    }
+
+    // Lưới 6 phân khu phân quyền (Grid 3 cột)
+    &__matrix-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: $spacing-sm;
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__category-card {
+        border: 1px solid #f0eae1;
+        background-color: $color-white;
+        border-radius: $border-radius-sm;
+        padding: 10px 12px;
+    }
+
+    &__category-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #c2410c;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__checklist {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    &__checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.75rem;
+        color: #2d1b0e;
+        cursor: pointer;
+        margin: 0;
+        user-select: none;
+
+        input[type='checkbox'] {
+            accent-color: $color-orange;
+            width: 13px;
+            height: 13px;
+            cursor: pointer;
+        }
+    }
+
+    &__checkbox-text {
+        line-height: 1.2;
+    }
+
+    // Footer & Nút tương tác
+    &__footer {
+        padding: $spacing-md $spacing-lg;
+        background-color: $color-white;
+        border-top: 1px solid $color-border;
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+    }
+
+    &__btn-submit {
+        flex: 1;
+        background-color: $color-orange;
+        color: $color-white;
+        border: none;
+        border-radius: $border-radius-sm;
+        padding: 10px 20px;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+
+        &:hover {
+            background-color: darken($color-orange, 7%);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+        }
+    }
+
+    &__btn-cancel {
+        background: transparent;
+        border: none;
+        color: #2d1b0e;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 10px 14px;
+        transition: $transition-base;
+
+        &:hover {
+            color: $color-text-main;
+        }
+    }
+}
+
+// ==========================================
+// MODAL BULK IMPORT USERS (ẢNH 2)
+// ==========================================
+.import-modal {
+    &__dialog {
+        max-width: 500px;
+        margin: 1.75rem auto;
+    }
+
+    &__content {
+        background-color: $color-white;
+        border-radius: $border-radius-md;
+        border: 1px solid $color-border;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: $spacing-lg $spacing-lg $spacing-md;
+        border-bottom: 1px solid #f1ece4;
+    }
+
+    &__title {
+        font-size: $font-size-md;
+        font-weight: 700;
+        color: $color-text-main;
+        margin: 0;
+    }
+
+    &__subtitle {
+        font-size: 0.875rem;
+        color: $color-brown;
+        margin: $spacing-xs 0 0;
+    }
+
+    &__close {
+        background: transparent;
+        border: none;
+        font-size: $font-size-md;
+        color: $color-text-light;
+        cursor: pointer;
+        padding: 4px;
+        line-height: 1;
+        transition: $transition-base;
+
+        &:hover {
+            color: $color-danger;
+        }
+    }
+
+    &__body {
+        padding: $spacing-lg;
+    }
+
+    // Vùng kéo thả file (Dropzone nét đứt)
+    &__dropzone {
+        border: 2px dashed #e5ded5;
+        border-radius: $border-radius-md;
+        padding: 32px $spacing-lg;
+        text-align: center;
+        background-color: #fbf9f6;
+        cursor: pointer;
+        transition: $transition-base;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        &:hover,
+        &--active {
+            border-color: $color-orange;
+            background-color: #fffaf5;
+        }
+    }
+
+    &__upload-icon {
+        font-size: 28px;
+        color: $color-brown;
+        margin-bottom: $spacing-sm;
+    }
+
+    &__drop-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: $color-brown;
+        margin: 0 0 4px 0;
+    }
+
+    &__drop-hint {
+        font-size: 0.75rem;
+        color: $color-brown;
+    }
+
+    // Đường kẻ phân cách & chữ giữa
+    &__divider {
+        position: relative;
+        text-align: center;
+        margin: $spacing-lg 0;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #ede8df;
+        }
+    }
+
+    &__divider-text {
+        position: relative;
+        background-color: $color-white;
+        padding: 0 14px;
+        font-size: $font-size-xs;
+        color: $color-text-light;
+        font-weight: 500;
+    }
+
+    // Nút nạp 3 người dùng mẫu
+    &__sample-form {
+        display: flex;
+        justify-content: center;
+    }
+
+    &__btn-sample {
+        width: 100%;
+        background-color: $color-white;
+        border: 1px solid #d1d5db;
+        border-radius: $border-radius-sm;
+        padding: 9px 16px;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        color: $color-text-main;
+        cursor: pointer;
+        transition: $transition-base;
+
+        &:hover {
+            background-color: #f9fafb;
+            border-color: #9ca3af;
+        }
+    }
+
+    // Footer
+    &__footer {
+        padding: 0 $spacing-lg $spacing-lg;
+        display: flex;
+        justify-content: center;
+    }
+
+    &__btn-cancel {
+        width: 100%;
+        background-color: $color-white;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-sm;
+        padding: 8px 16px;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        color: #2d1b0e;
+        cursor: pointer;
+        transition: $transition-base;
+
+        &:hover {
+            color: $color-text-main;
+            background-color: #f9fafb;
+        }
+    }
+}
