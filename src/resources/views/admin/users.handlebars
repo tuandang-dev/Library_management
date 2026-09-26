@@ -1,5 +1,4 @@
 <div class="user-mgmt">
-    <!-- Header Block (Ảnh 1) -->
     <div class="user-mgmt__header">
         <div class="user-mgmt__title-group">
             <h1 class="user-mgmt__title">
@@ -18,7 +17,6 @@
         </div>
     </div>
 
-    <!-- Card Bảng Dữ Liệu -->
     <div class="user-mgmt__card">
         <div class="user-mgmt__card-header">
             <div class="user-mgmt__card-title-group">
@@ -26,7 +24,6 @@
                 <p class="user-mgmt__card-subtitle">All registered users in the system</p>
             </div>
 
-            <!-- Toolbar Tìm Kiếm & Bộ Lọc -->
             <form class="user-mgmt__toolbar" method="GET" action="/admin/users" id="userFilterForm">
                 <div class="user-mgmt__search">
                     <i class="fa-solid fa-magnifying-glass user-mgmt__search-icon"></i>
@@ -50,7 +47,6 @@
             </form>
         </div>
 
-        <!-- Bảng Danh Sách 6 Cột -->
         <div class="user-mgmt__table-responsive">
             <table class="user-mgmt__table">
                 <thead>
@@ -66,14 +62,12 @@
                 <tbody>
                     {{#each users}}
                     <tr class="user-mgmt__tr" data-user-id="{{this._id}}">
-                        <!-- Cột 1: Thông tin User -->
                         <td class="user-mgmt__td user-mgmt__td--user">
                             <div class="user-mgmt__user-info">
                                 <span class="user-mgmt__user-name">{{this.fullname}}</span>
                                 <span class="user-mgmt__user-email">{{this.email}}</span>
                             </div>
                         </td>
-                        <!-- Cột 2: Badge Role -->
                         <td class="user-mgmt__td user-mgmt__td--role">
                             {{#if this.isAdmin}}
                             <span class="user-mgmt__badge user-mgmt__badge--role-admin">Admin</span>
@@ -81,7 +75,6 @@
                             <span class="user-mgmt__badge user-mgmt__badge--role-user">User</span>
                             {{/if}}
                         </td>
-                        <!-- Cột 3: Badge Status -->
                         <td class="user-mgmt__td user-mgmt__td--status">
                             {{#if this.isActive}}
                             <span class="user-mgmt__badge user-mgmt__badge--status-active">Active</span>
@@ -89,11 +82,8 @@
                             <span class="user-mgmt__badge user-mgmt__badge--status-disable">Disable</span>
                             {{/if}}
                         </td>
-                        <!-- Cột 4: Join Date -->
                         <td class="user-mgmt__td user-mgmt__td--date">{{this.formattedJoinDate}}</td>
-                        <!-- Cột 5: Last Active -->
                         <td class="user-mgmt__td user-mgmt__td--date">{{this.formattedLastActive}}</td>
-                        <!-- Cột 6: Actions -->
                         <td class="user-mgmt__td user-mgmt__td--actions">
                             <div class="user-mgmt__action-cell">
                                 <select class="user-mgmt__select-status" data-user-id="{{this._id}}">
@@ -121,13 +111,11 @@
     </div>
 </div>
 
-<!-- Modal Thêm Mới Người Dùng (Add New User) -->
 <div class="modal fade user-modal" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg user-modal__dialog" role="document">
         <div class="modal-content user-modal__content">
             <form action="/admin/users" method="POST" id="addUserForm">
-                <!-- Modal Header -->
                 <div class="user-modal__header">
                     <div class="user-modal__header-info">
                         <h3 class="user-modal__title" id="addUserModalLabel">
@@ -140,9 +128,7 @@
                     </button>
                 </div>
 
-                <!-- Modal Body -->
                 <div class="user-modal__body">
-                    <!-- Phần Thông Tin Cơ Bản (Basic Information) -->
                     <div class="user-modal__section">
                         <h4 class="user-modal__section-title">Basic Information</h4>
                         <div class="form-row">
@@ -168,7 +154,6 @@
                         </div>
                     </div>
 
-                    <!-- Phần Ma Trận Phân Quyền (Permissions Matrix) -->
                     <div class="user-modal__section user-modal__section--perms">
                         <div class="user-modal__perm-title-group">
                             <i class="fa-regular fa-circle-check user-modal__perm-icon"></i>
@@ -179,9 +164,7 @@
                             to that feature.
                         </p>
 
-                        <!-- Lưới 6 Phân Khu Quyền Hạn -->
                         <div class="user-modal__matrix-grid">
-                            <!-- 1. Archives -->
                             <div class="user-modal__category-card">
                                 <h5 class="user-modal__category-title">Archives</h5>
                                 <div class="user-modal__checklist">
@@ -208,7 +191,6 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Inventory -->
                             <div class="user-modal__category-card">
                                 <h5 class="user-modal__category-title">Inventory</h5>
                                 <div class="user-modal__checklist">
@@ -235,7 +217,6 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Borrowing System -->
                             <div class="user-modal__category-card">
                                 <h5 class="user-modal__category-title">Borrowing System</h5>
                                 <div class="user-modal__checklist">
@@ -257,7 +238,6 @@
                                 </div>
                             </div>
 
-                            <!-- 4. User Management -->
                             <div class="user-modal__category-card">
                                 <h5 class="user-modal__category-title">User Management</h5>
                                 <div class="user-modal__checklist">
@@ -284,7 +264,6 @@
                                 </div>
                             </div>
 
-                            <!-- 5. Reports -->
                             <div class="user-modal__category-card">
                                 <h5 class="user-modal__category-title">Reports</h5>
                                 <div class="user-modal__checklist">
@@ -301,7 +280,6 @@
                                 </div>
                             </div>
 
-                            <!-- 6. System Settings -->
                             <div class="user-modal__category-card">
                                 <h5 class="user-modal__category-title">System Settings</h5>
                                 <div class="user-modal__checklist">
@@ -326,7 +304,6 @@
                     </div>
                 </div>
 
-                <!-- Modal Footer (Nút Add User & Cancel) -->
                 <div class="user-modal__footer">
                     <button type="submit" class="user-modal__btn-submit">Add User</button>
                     <button type="button" class="user-modal__btn-cancel" data-dismiss="modal">Cancel</button>
@@ -336,11 +313,9 @@
     </div>
 </div>
 
-<!-- Modal Nhập Hàng Loạt (Bulk Import Users - Ảnh 2) -->
 <div class="modal fade import-modal" id="bulkImportModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered import-modal__dialog" role="document">
         <div class="modal-content import-modal__content">
-            <!-- Header Modal -->
             <div class="import-modal__header">
                 <div class="import-modal__header-info">
                     <h3 class="import-modal__title">Bulk Import Users</h3>
@@ -351,9 +326,7 @@
                 </button>
             </div>
 
-            <!-- Body Modal -->
             <div class="import-modal__body">
-                <!-- Vùng Kéo Thả File CSV (Dropzone) -->
                 <div class="import-modal__dropzone" id="csvDropzone">
                     <input type="file" id="csvFileInput" accept=".csv" class="import-modal__file-input" hidden>
                     <i class="fa-solid fa-arrow-up-from-bracket import-modal__upload-icon"></i>
@@ -362,7 +335,6 @@
                 </div>
             </div>
 
-            <!-- Footer Modal -->
             <div class="import-modal__footer">
                 <button type="button" class="import-modal__btn-cancel" data-dismiss="modal">Cancel</button>
             </div>
@@ -372,9 +344,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // -------------------------------------------------------------
-        // 1. QUẢN LÝ MODAL GENERIC (Native DOM Fallback)
-        // -------------------------------------------------------------
         function openCustomModal(modalEl) {
             if (!modalEl) return;
             if (window.jQuery && typeof window.jQuery.fn.modal === 'function') {
@@ -407,7 +376,6 @@
             }
         }
 
-        // Đăng ký sự kiện đóng chung cho tất cả các modal
         document.querySelectorAll('.modal').forEach(function (modal) {
             modal.querySelectorAll('[data-dismiss="modal"], .user-modal__close, .import-modal__close, .user-modal__btn-cancel, .import-modal__btn-cancel').forEach(function (btn) {
                 btn.addEventListener('click', function (e) {
@@ -421,16 +389,12 @@
             });
         });
 
-        // Hỗ trợ phím Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal.show').forEach(closeCustomModal);
             }
         });
 
-        // -------------------------------------------------------------
-        // 2. KÍCH HOẠT CÁC NÚT MỞ MODAL
-        // -------------------------------------------------------------
         const btnOpenAddUser = document.getElementById('btnOpenAddUser');
         const addUserModal = document.getElementById('addUserModal');
         if (btnOpenAddUser) {
@@ -449,9 +413,6 @@
             });
         }
 
-        // -------------------------------------------------------------
-        // 3. XỬ LÝ KÉO THẢ & ĐỌC FILE CSV BẰNG FILEREADER
-        // -------------------------------------------------------------
         const csvDropzone = document.getElementById('csvDropzone');
         const csvFileInput = document.getElementById('csvFileInput');
 
@@ -491,17 +452,14 @@
             }
 
             const reader = new FileReader();
-            // Đọc dạng ArrayBuffer để chủ động kiểm soát bộ giải mã Encoding
             reader.readAsArrayBuffer(file);
 
             reader.onload = async function (e) {
                 const buffer = e.target.result;
 
-                // 1. Thử giải mã chuẩn UTF-8 trước
                 let decoder = new TextDecoder('utf-8');
                 let text = decoder.decode(buffer);
 
-                // 2. Fallback: Nếu văn bản chứa ký tự lỗi U+FFFD (), thử giải mã lại bằng Windows-1258 (tiếng Việt ANSI)
                 if (text.includes('\uFFFD')) {
                     try {
                         const fallbackDecoder = new TextDecoder('windows-1258');
@@ -511,7 +469,6 @@
                     }
                 }
 
-                // 3. Loại bỏ ký tự BOM (\uFEFF) do Excel tự chèn vào đầu file nếu có
                 if (text.charCodeAt(0) === 0xFEFF) {
                     text = text.slice(1);
                 }
@@ -522,10 +479,8 @@
                     return;
                 }
 
-                // Dòng đầu là tiêu đề (Name, Email, Role) -> Duyệt từ dòng 1 trở đi
                 const parsedUsers = [];
                 for (let i = 1; i < lines.length; i++) {
-                    // Tách cột theo dấu phẩy hoặc chấm phẩy (Excel tiếng Việt đôi khi dùng ;)
                     const delimiter = lines[i].includes(';') ? ';' : ',';
                     const cols = lines[i].split(delimiter).map((item) => item.trim().replace(/^["']|["']$/g, ''));
 
@@ -543,7 +498,6 @@
                     return;
                 }
 
-                // Gửi request JSON lên server
                 try {
                     const response = await fetch('/admin/users/bulk-import', {
                         method: 'POST',
@@ -564,12 +518,8 @@
             };
         }
 
-        // -------------------------------------------------------------
-        // 4. XỬ LÝ ĐỔI TRẠNG THÁI NHANH (SELECT STATUS TẠI CỘT ACTIONS)
-        // -------------------------------------------------------------
         const statusSelects = document.querySelectorAll('.user-mgmt__select-status');
         statusSelects.forEach(function (select) {
-            // Lưu lại giá trị ban đầu để rollback nếu server báo lỗi
             let previousValue = select.value;
 
             select.addEventListener('focus', function () {
@@ -593,7 +543,6 @@
 
                     if (result.success) {
                         previousValue = newStatus;
-                        // Cập nhật giao diện Badge tức thì
                         if (badgeContainer) {
                             if (newStatus === 'active') {
                                 badgeContainer.innerHTML = '<span class="user-mgmt__badge user-mgmt__badge--status-active">Active</span>';
@@ -603,19 +552,16 @@
                         }
                     } else {
                         alert(result.message || 'Không thể cập nhật trạng thái.');
-                        select.value = previousValue; // Rollback
+                        select.value = previousValue;
                     }
                 } catch (err) {
                     console.error('Fetch error:', err);
                     alert('Lỗi kết nối khi cập nhật trạng thái.');
-                    select.value = previousValue; // Rollback
+                    select.value = previousValue;
                 }
             });
         });
 
-        // -------------------------------------------------------------
-        // 5. XỬ LÝ XÓA TÀI KHOẢN (NÚT THÙNG RÁC TẠI CỘT ACTIONS)
-        // -------------------------------------------------------------
         const deleteButtons = document.querySelectorAll('.user-mgmt__btn-delete');
         deleteButtons.forEach(function (btn) {
             btn.addEventListener('click', async function () {
@@ -636,14 +582,12 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        // Hiệu ứng mờ dần và loại bỏ hàng khỏi bảng
                         if (row) {
                             row.style.transition = 'all 0.3s ease';
                             row.style.opacity = '0';
                             row.style.transform = 'translateX(20px)';
                             setTimeout(function () {
                                 row.remove();
-                                // Nếu không còn dòng nào thì hiển thị dòng thông báo trống
                                 const tbody = document.querySelector('.user-mgmt__table tbody');
                                 if (tbody && tbody.querySelectorAll('.user-mgmt__tr').length === 0) {
                                     tbody.innerHTML = '<tr><td colspan="6" class="user-mgmt__td--empty text-center py-4">Không tìm thấy người dùng nào trong hệ thống.</td></tr>';

@@ -9,5 +9,11 @@ router.post('/users', requireAuth, requireAdmin, adminController.createUser);
 router.post('/users/bulk-import', requireAuth, requireAdmin, adminController.bulkImport);
 router.patch('/users/:id/status', requireAuth, requireAdmin, adminController.updateStatus);
 router.delete('/users/:id', requireAuth, requireAdmin, adminController.deleteUser);
+router.get('/books', requireAuth, requireAdmin, adminController.books);
+router.post('/books', requireAuth, requireAdmin, adminController.createBook);
+router.put('/books/:id', requireAuth, requireAdmin, adminController.updateBook);
+router.delete('/books/:id', requireAuth, requireAdmin, adminController.deleteBook);
+router.get('/books/export', requireAuth, requireAdmin, adminController.exportBooks);
+router.post('/books/bulk-import', requireAuth, requireAdmin, adminController.bulkImportBooks);
 
 module.exports = router;

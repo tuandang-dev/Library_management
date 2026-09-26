@@ -1,0 +1,757 @@
+<div class="admin-books">
+    <div class="container-fluid">
+        <div class="admin-books__header">
+            <div class="admin-books__title-group">
+                <h1 class="admin-books__title">
+                    <i class="fa-solid fa-book-open admin-books__title-icon"></i>
+                    Admin Book Management
+                </h1>
+                <p class="admin-books__subtitle">Comprehensive book management with advanced admin features.</p>
+            </div>
+            <div class="admin-books__actions">
+                <button type="button" class="admin-books__btn admin-books__btn--outline" id="btnExportBooks">
+                    <i class="fa-solid fa-download"></i> Export
+                </button>
+                <button type="button" class="admin-books__btn admin-books__btn--outline" data-toggle="modal"
+                    data-target="#bulkImportModal">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i> Bulk Import
+                </button>
+                <button type="button" class="admin-books__btn admin-books__btn--orange" data-toggle="modal"
+                    data-target="#addBookModal">
+                    <i class="fa-solid fa-plus"></i> Add New Book
+                </button>
+            </div>
+        </div>
+
+        <div class="admin-books__filter-card">
+            <div class="admin-books__filter-header">
+                <i class="fa-solid fa-filter"></i> Search &amp; Filter
+            </div>
+            <form action="/admin/books" method="GET" class="admin-books__filter-form">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+                        <div class="admin-books__search-box">
+                            <i class="fa-solid fa-magnifying-glass admin-books__search-icon"></i>
+                            <input type="text" name="search" class="admin-books__search-input"
+                                placeholder="Search by title, author, ISBN, or Book ID..." value="{{filters.search}}">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+                        <select name="category" class="admin-books__select" onchange="this.form.submit()">
+                            <option value="all">All Categories</option>
+                            {{#each categoryOptions}}
+                            <option value="{{this.name}}" {{#if this.isSelected}}selected{{/if}}>{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <select name="status" class="admin-books__select" onchange="this.form.submit()">
+                            <option value="all" {{#if filters.isStatusAll}}selected{{/if}}>All Status</option>
+                            <option value="available" {{#if filters.isStatusAvailable}}selected{{/if}}>Available
+                            </option>
+                            <option value="borrowed" {{#if filters.isStatusBorrowed}}selected{{/if}}>Borrowed</option>
+                            <option value="overdue" {{#if filters.isStatusOverdue}}selected{{/if}}>Overdue</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-books__meta-bar">
+            <div class="admin-books__meta-count">
+                Showing {{showingCount}} of {{totalBooksCount}} books
+            </div>
+            <div class="admin-books__meta-total">
+                Total Inventory: {{totalInventory}} copies
+            </div>
+        </div>
+
+        <div class="admin-books__table-wrapper">
+            <table class="admin-books__table">
+                <thead>
+                    <tr>
+                        <th style="width: 26%;">Book Details</th>
+                        <th style="width: 11%;">Book ID</th>
+                        <th style="width: 16%;">Category</th>
+                        <th style="width: 15%;">Location</th>
+                        <th style="width: 11%;">Availability</th>
+                        <th style="width: 9%;">Status</th>
+                        <th style="width: 12%; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each books}}
+                    <tr class="admin-books__row">
+                        <td>
+                            <div class="admin-books__book-title">{{this.title}}</div>
+                            <div class="admin-books__book-author">by {{this.author}}</div>
+                            <div class="admin-books__book-isbn">ISBN: {{this.isbn}}</div>
+                        </td>
+
+                        <td>
+                            <span class="admin-books__book-id">{{this.bookId}}</span>
+                        </td>
+
+                        <td>
+                            <span class="admin-books__category-text">{{this.category}}</span>
+                        </td>
+
+                        <td>
+                            <span class="admin-books__location-text">{{this.location}}</span>
+                        </td>
+
+                        <td>
+                            <div class="admin-books__avail-ratio">{{this.availableQuantity}} / {{this.totalQuantity}}
+                            </div>
+                            <div class="admin-books__avail-label">available</div>
+                        </td>
+
+                        <td>
+                            {{#if this.isAvailable}}
+                            <span class="admin-books__badge admin-books__badge--available">available</span>
+                            {{/if}}
+                            {{#if this.isBorrowed}}
+                            <span class="admin-books__badge admin-books__badge--borrowed">borrowed</span>
+                            {{/if}}
+                            {{#if this.isOverdue}}
+                            <span class="admin-books__badge admin-books__badge--overdue">overdue</span>
+                            {{/if}}
+                        </td>
+
+                        <td style="text-align: right;">
+                            <div class="admin-books__action-btns">
+                                <button type="button"
+                                    class="admin-books__action-btn admin-books__action-btn--edit btn-edit-book"
+                                    data-id="{{this._id}}" data-bookid="{{this.bookId}}" data-title="{{this.title}}"
+                                    data-author="{{this.author}}" data-isbn="{{this.isbn}}"
+                                    data-category="{{this.category}}" data-location="{{this.location}}"
+                                    data-copies="{{this.totalQuantity}}" data-image="{{this.image}}"
+                                    data-description="{{this.description}}">
+                                    <i class="fa-regular fa-pen-to-square"></i> Edit
+                                </button>
+                                <button type="button"
+                                    class="admin-books__action-btn admin-books__action-btn--delete btn-delete-book"
+                                    data-id="{{this._id}}" data-title="{{this.title}}">
+                                    <i class="fa-regular fa-trash-can"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="7" class="admin-books__empty">
+                            <i class="fa-solid fa-book-bookmark admin-books__empty-icon"></i>
+                            <p class="admin-books__empty-text">No books found matching the filter criteria.</p>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade book-modal" id="addBookModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content book-modal__content">
+            <div class="book-modal__header-admin">
+                <div>
+                    <h5 class="book-modal__title">Add New Book</h5>
+                    <p class="book-modal__subtitle">Add a new book to the library catalog.</p>
+                </div>
+                <button type="button" class="close book-modal__close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="formAddBook" class="book-modal__form">
+                <div class="form-group">
+                    <label class="book-modal__label">Title <span class="text-danger">*</span></label>
+                    <input type="text" name="title" class="book-modal__input" placeholder="Book title" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Author <span class="text-danger">*</span></label>
+                    <input type="text" name="author" class="book-modal__input" placeholder="Author name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">ISBN <span class="text-danger">*</span></label>
+                    <input type="text" name="isbn" class="book-modal__input" placeholder="978-0-123456-78-9" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Book ID <span class="text-danger">*</span></label>
+                    <input type="text" name="bookId" class="book-modal__input" placeholder="e.g., CS-001, PHY-002"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Category</label>
+                    <input type="text" name="category" class="book-modal__input" placeholder="e.g., Computer Science">
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Location</label>
+                    <input type="text" name="location" class="book-modal__input" placeholder="e.g., Section A, Shelf 2">
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Number of Copies</label>
+                    <input type="number" name="copies" class="book-modal__input" value="1" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Cover Image URL</label>
+                    <input type="url" name="image" id="addImageUrlInput" class="book-modal__input"
+                        placeholder="https://example.com/cover.jpg">
+                    <div class="book-modal__image-preview-box">
+                        <img id="addImagePreview"
+                            src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400"
+                            alt="Book Preview" class="book-modal__preview-img">
+                        <span class="book-modal__preview-hint">Live Cover Preview (Will fallback to default if
+                            empty)</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Description</label>
+                    <textarea name="description" class="book-modal__textarea" rows="3"
+                        placeholder="Book description"></textarea>
+                </div>
+
+                <div class="book-modal__footer">
+                    <button type="submit" class="book-modal__btn-submit">Add Book</button>
+                    <button type="button" class="book-modal__btn-cancel" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade book-modal" id="editBookModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content book-modal__content">
+            <div class="book-modal__header-admin">
+                <div>
+                    <h5 class="book-modal__title">Edit Book</h5>
+                    <p class="book-modal__subtitle">Update book information.</p>
+                </div>
+                <button type="button" class="close book-modal__close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="formEditBook" class="book-modal__form">
+                <input type="hidden" id="editBookDbId" name="id">
+
+                <div class="form-group">
+                    <label class="book-modal__label">Title <span class="text-danger">*</span></label>
+                    <input type="text" id="editTitle" name="title" class="book-modal__input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Author <span class="text-danger">*</span></label>
+                    <input type="text" id="editAuthor" name="author" class="book-modal__input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">ISBN <span class="text-danger">*</span></label>
+                    <input type="text" id="editIsbn" name="isbn" class="book-modal__input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Book ID <span class="text-danger">*</span></label>
+                    <input type="text" id="editBookId" name="bookId" class="book-modal__input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Category</label>
+                    <input type="text" id="editCategory" name="category" class="book-modal__input">
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Location</label>
+                    <input type="text" id="editLocation" name="location" class="book-modal__input">
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Number of Copies</label>
+                    <input type="number" id="editCopies" name="copies" class="book-modal__input" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Cover Image URL</label>
+                    <input type="url" id="editImageUrlInput" name="image" class="book-modal__input"
+                        placeholder="https://example.com/cover.jpg">
+                    <div class="book-modal__image-preview-box">
+                        <img id="editImagePreview"
+                            src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400"
+                            alt="Book Preview" class="book-modal__preview-img">
+                        <span class="book-modal__preview-hint">Live Cover Preview</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="book-modal__label">Description</label>
+                    <textarea id="editDescription" name="description" class="book-modal__textarea" rows="3"></textarea>
+                </div>
+
+                <div class="book-modal__footer">
+                    <button type="submit" class="book-modal__btn-submit">Update Book</button>
+                    <button type="button" class="book-modal__btn-cancel" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade book-verify-modal" id="bookSecurityModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content book-verify-modal__content">
+            <div class="book-verify-modal__header">
+                <div class="book-verify-modal__icon-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h5 class="book-verify-modal__title" id="bookSecurityTitle">Add New Book</h5>
+            </div>
+
+            <p class="book-verify-modal__desc" id="bookSecurityDesc">
+                You are about to add "Introduction to Computer Science" to the library catalog. This action will make
+                the book available for borrowing.
+            </p>
+
+            <div class="book-verify-modal__callout">
+                <div class="book-verify-modal__callout-title">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Security Verification Required</span>
+                </div>
+                <p class="book-verify-modal__callout-subtitle">
+                    Please enter your password to authorize this action.
+                </p>
+            </div>
+
+            <div class="book-verify-modal__alert alert alert-danger d-none" id="bookSecurityAlert"></div>
+
+            <form id="formSecurityVerify">
+                <div class="form-group mb-4">
+                    <label class="book-verify-modal__label">Your Password</label>
+                    <input type="password" id="securityAdminPassword" class="book-verify-modal__input"
+                        placeholder="Enter your password" required autocomplete="current-password">
+                </div>
+
+                <div class="book-verify-modal__footer">
+                    <button type="button" class="book-verify-modal__btn-cancel" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="book-verify-modal__btn-confirm" id="btnConfirmSecurityAction">Confirm
+                        Action</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade book-confirm-modal" id="deleteConfirmStep1Modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content book-confirm-modal__content">
+            <h5 class="book-confirm-modal__title">Are you absolutely sure?</h5>
+            <p class="book-confirm-modal__desc">
+                This action cannot be undone. This will permanently delete <span id="deleteConfirmBookTitle"
+                    class="book-confirm-modal__book-name">"Book Title"</span> from the library catalog.
+            </p>
+            <div class="book-confirm-modal__footer">
+                <button type="button" class="book-confirm-modal__btn-cancel" data-dismiss="modal">Cancel</button>
+                <button type="button" class="book-confirm-modal__btn-delete"
+                    id="btnProceedToDeleteStep2">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade book-import-modal" id="bulkImportModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content book-import-modal__content">
+            <div class="book-import-modal__header">
+                <div>
+                    <h5 class="book-import-modal__title">Bulk Import Books</h5>
+                    <p class="book-import-modal__subtitle">Import multiple books from a CSV file.</p>
+                </div>
+                <button type="button" class="close book-import-modal__close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="book-import-modal__dropzone" id="csvDropzone">
+                <input type="file" id="csvFileInput" accept=".csv" class="d-none">
+                <i class="fa-solid fa-arrow-up-from-bracket book-import-modal__dropzone-icon"></i>
+                <p class="book-import-modal__dropzone-text">Upload a CSV file with book information</p>
+                <button type="button" class="book-import-modal__btn-choose" id="btnTriggerChooseFile">Choose
+                    File</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let pendingAction = null;
+        let bookPendingDelete = null;
+
+        const securityModalElement = $('#bookSecurityModal');
+        const deleteStep1ModalElement = $('#deleteConfirmStep1Modal');
+        const securityAlert = document.getElementById('bookSecurityAlert');
+        const securityPasswordInput = document.getElementById('securityAdminPassword');
+        const securityTitle = document.getElementById('bookSecurityTitle');
+        const securityDesc = document.getElementById('bookSecurityDesc');
+
+        const deleteButtons = document.querySelectorAll('.btn-delete-book');
+        deleteButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                bookPendingDelete = {
+                    id: this.dataset.id,
+                    title: this.dataset.title
+                };
+
+                document.getElementById('deleteConfirmBookTitle').textContent = `"${this.dataset.title}"`;
+                deleteStep1ModalElement.modal('show');
+            });
+        });
+
+        const btnProceedToDeleteStep2 = document.getElementById('btnProceedToDeleteStep2');
+        if (btnProceedToDeleteStep2) {
+            btnProceedToDeleteStep2.addEventListener('click', function () {
+                if (!bookPendingDelete) return;
+
+                pendingAction = {
+                    type: 'delete',
+                    url: `/admin/books/${bookPendingDelete.id}`,
+                    method: 'DELETE',
+                    data: {},
+                    title: bookPendingDelete.title
+                };
+
+                securityTitle.textContent = 'Delete Book';
+                securityDesc.textContent = `You are about to permanently delete "${bookPendingDelete.title}" from the library catalog. This action cannot be undone.`;
+                securityAlert.classList.add('d-none');
+                securityPasswordInput.value = '';
+
+                deleteStep1ModalElement.modal('hide');
+                setTimeout(() => {
+                    securityModalElement.modal('show');
+                    securityPasswordInput.focus();
+                }, 300);
+            });
+        }
+
+        const editButtons = document.querySelectorAll('.btn-edit-book');
+        editButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.getElementById('editBookDbId').value = this.dataset.id;
+                document.getElementById('editTitle').value = this.dataset.title;
+                document.getElementById('editAuthor').value = this.dataset.author;
+                document.getElementById('editIsbn').value = this.dataset.isbn;
+                document.getElementById('editBookId').value = this.dataset.bookid;
+                document.getElementById('editCategory').value = this.dataset.category || '';
+                document.getElementById('editLocation').value = this.dataset.location || '';
+                document.getElementById('editCopies').value = this.dataset.copies || 1;
+                document.getElementById('editDescription').value = this.dataset.description || '';
+
+                const currentImg = this.dataset.image || defaultCoverUrl;
+                if (editImageUrlInput) editImageUrlInput.value = this.dataset.image || '';
+                if (editImagePreview) editImagePreview.src = currentImg;
+
+                $('#editBookModal').modal('show');
+            });
+        });
+
+        const formAdd = document.getElementById('formAddBook');
+        if (formAdd) {
+            formAdd.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+
+                pendingAction = {
+                    type: 'create',
+                    url: '/admin/books',
+                    method: 'POST',
+                    data: data,
+                    title: data.title
+                };
+
+                securityTitle.textContent = 'Add New Book';
+                securityDesc.textContent = `You are about to add "${data.title}" to the library catalog. This action will make the book available for borrowing.`;
+                securityAlert.classList.add('d-none');
+                securityPasswordInput.value = '';
+
+                $('#addBookModal').modal('hide');
+                setTimeout(() => {
+                    securityModalElement.modal('show');
+                    securityPasswordInput.focus();
+                }, 300);
+            });
+        }
+
+        const formEdit = document.getElementById('formEditBook');
+        if (formEdit) {
+            formEdit.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const bookId = document.getElementById('editBookDbId').value;
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+
+                pendingAction = {
+                    type: 'update',
+                    url: `/admin/books/${bookId}`,
+                    method: 'PUT',
+                    data: data,
+                    title: data.title
+                };
+
+                securityTitle.textContent = 'Update Book';
+                securityDesc.textContent = `You are about to update "${data.title}". This will modify the book information in the library catalog.`;
+                securityAlert.classList.add('d-none');
+                securityPasswordInput.value = '';
+
+                $('#editBookModal').modal('hide');
+                setTimeout(() => {
+                    securityModalElement.modal('show');
+                    securityPasswordInput.focus();
+                }, 300);
+            });
+        }
+
+        const formSecurity = document.getElementById('formSecurityVerify');
+        if (formSecurity) {
+            formSecurity.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (!pendingAction) return;
+
+                securityAlert.classList.add('d-none');
+                const password = securityPasswordInput.value;
+
+                if (!password) {
+                    securityAlert.textContent = 'Vui lòng nhập mật khẩu xác thực!';
+                    securityAlert.classList.remove('d-none');
+                    return;
+                }
+
+                const payload = {
+                    ...pendingAction.data,
+                    adminPassword: password
+                };
+
+                const submitBtn = document.getElementById('btnConfirmSecurityAction');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Verifying...';
+
+                try {
+                    const response = await fetch(pendingAction.url, {
+                        method: pendingAction.method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (!result.success) {
+                        securityAlert.textContent = result.message;
+                        securityAlert.classList.remove('d-none');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Confirm Action';
+                    } else {
+                        securityModalElement.modal('hide');
+                        window.location.reload();
+                    }
+                } catch (err) {
+                    securityAlert.textContent = 'Lỗi kết nối máy chủ. Vui lòng thử lại!';
+                    securityAlert.classList.remove('d-none');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Confirm Action';
+                }
+            });
+        }
+
+        const btnExportBooks = document.getElementById('btnExportBooks');
+        if (btnExportBooks) {
+            btnExportBooks.addEventListener('click', function () {
+                window.location.href = '/admin/books/export';
+            });
+        }
+
+        const btnDownloadTemplate = document.getElementById('btnDownloadTemplate');
+        if (btnDownloadTemplate) {
+            btnDownloadTemplate.addEventListener('click', function () {
+                const templateCsv = '\uFEFFtitle,author,isbn,bookid,category,location,copies,image,description\r\n' +
+                    '"Clean Architecture","Robert C. Martin","978-0-134494-16-6","CS-101","Computer Science","Section A, Shelf 1",5,"https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400","A Craftsman Guide to Software Structure"\r\n' +
+                    '"Calculus: Early Transcendentals","James Stewart","978-1-285741-55-0","MATH-102","Mathematics","Section C, Shelf 4",3,"https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400","Comprehensive calculus guide"';
+
+                const blob = new Blob([templateCsv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const downloadLink = document.createElement('a');
+                downloadLink.setAttribute('href', url);
+                downloadLink.setAttribute('download', 'books_template.csv');
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            });
+        }
+
+        const csvDropzone = document.getElementById('csvDropzone');
+        const csvFileInput = document.getElementById('csvFileInput');
+        const btnTriggerChooseFile = document.getElementById('btnTriggerChooseFile');
+
+        if (btnTriggerChooseFile && csvFileInput) {
+            btnTriggerChooseFile.addEventListener('click', () => csvFileInput.click());
+        }
+
+        if (csvDropzone && csvFileInput) {
+            ['dragenter', 'dragover'].forEach(eventName => {
+                csvDropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    csvDropzone.classList.add('book-import-modal__dropzone--active');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                csvDropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    csvDropzone.classList.remove('book-import-modal__dropzone--active');
+                });
+            });
+
+            csvDropzone.addEventListener('drop', (e) => {
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    handleCsvFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            csvFileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleCsvFile(e.target.files[0]);
+                }
+            });
+        }
+
+        function handleCsvFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                alert('Vui lòng chọn tệp tin có định dạng .csv!');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    let csvText = new TextDecoder('utf-8').decode(e.target.result);
+                    if (csvText.charCodeAt(0) === 0xFEFF) {
+                        csvText = csvText.slice(1);
+                    }
+
+                    const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+                    if (lines.length < 2) {
+                        alert('Tệp CSV không chứa dữ liệu hoặc không có dòng tiêu đề!');
+                        return;
+                    }
+
+                    const headers = parseCsvLine(lines[0]).map(h => h.toLowerCase().trim());
+                    const parsedBooks = [];
+
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = parseCsvLine(lines[i]);
+                        if (values.length === 0) continue;
+
+                        const bookObj = {};
+                        headers.forEach((h, idx) => {
+                            bookObj[h] = values[idx] || '';
+                        });
+
+                        if (bookObj.title && bookObj.author && bookObj.isbn && (bookObj.bookid || bookObj.bookId)) {
+                            parsedBooks.push(bookObj);
+                        }
+                    }
+
+                    if (parsedBooks.length === 0) {
+                        alert('Không tìm thấy dòng dữ liệu nào hợp lệ trong tệp CSV!');
+                        return;
+                    }
+
+                    pendingAction = {
+                        type: 'bulk-import',
+                        url: '/admin/books/bulk-import',
+                        method: 'POST',
+                        data: { books: parsedBooks },
+                        title: `${parsedBooks.length} Books`
+                    };
+
+                    securityTitle.textContent = 'Bulk Import Books';
+                    securityDesc.textContent = `You are about to import ${parsedBooks.length} books into the library catalog. This action will make them available for borrowing.`;
+                    securityAlert.classList.add('d-none');
+                    securityPasswordInput.value = '';
+
+                    $('#bulkImportModal').modal('hide');
+                    setTimeout(() => {
+                        securityModalElement.modal('show');
+                        securityPasswordInput.focus();
+                    }, 300);
+
+                } catch (err) {
+                    console.error(err);
+                    alert('Không thể đọc nội dung tệp CSV: ' + err.message);
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function parseCsvLine(line) {
+            const result = [];
+            let cur = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"' || char === "'") {
+                    if (inQuotes && line[i + 1] === char) {
+                        cur += char;
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(cur.trim());
+                    cur = '';
+                } else {
+                    cur += char;
+                }
+            }
+            result.push(cur.trim());
+            return result;
+        }
+
+        const defaultCoverUrl = 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400';
+
+        const addImageUrlInput = document.getElementById('addImageUrlInput');
+        const addImagePreview = document.getElementById('addImagePreview');
+        if (addImageUrlInput && addImagePreview) {
+            addImageUrlInput.addEventListener('input', function () {
+                const url = this.value.trim();
+                addImagePreview.src = url || defaultCoverUrl;
+            });
+            addImagePreview.onerror = function () {
+                this.src = defaultCoverUrl;
+            };
+        }
+
+        const editImageUrlInput = document.getElementById('editImageUrlInput');
+        const editImagePreview = document.getElementById('editImagePreview');
+        if (editImageUrlInput && editImagePreview) {
+            editImageUrlInput.addEventListener('input', function () {
+                const url = this.value.trim();
+                editImagePreview.src = url || defaultCoverUrl;
+            });
+            editImagePreview.onerror = function () {
+                this.src = defaultCoverUrl;
+            };
+        }
+
+
+    });
+</script>

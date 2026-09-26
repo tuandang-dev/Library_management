@@ -65,7 +65,6 @@
         }
     }
 
-    // Card chính bao bọc bảng dữ liệu
     &__card {
         background-color: $color-white;
         border: 1px solid $color-border;
@@ -96,7 +95,6 @@
         margin: 2px 0 0 0;
     }
 
-    // Thanh công cụ: Search & Select Filter
     &__toolbar {
         display: flex;
         align-items: center;
@@ -157,7 +155,6 @@
         }
     }
 
-    // Bảng dữ liệu 6 cột
     &__table-responsive {
         width: 100%;
         overflow-x: auto;
@@ -203,7 +200,6 @@
         }
     }
 
-    // Cột 1: User info
     &__user-info {
         display: flex;
         flex-direction: column;
@@ -215,7 +211,6 @@
         margin-top: 2px;
     }
 
-    // Cột 2 & 3: Badges
     &__badge {
         display: inline-flex;
         align-items: center;
@@ -254,7 +249,6 @@
         }
     }
 
-    // Cột 6: Thao tác Actions
     &__action-cell {
         display: flex;
         align-items: center;
@@ -297,9 +291,6 @@
     }
 }
 
-// ==========================================
-// MODAL THÊM NGƯỜI DÙNG & MA TRẬN PHÂN QUYỀN
-// ==========================================
 .user-modal {
     &__dialog {
         max-width: 680px;
@@ -421,7 +412,6 @@
         }
     }
 
-    // Lưới 6 phân khu phân quyền (Grid 3 cột)
     &__matrix-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -474,7 +464,6 @@
         line-height: 1.2;
     }
 
-    // Footer & Nút tương tác
     &__footer {
         padding: $spacing-md $spacing-lg;
         background-color: $color-white;
@@ -518,9 +507,6 @@
     }
 }
 
-// ==========================================
-// MODAL BULK IMPORT USERS (ẢNH 2)
-// ==========================================
 .import-modal {
     &__dialog {
         max-width: 500px;
@@ -575,7 +561,6 @@
         padding: $spacing-lg;
     }
 
-    // Vùng kéo thả file (Dropzone nét đứt)
     &__dropzone {
         border: 2px dashed #e5ded5;
         border-radius: $border-radius-md;
@@ -614,7 +599,6 @@
         color: $color-brown;
     }
 
-    // Đường kẻ phân cách & chữ giữa
     &__divider {
         position: relative;
         text-align: center;
@@ -640,7 +624,6 @@
         font-weight: 500;
     }
 
-    // Nút nạp 3 người dùng mẫu
     &__sample-form {
         display: flex;
         justify-content: center;
@@ -664,7 +647,6 @@
         }
     }
 
-    // Footer
     &__footer {
         padding: 0 $spacing-lg $spacing-lg;
         display: flex;
