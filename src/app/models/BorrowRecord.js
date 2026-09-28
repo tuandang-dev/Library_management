@@ -12,6 +12,8 @@ const BorrowRecordSchema = new Schema(
         returnDate: { type: Date, default: null },
         staffName: { type: String, default: 'Sarah Chen', trim: true },
         status: { type: String, enum: ['BORROWED', 'RETURNED', 'OVERDUE'], default: 'BORROWED' },
+        remindersSent: { type: Number, default: 0, min: 0 },
+        lastReminderSentAt: { type: Date, default: null },
         notes: { type: String, default: '' },
     },
     {

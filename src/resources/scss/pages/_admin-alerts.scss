@@ -1,0 +1,423 @@
+@use '../abstracts/variables' as v;
+
+.admin-alerts {
+    background-color: v.$color-bg-page;
+    min-height: calc(100vh - 140px);
+
+    &__header {
+        .admin-alerts__title {
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            margin-bottom: v.$spacing-xs;
+        }
+
+        .admin-alerts__subtitle {
+            font-size: v.$font-size-base;
+            color: v.$color-brown;
+        }
+    }
+
+    &__actions {
+        .admin-alerts__btn-report {
+            font-size: 12px;
+            font-weight: 500;
+            color: v.$color-text-main;
+            border: solid 1px #cbd5e1;
+            background-color: v.$color-white;
+            border-radius: v.$border-radius-sm;
+            padding: 8px 16px;
+            transition: v.$transition-base;
+
+            &:hover {
+                background-color: #f1f5f9;
+                border-color: #94a3b8;
+                color: v.$color-text-main;
+            }
+        }
+
+        .admin-alerts__btn-bulk {
+            font-size: 12px;
+            background-color: v.$color-orange;
+            border-color: v.$color-orange;
+            color: v.$color-white;
+            font-weight: 600;
+            border-radius: v.$border-radius-sm;
+            padding: 8px 18px;
+            box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
+            transition: v.$transition-base;
+
+            &:hover {
+                background-color: darken(#ea580c, 8%);
+                border-color: darken(#ea580c, 8%);
+                color: v.$color-white;
+                box-shadow: 0 4px 10px rgba(234, 88, 12, 0.35);
+            }
+        }
+    }
+
+    &__metrics {
+        .metric-card {
+            background: v.$color-white;
+            border-radius: v.$border-radius-md;
+            padding: 20px 24px;
+            box-shadow: v.$shadow-card;
+            border: 1px solid v.$color-border;
+            border-left-width: 5px;
+            transition: v.$transition-base;
+            height: 100%;
+
+            &:hover {
+                box-shadow: v.$shadow-card-hover;
+                transform: translateY(-2px);
+            }
+
+            &--danger {
+                border-left-color: v.$color-danger;
+
+                .metric-card__value {
+                    color: v.$color-danger;
+                }
+            }
+
+            &--warning {
+                border-left-color: v.$color-orange;
+
+                .metric-card__value {
+                    color: v.$color-orange;
+                }
+            }
+
+            &--info {
+                border-left-color: #0284c7;
+
+                .metric-card__value {
+                    color: #0284c7;
+                }
+            }
+
+            &__header {
+                font-size: v.$font-size-base;
+                font-weight: 600;
+                color: v.$color-text-main;
+            }
+
+            &__icon-wrap {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                font-size: 13px;
+
+                &--danger {
+                    background-color: v.$color-danger-bg;
+                    color: v.$color-danger;
+                }
+
+                &--warning {
+                    background-color: #fff7ed;
+                    color: v.$color-orange;
+                }
+
+                &--info {
+                    background-color: #f0f9ff;
+                    color: #0284c7;
+                }
+            }
+
+            &__value {
+                font-size: 32px;
+                font-weight: 700;
+                line-height: 1.1;
+                margin-bottom: 4px;
+            }
+
+            &__desc {
+                font-size: v.$font-size-sm;
+                color: v.$color-brown;
+            }
+        }
+    }
+
+    &__filter-card {
+        background: v.$color-white;
+        border-radius: v.$border-radius-md;
+        box-shadow: v.$shadow-card;
+        border: 1px solid v.$color-border;
+
+        .admin-alerts__filter-title {
+            font-size: 1.125rem;
+            color: v.$color-text-main;
+        }
+
+        .admin-alerts__filter-desc {
+            font-size: v.$font-size-sm;
+            color: v.$color-brown;
+        }
+
+        .admin-alerts__search-box {
+            .input-group-text {
+                border-color: v.$color-border;
+                border-top-left-radius: v.$border-radius-sm;
+                border-bottom-left-radius: v.$border-radius-sm;
+                padding-left: 14px;
+            }
+
+            .form-control {
+                border-color: v.$color-border;
+                border-top-right-radius: v.$border-radius-sm;
+                border-bottom-right-radius: v.$border-radius-sm;
+                height: 42px;
+                font-size: v.$font-size-base;
+
+                &:focus {
+                    border-color: v.$color-primary;
+                    box-shadow: 0 0 0 0.2rem rgba(230, 92, 0, 0.15);
+                }
+            }
+        }
+
+        .admin-alerts__select-box {
+            height: 42px;
+            border-color: v.$color-border;
+            border-radius: v.$border-radius-sm;
+            font-size: v.$font-size-base;
+            color: v.$color-text-main;
+
+            &:focus {
+                border-color: v.$color-primary;
+                box-shadow: 0 0 0 0.2rem rgba(230, 92, 0, 0.15);
+            }
+        }
+    }
+
+    &__table-card {
+        background: v.$color-white;
+        border-radius: v.$border-radius-md;
+        box-shadow: v.$shadow-card;
+        border: 1px solid v.$color-border;
+        overflow: hidden;
+
+        .admin-alerts__table-header {
+            background-color: #fff9f5;
+            border-bottom: 1px solid #fce7db;
+
+            .admin-alerts__table-title {
+                font-size: 1.125rem;
+                color: v.$color-text-main;
+            }
+
+            .admin-alerts__table-desc {
+                font-size: v.$font-size-sm;
+                color: v.$color-brown;
+            }
+        }
+    }
+}
+
+.overdue-table {
+    &__th {
+        font-size: 0.875rem;
+        letter-spacing: 0.6px;
+        font-weight: 500;
+        color: #2d1b0e;
+        background-color: #fafaf9;
+        border-top: none;
+        border-bottom: 1px solid v.$color-border;
+        padding: 14px 20px;
+    }
+
+    &__row {
+        transition: v.$transition-base;
+
+        &:hover {
+            background-color: #fcfcfb;
+        }
+    }
+
+    &__td {
+        padding: 16px 20px;
+        vertical-align: middle;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    &__cell-book {
+        max-width: 280px;
+
+        .book-title-borrow {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .book-author-borrow .book-isbn-borrow {
+            font-size: 0.75rem;
+            color: v.$color-brown;
+        }
+
+        .badge {
+            border-color: #e2e8f0;
+            font-weight: 500;
+            font-size: 11px;
+        }
+    }
+
+    &__cell-student {
+        min-width: 200px;
+
+        .student-borrow {
+            font-size: 0.875rem;
+        }
+
+        .student-email {
+            font-size: 0.75rem;
+            color: blue;
+        }
+    }
+
+    &__cell-overdue {
+        min-width: 180px;
+
+        .overdue-days-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: v.$color-danger;
+            background-color: #fef2f2;
+            padding: 3px 8px;
+            border-radius: v.$border-radius-sm;
+        }
+
+        .reminders-count-text {
+            color: #64748b;
+        }
+
+        .small {
+            color: v.$color-brown;
+            font-size: 0.75rem;
+        }
+    }
+
+    &__cell-status {
+        width: 130px;
+    }
+
+    &__cell-actions {
+        width: 150px;
+
+        .overdue-table__btn-remind {
+            font-weight: 500;
+            font-size: v.$font-size-xs;
+            border-radius: v.$border-radius-sm;
+            padding: 6px 12px;
+            color: v.$color-text-main;
+            border: solid 1px #cbd5e1;
+            background-color: v.$color-white;
+            transition: v.$transition-base;
+
+            &:hover {
+                background-color: #f1f5f9;
+                border-color: #94a3b8;
+                color: v.$color-text-main;
+            }
+        }
+    }
+}
+
+.badge-tier {
+    display: inline-block;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: v.$border-radius-pill;
+    color: v.$color-white;
+
+    &--overdue {
+        background-color: #dc2626;
+    }
+
+    &--critical {
+        background-color: #991b1b;
+    }
+
+    &--lost {
+        background-color: #7f1d1d;
+    }
+
+    &--normal {
+        background-color: #16a34a;
+    }
+}
+
+.reminder-modal {
+    border-radius: v.$border-radius-md;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+
+    .modal-title {
+        font-size: 18px;
+        color: v.$color-text-main;
+
+        .small {
+            color: v.$color-brown;
+        }
+    }
+
+    &__summary {
+        background-color: #fffbf7;
+        border: 1px solid #fed7aa;
+        border-radius: v.$border-radius-sm;
+        font-size: 13px;
+
+        &-item {
+            margin-bottom: 4px;
+            color: #334155;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            span.font-weight-bold {
+                display: inline-block;
+                min-width: 105px;
+                color: #1e293b;
+            }
+        }
+    }
+
+    &__textarea {
+        border-color: #fdba74;
+        border-radius: v.$border-radius-sm;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #1e293b;
+        resize: vertical;
+        padding: 12px;
+
+        &:focus {
+            border-color: v.$color-orange;
+            box-shadow: 0 0 0 0.2rem rgba(234, 88, 12, 0.15);
+        }
+    }
+
+    &__btn-submit {
+        background-color: v.$color-orange;
+        border-color: v.$color-orange;
+        color: v.$color-white;
+        font-weight: 600;
+        border-radius: v.$border-radius-sm;
+        padding: 7px 18px;
+        transition: v.$transition-base;
+
+        &:hover {
+            background-color: darken(#ea580c, 8%);
+            border-color: darken(#ea580c, 8%);
+            color: v.$color-white;
+        }
+    }
+}

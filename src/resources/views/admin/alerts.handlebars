@@ -1,0 +1,379 @@
+<div class="admin-alerts">
+    <div class="admin-alerts__header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+        <div class="admin-alerts__title-group mb-3 mb-md-0">
+            <h1 class="admin-alerts__title">
+                <i class="fa-solid fa-triangle-exclamation text-danger mr-2"></i>Overdue Alerts Management
+            </h1>
+            <p class="admin-alerts__subtitle mb-0">
+                Monitor and manage overdue books and student notifications.
+            </p>
+        </div>
+        <div class="admin-alerts__actions d-flex align-items-center">
+            <a href="/admin/alerts/export" class="btn btn-outline-secondary admin-alerts__btn-report mr-2">
+                <i class="fa-solid fa-book-open mr-2"></i>Generate Report
+            </a>
+            <button type="button" class="btn admin-alerts__btn-bulk" data-toggle="modal"
+                data-target="#bulkReminderModal">
+                <i class="fa-solid fa-paper-plane mr-2"></i>Send Bulk Reminders
+            </button>
+        </div>
+    </div>
+
+    <div class="row admin-alerts__metrics mb-4">
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+            <div class="metric-card metric-card--danger">
+                <div class="metric-card__header d-flex align-items-center mb-2">
+                    <span class="metric-card__icon-wrap metric-card__icon-wrap--danger mr-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </span>
+                    <span class="metric-card__title">Total Overdue</span>
+                </div>
+                <div class="metric-card__value">{{metrics.totalOverdue}}</div>
+                <div class="metric-card__desc">books requiring attention</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+            <div class="metric-card metric-card--warning">
+                <div class="metric-card__header d-flex align-items-center mb-2">
+                    <span class="metric-card__icon-wrap metric-card__icon-wrap--warning mr-2">
+                        <i class="fa-regular fa-clock"></i>
+                    </span>
+                    <span class="metric-card__title">Critical Cases</span>
+                </div>
+                <div class="metric-card__value">{{metrics.criticalCases}}</div>
+                <div class="metric-card__desc">7+ days overdue</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="metric-card metric-card--info">
+                <div class="metric-card__header d-flex align-items-center mb-2">
+                    <span class="metric-card__icon-wrap metric-card__icon-wrap--info mr-2">
+                        <i class="fa-regular fa-calendar"></i>
+                    </span>
+                    <span class="metric-card__title">Average Overdue</span>
+                </div>
+                <div class="metric-card__value">{{metrics.averageOverdue}}</div>
+                <div class="metric-card__desc">days on average</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card admin-alerts__filter-card mb-4 border-0">
+        <div class="card-body p-4">
+            <div class="admin-alerts__filter-header mb-3">
+                <h5 class="admin-alerts__filter-title mb-1">
+                    <i class="fa-solid fa-filter text-primary mr-2"></i>Search & Filter Options
+                </h5>
+                <p class="admin-alerts__filter-desc mb-0">Find and filter overdue books by various criteria
+                </p>
+            </div>
+
+            <form action="/admin/alerts" method="GET" class="admin-alerts__filter-form row">
+                <div class="col-12 col-md-8 mb-3 mb-md-0">
+                    <div class="input-group admin-alerts__search-box">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-right-0">
+                                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                            </span>
+                        </div>
+                        <input type="text" name="search" class="form-control border-left-0"
+                            placeholder="Search by book title, student name, or email..." value="{{filters.search}}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <select name="status" class="custom-select admin-alerts__select-box" onchange="this.form.submit()">
+                        <option value="all" {{#if filters.isStatusAll}}selected{{/if}}>All Status</option>
+                        <option value="overdue" {{#if filters.isStatusOverdue}}selected{{/if}}>Overdue (1-6 days)
+                        </option>
+                        <option value="critical" {{#if filters.isStatusCritical}}selected{{/if}}>Critical (7-13 days)
+                        </option>
+                        <option value="lost" {{#if filters.isStatusLost}}selected{{/if}}>Lost (14+ days)</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card admin-alerts__table-card border-0">
+        <div class="card-body p-0">
+            <div class="admin-alerts__table-header p-4">
+                <h5 class="admin-alerts__table-title mb-1">
+                    <i class="fa-solid fa-book-open text-danger mr-2"></i>Overdue Books ({{totalOverdueCount}})
+                </h5>
+                <p class="admin-alerts__table-desc mb-0">
+                    Comprehensive overview of all overdue items requiring immediate attention
+                </p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table overdue-table mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th class="overdue-table__th">Book Information</th>
+                            <th class="overdue-table__th text-center">Student Details</th>
+                            <th class="overdue-table__th text-center">Overdue Information</th>
+                            <th class="overdue-table__th text-center">Status</th>
+                            <th class="overdue-table__th text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#if records.length}}
+                        {{#each records}}
+                        <tr class="overdue-table__row" id="row-{{this._id}}">
+                            <td class="overdue-table__td overdue-table__cell-book">
+                                <div class="book-title-borrow font-weight-bold text-dark mb-1">{{this.bookTitle}}</div>
+                                <div class="book-author-borrow small mb-1">by {{this.bookAuthor}}</div>
+                                <div class="book-isbn-borrow small mb-1">ISBN: {{this.bookIsbn}}</div>
+                                <span class="badge badge-light border px-2 py-1">{{this.bookCategory}}</span>
+                            </td>
+
+                            <td class="overdue-table__td overdue-table__cell-student text-center">
+                                <div class="student-borrow font-weight-bold text-dark mb-1">
+                                    <i class="fa-regular fa-user mr-1 text-muted"></i>{{this.studentName}}
+                                </div>
+                                <div class="student-email small">
+                                    <i class="fa-regular fa-envelope mr-1 text-muted"></i>{{this.studentEmail}}
+                                </div>
+                            </td>
+
+                            <td class="overdue-table__td overdue-table__cell-overdue text-center">
+                                <div class="small mb-1">Due: {{this.dueDateFormatted}}</div>
+                                <div class="overdue-days-badge mb-1">
+                                    <i class="fa-regular fa-clock mr-1"></i>{{this.overdueDays}} days overdue
+                                </div>
+                                <div class="small mb-1">Borrowed: {{this.borrowDateFormatted}}</div>
+                                <div class="small reminders-count-text">
+                                    <span class="reminders-count-num">{{this.remindersSent}}</span> reminders sent
+                                </div>
+                            </td>
+
+                            <td class="overdue-table__td overdue-table__cell-status text-center">
+                                <span class="badge-tier {{this.statusBadgeClass}}">
+                                    {{this.statusLabel}}
+                                </span>
+                            </td>
+
+                            <td class="overdue-table__td overdue-table__cell-actions text-right">
+                                <button type="button" class="btn btn-outline-secondary btn-sm overdue-table__btn-remind"
+                                    data-toggle="modal" data-target="#reminderModal" data-id="{{this._id}}"
+                                    data-student="{{this.studentName}}" data-email="{{this.studentEmail}}"
+                                    data-book="{{this.bookTitle}}" data-days="{{this.overdueDays}}"
+                                    data-message="{{this.defaultEmailMessage}}">
+                                    <i class="fa-regular fa-envelope mr-1"></i>Send Reminder
+                                </button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                        {{else}}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fa-regular fa-circle-check fa-3x text-success mb-3"></i>
+                                    <p class="font-weight-bold mb-1">No overdue records found!</p>
+                                    <small>All borrowed books are returned or on schedule.</small>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/if}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="reminderModal" tabindex="-1" role="dialog" aria-labelledby="reminderModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 reminder-modal">
+            <div class="modal-header border-0 pb-0">
+                <div class="modal-title-group">
+                    <h5 class="modal-title font-weight-bold" id="reminderModalLabel">Send Email Reminder</h5>
+                    <p class="small mb-0">
+                        Send an email reminder to <span id="modalStudentNameTitle">Student</span> about the overdue book
+                    </p>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body pt-3">
+                <input type="hidden" id="modalRecordId">
+
+                <div class="reminder-modal__summary mb-3 p-3">
+                    <div class="reminder-modal__summary-item">
+                        <span class="font-weight-bold">Book:</span> <span id="modalBookTitle">Data Structures and
+                            Algorithms</span>
+                    </div>
+                    <div class="reminder-modal__summary-item">
+                        <span class="font-weight-bold">Student:</span> <span id="modalStudentName">Alex Johnson</span>
+                    </div>
+                    <div class="reminder-modal__summary-item">
+                        <span class="font-weight-bold">Email:</span> <span
+                            id="modalStudentEmail">alex.johnson@student.university.edu</span>
+                    </div>
+                    <div class="reminder-modal__summary-item">
+                        <span class="font-weight-bold">Days Overdue:</span> <span id="modalDaysOverdue">2</span>
+                    </div>
+                </div>
+
+                <div class="form-group mb-0">
+                    <label for="modalEmailMessage" class="font-weight-bold text-dark small mb-1">Message</label>
+                    <textarea class="form-control reminder-modal__textarea" id="modalEmailMessage" rows="9"></textarea>
+                </div>
+            </div>
+
+            <div class="row modal-footer border-0 pt-0">
+                <button type="button" class="btn reminder-modal__btn-submit col ml-3" id="btnConfirmSendSingleReminder">
+                    <i class="fa-solid fa-paper-plane mr-2"></i>Send Email
+                </button>
+                <button type="button" class="btn btn-light border col-auto mr-3" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bulkReminderModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 reminder-modal">
+            <div class="modal-header border-0 pb-0">
+                <div class="modal-title-group">
+                    <h5 class="modal-title font-weight-bold text-danger">
+                        <i class="fa-solid fa-triangle-exclamation mr-2"></i>Confirm Bulk Reminders
+                    </h5>
+                    <p class="text-muted small mb-0">Send automated overdue reminders to all eligible students</p>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="mb-2">Are you sure you want to send email reminders to all
+                    <strong>{{metrics.totalOverdue}}</strong> overdue borrow cases?
+                </p>
+                <div class="alert alert-warning small mb-0">
+                    <i class="fa-solid fa-circle-info mr-1"></i>
+                    This action will dispatch automated emails to all affected students and update the reminder counters
+                    immediately.
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn reminder-modal__btn-submit" id="btnConfirmSendBulkReminders">
+                    <i class="fa-solid fa-paper-plane mr-2"></i>Send All Reminders
+                </button>
+                <button type="button" class="btn btn-light border" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#reminderModal').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget);
+
+            const id = button.data('id');
+            const student = button.data('student') || 'Student';
+            const email = button.data('email') || 'N/A';
+            const book = button.data('book') || 'Borrowed Book';
+            const days = button.data('days') || 0;
+            const message = button.data('message') || '';
+
+            const modal = $(this);
+            modal.find('#modalRecordId').val(id);
+            modal.find('#modalStudentNameTitle').text(student);
+            modal.find('#modalBookTitle').text(book);
+            modal.find('#modalStudentName').text(student);
+            modal.find('#modalStudentEmail').text(email);
+            modal.find('#modalDaysOverdue').text(days);
+            modal.find('#modalEmailMessage').val(message);
+        });
+
+        const btnSingle = document.getElementById('btnConfirmSendSingleReminder');
+        if (btnSingle) {
+            btnSingle.addEventListener('click', async function () {
+                const recordId = document.getElementById('modalRecordId').value;
+                const message = document.getElementById('modalEmailMessage').value;
+
+                if (!recordId) {
+                    alert('Lỗi: Không tìm thấy mã bản ghi mượn sách!');
+                    return;
+                }
+
+                const originalHtml = btnSingle.innerHTML;
+                btnSingle.disabled = true;
+                btnSingle.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Sending...';
+
+                try {
+                    const response = await fetch(`/admin/alerts/${recordId}/remind`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message }),
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const row = document.getElementById(`row-${recordId}`);
+                        if (row) {
+                            const countNum = row.querySelector('.reminders-count-num');
+                            if (countNum) {
+                                countNum.textContent = result.remindersSent;
+                            }
+                        }
+
+                        $('#reminderModal').modal('hide');
+                        alert(result.message || 'Đã gửi email nhắc nhở thành công!');
+                    } else {
+                        alert(result.message || 'Không thể gửi email nhắc nhở. Vui lòng thử lại.');
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi gửi AJAX nhắc nhở:', error);
+                    alert('Lỗi kết nối máy chủ khi thực hiện gửi email.');
+                } finally {
+                    btnSingle.disabled = false;
+                    btnSingle.innerHTML = originalHtml;
+                }
+            });
+        }
+
+        const btnBulk = document.getElementById('btnConfirmSendBulkReminders');
+        if (btnBulk) {
+            btnBulk.addEventListener('click', async function () {
+                const originalHtml = btnBulk.innerHTML;
+                btnBulk.disabled = true;
+                btnBulk.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Sending all...';
+
+                try {
+                    const response = await fetch('/admin/alerts/bulk-remind', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        $('#bulkReminderModal').modal('hide');
+                        alert(result.message || 'Đã kích hoạt gửi email nhắc nhở hàng loạt thành công!');
+                        window.location.reload();
+                    } else {
+                        alert(result.message || 'Không thể gửi email hàng loạt.');
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi gửi email hàng loạt:', error);
+                    alert('Lỗi kết nối máy chủ khi kích hoạt gửi thư hàng loạt.');
+                } finally {
+                    btnBulk.disabled = false;
+                    btnBulk.innerHTML = originalHtml;
+                }
+            });
+        }
+    });
+</script>

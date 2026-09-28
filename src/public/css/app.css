@@ -569,7 +569,7 @@
 
 .btn {
   display: inline-block;
-  padding: 12px 24px;
+  padding: 7px 18px;
   font-size: 1rem;
   font-weight: 600;
   text-align: center;
@@ -3366,7 +3366,6 @@ dialog.book-modal:not([open]) {
 .metric-card__title {
   font-size: 0.875rem;
   color: #92400e;
-  margin-bottom: 6px;
 }
 .metric-card__value {
   font-size: 1.5rem;
@@ -5730,6 +5729,353 @@ dialog.book-modal:not([open]) {
 }
 .book-import-modal__btn-template:hover {
   color: #ea580c;
+}
+
+.admin-alerts {
+  background-color: #f8faf9;
+  min-height: calc(100vh - 140px);
+}
+.admin-alerts__header .admin-alerts__title {
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+.admin-alerts__header .admin-alerts__subtitle {
+  font-size: 14px;
+  color: #92400e;
+}
+.admin-alerts__actions .admin-alerts__btn-report {
+  font-size: 12px;
+  font-weight: 500;
+  color: #2d3748;
+  border: solid 1px #cbd5e1;
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 8px 16px;
+  transition: all 0.25s ease-in-out;
+}
+.admin-alerts__actions .admin-alerts__btn-report:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #2d3748;
+}
+.admin-alerts__actions .admin-alerts__btn-bulk {
+  font-size: 12px;
+  background-color: #ea580c;
+  border-color: #ea580c;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 8px 18px;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
+  transition: all 0.25s ease-in-out;
+}
+.admin-alerts__actions .admin-alerts__btn-bulk:hover {
+  background-color: rgb(195.1902439024, 73.4048780488, 10.0097560976);
+  border-color: rgb(195.1902439024, 73.4048780488, 10.0097560976);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.35);
+}
+.admin-alerts__metrics .metric-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #ede8df;
+  border-left-width: 5px;
+  transition: all 0.25s ease-in-out;
+  height: 100%;
+}
+.admin-alerts__metrics .metric-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+.admin-alerts__metrics .metric-card--danger {
+  border-left-color: #dc2626;
+}
+.admin-alerts__metrics .metric-card--danger .metric-card__value {
+  color: #dc2626;
+}
+.admin-alerts__metrics .metric-card--warning {
+  border-left-color: #ea580c;
+}
+.admin-alerts__metrics .metric-card--warning .metric-card__value {
+  color: #ea580c;
+}
+.admin-alerts__metrics .metric-card--info {
+  border-left-color: #0284c7;
+}
+.admin-alerts__metrics .metric-card--info .metric-card__value {
+  color: #0284c7;
+}
+.admin-alerts__metrics .metric-card__header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+}
+.admin-alerts__metrics .metric-card__icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 13px;
+}
+.admin-alerts__metrics .metric-card__icon-wrap--danger {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+.admin-alerts__metrics .metric-card__icon-wrap--warning {
+  background-color: #fff7ed;
+  color: #ea580c;
+}
+.admin-alerts__metrics .metric-card__icon-wrap--info {
+  background-color: #f0f9ff;
+  color: #0284c7;
+}
+.admin-alerts__metrics .metric-card__value {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.admin-alerts__metrics .metric-card__desc {
+  font-size: 13px;
+  color: #92400e;
+}
+.admin-alerts__filter-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #ede8df;
+}
+.admin-alerts__filter-card .admin-alerts__filter-title {
+  font-size: 1.125rem;
+  color: #2d3748;
+}
+.admin-alerts__filter-card .admin-alerts__filter-desc {
+  font-size: 13px;
+  color: #92400e;
+}
+.admin-alerts__filter-card .admin-alerts__search-box .input-group-text {
+  border-color: #ede8df;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  padding-left: 14px;
+}
+.admin-alerts__filter-card .admin-alerts__search-box .form-control {
+  border-color: #ede8df;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  height: 42px;
+  font-size: 14px;
+}
+.admin-alerts__filter-card .admin-alerts__search-box .form-control:focus {
+  border-color: #e65c00;
+  box-shadow: 0 0 0 0.2rem rgba(230, 92, 0, 0.15);
+}
+.admin-alerts__filter-card .admin-alerts__select-box {
+  height: 42px;
+  border-color: #ede8df;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #2d3748;
+}
+.admin-alerts__filter-card .admin-alerts__select-box:focus {
+  border-color: #e65c00;
+  box-shadow: 0 0 0 0.2rem rgba(230, 92, 0, 0.15);
+}
+.admin-alerts__table-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #ede8df;
+  overflow: hidden;
+}
+.admin-alerts__table-card .admin-alerts__table-header {
+  background-color: #fff9f5;
+  border-bottom: 1px solid #fce7db;
+}
+.admin-alerts__table-card .admin-alerts__table-header .admin-alerts__table-title {
+  font-size: 1.125rem;
+  color: #2d3748;
+}
+.admin-alerts__table-card .admin-alerts__table-header .admin-alerts__table-desc {
+  font-size: 13px;
+  color: #92400e;
+}
+
+.overdue-table__th {
+  font-size: 0.875rem;
+  letter-spacing: 0.6px;
+  font-weight: 500;
+  color: #2d1b0e;
+  background-color: #fafaf9;
+  border-top: none;
+  border-bottom: 1px solid #ede8df;
+  padding: 14px 20px;
+}
+.overdue-table__row {
+  transition: all 0.25s ease-in-out;
+}
+.overdue-table__row:hover {
+  background-color: #fcfcfb;
+}
+.overdue-table__td {
+  padding: 16px 20px;
+  vertical-align: middle;
+  border-top: 1px solid #f1f5f9;
+}
+.overdue-table__cell-book {
+  max-width: 280px;
+}
+.overdue-table__cell-book .book-title-borrow {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.overdue-table__cell-book .book-author-borrow .book-isbn-borrow {
+  font-size: 0.75rem;
+  color: #92400e;
+}
+.overdue-table__cell-book .badge {
+  border-color: #e2e8f0;
+  font-weight: 500;
+  font-size: 11px;
+}
+.overdue-table__cell-student {
+  min-width: 200px;
+}
+.overdue-table__cell-student .student-borrow {
+  font-size: 0.875rem;
+}
+.overdue-table__cell-student .student-email {
+  font-size: 0.75rem;
+  color: blue;
+}
+.overdue-table__cell-overdue {
+  min-width: 180px;
+}
+.overdue-table__cell-overdue .overdue-days-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #dc2626;
+  background-color: #fef2f2;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.overdue-table__cell-overdue .reminders-count-text {
+  color: #64748b;
+}
+.overdue-table__cell-overdue .small {
+  color: #92400e;
+  font-size: 0.75rem;
+}
+.overdue-table__cell-status {
+  width: 130px;
+}
+.overdue-table__cell-actions {
+  width: 150px;
+}
+.overdue-table__cell-actions .overdue-table__btn-remind {
+  font-weight: 500;
+  font-size: 12px;
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: #2d3748;
+  border: solid 1px #cbd5e1;
+  background-color: #ffffff;
+  transition: all 0.25s ease-in-out;
+}
+.overdue-table__cell-actions .overdue-table__btn-remind:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #2d3748;
+}
+
+.badge-tier {
+  display: inline-block;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 50px;
+  color: #ffffff;
+}
+.badge-tier--overdue {
+  background-color: #dc2626;
+}
+.badge-tier--critical {
+  background-color: #991b1b;
+}
+.badge-tier--lost {
+  background-color: #7f1d1d;
+}
+.badge-tier--normal {
+  background-color: #16a34a;
+}
+
+.reminder-modal {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+.reminder-modal .modal-title {
+  font-size: 18px;
+  color: #2d3748;
+}
+.reminder-modal .modal-title .small {
+  color: #92400e;
+}
+.reminder-modal__summary {
+  background-color: #fffbf7;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.reminder-modal__summary-item {
+  margin-bottom: 4px;
+  color: #334155;
+}
+.reminder-modal__summary-item:last-child {
+  margin-bottom: 0;
+}
+.reminder-modal__summary-item span.font-weight-bold {
+  display: inline-block;
+  min-width: 105px;
+  color: #1e293b;
+}
+.reminder-modal__textarea {
+  border-color: #fdba74;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #1e293b;
+  resize: vertical;
+  padding: 12px;
+}
+.reminder-modal__textarea:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 0.2rem rgba(234, 88, 12, 0.15);
+}
+.reminder-modal__btn-submit {
+  background-color: #ea580c;
+  border-color: #ea580c;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 7px 18px;
+  transition: all 0.25s ease-in-out;
+}
+.reminder-modal__btn-submit:hover {
+  background-color: rgb(195.1902439024, 73.4048780488, 10.0097560976);
+  border-color: rgb(195.1902439024, 73.4048780488, 10.0097560976);
+  color: #ffffff;
 }
 
 /*# sourceMappingURL=app.css.map */

@@ -15,6 +15,118 @@ const formatDate = (date) => {
 };
 
 /**
+ * @param {Date|string|null} date
+ * @returns {string}
+ */
+const formatDateDisplay = (date) => {
+    if (!date) return 'N/A';
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return 'N/A';
+    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+};
+
+/**
+ * @param {Date|string} dueDate 
+ * @param {Date|string|null} returnDate 
+ * @returns {number}
+ */
+const calculateOverdueDays = (dueDate, returnDate = null) => {
+    if (returnDate) return 0;
+    const due = new Date(dueDate).getTime();
+    const now = Date.now();
+    if (isNaN(due) || now <= due) return 0;
+
+    return Math.floor((now - due) / (1000 * 60 * 60 * 24));
+};
+
+/**
+ * @param {number} overdueDays 
+ * @returns {{ tier: string, label: string, badgeClass: string }}
+ */
+const getOverdueAlertTier = (overdueDays) => {
+    if (overdueDays >= 14) {
+        return {
+            tier: 'LOST',
+            label: 'LOST',
+            badgeClass: 'badge-tier--lost',
+        };
+    }
+    if (overdueDays >= 7) {
+        return {
+            tier: 'CRITICAL',
+            label: 'CRITICAL',
+            badgeClass: 'badge-tier--critical',
+        };
+    }
+    if (overdueDays >= 1) {
+        return {
+            tier: 'OVERDUE',
+            label: 'OVERDUE',
+            badgeClass: 'badge-tier--overdue',
+        };
+    }
+    return {
+        tier: 'NORMAL',
+        label: 'ON TIME',
+        badgeClass: 'badge-tier--normal',
+    };
+};
+
+/**
+ * @param {Object} params
+ * @param {string} params.studentName
+ * @param {string} params.bookTitle
+ * @param {string} params.dueDateFormatted
+ * @param {number} params.daysOverdue
+ * @returns {string}
+ */
+const generateDefaultEmailMessage = ({ studentName, bookTitle, dueDateFormatted, daysOverdue }) => {
+    return (
+        `Dear ${studentName},\n\n` +
+        `This is a reminder that the following book is overdue:\n\n` +
+        `Title: ${bookTitle}\n` +
+        `Due Date: ${dueDateFormatted}\n` +
+        `Days Overdue: ${daysOverdue}\n\n` +
+        `Please return this book as soon as possible.\n\n` +
+        `Thank you,\nLibrary Administration`
+    );
+};
+
+/**
+ * @param {Array<Object>} records
+ * @returns {{ totalOverdue: number, criticalCases: number, averageOverdue: number }}
+ */
+const calculateOverdueSummary = (records = []) => {
+    const totalOverdue = records.length;
+    if (totalOverdue === 0) {
+        return {
+            totalOverdue: 0,
+            criticalCases: 0,
+            averageOverdue: 0,
+        };
+    }
+
+    let totalDays = 0;
+    let criticalCases = 0;
+
+    for (const record of records) {
+        const days = record.overdueDays || 0;
+        totalDays += days;
+        if (days >= 7) {
+            criticalCases += 1;
+        }
+    }
+
+    const averageOverdue = Math.round(totalDays / totalOverdue);
+
+    return {
+        totalOverdue,
+        criticalCases,
+        averageOverdue,
+    };
+};
+
+/**
  * @param {Object} record
  * @returns {Object}
  */
@@ -59,5 +171,10 @@ const processBorrowStatus = (record) => {
 
 module.exports = {
     formatDate,
+    formatDateDisplay,
+    calculateOverdueDays,
+    getOverdueAlertTier,
+    generateDefaultEmailMessage,
+    calculateOverdueSummary,
     processBorrowStatus,
 };

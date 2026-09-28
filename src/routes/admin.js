@@ -15,5 +15,9 @@ router.put('/books/:id', requireAuth, requireAdmin, adminController.updateBook);
 router.delete('/books/:id', requireAuth, requireAdmin, adminController.deleteBook);
 router.get('/books/export', requireAuth, requireAdmin, adminController.exportBooks);
 router.post('/books/bulk-import', requireAuth, requireAdmin, adminController.bulkImportBooks);
+router.get('/alerts', requireAuth, requireAdmin, adminController.overdueAlerts);
+router.get('/alerts/export', requireAuth, requireAdmin, adminController.exportOverdueCsv);
+router.post('/alerts/:id/remind', requireAuth, requireAdmin, adminController.sendReminder);
+router.post('/alerts/bulk-remind', requireAuth, requireAdmin, adminController.sendBulkReminders);
 
 module.exports = router;
