@@ -9,8 +9,11 @@ const port = 3000
 const route = require('./routes');
 const db = require('./config/db');
 
+const { seedSampleLogs } = require('./app/helpers/loggerHelper');
+
 // Connect to DB
 db.connect();
+seedSampleLogs();
 
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -35,14 +38,13 @@ app.engine('handlebars', engine({
 app.set('view engine', 'handlebars')
 app.set('views', path.join(__dirname, 'resources', 'views'))
 
-// Cấu hình Middleware Session
 app.use(session({
-  secret: 'my_super_secret_key_library_2026', // Khóa bí mật để ký session ID
-  resave: false,                              // Không lưu lại nếu session không thay đổi
-  saveUninitialized: false,                   // Không tạo session nếu người dùng chưa đăng nhập
+  secret: 'my_super_secret_key_library_2026',
+  resave: false,
+  saveUninitialized: false,
   cookie: {
-    secure: false,                          // Set là true nếu dự án có HTTPS
-    maxAge: 1000 * 60 * 60 * 24             // Thời gian sống của cookie: 1 ngày (tính bằng milliseconds)
+    secure: false,
+    maxAge: 1000 * 60 * 60 * 24
   }
 }));
 

@@ -1,0 +1,339 @@
+@use '../abstracts/variables' as v;
+
+.activity-logs {
+    background-color: v.$color-bg-page;
+    min-height: calc(100vh - 140px);
+
+    &__title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: v.$color-text-main;
+
+        &-icon {
+            color: v.$color-metric-total;
+        }
+    }
+
+    &__subtitle {
+        font-size: v.$font-size-base;
+        color: v.$color-brown;
+    }
+
+    .metric-card {
+        background-color: v.$color-white;
+        border: 1px solid v.$color-border;
+        border-radius: v.$border-radius-md;
+        box-shadow: v.$shadow-card;
+        transition: v.$transition-base;
+        border-left: 5px solid transparent;
+        height: 100%;
+        padding: 0;
+
+        &:hover {
+            box-shadow: v.$shadow-card-hover;
+            transform: translateY(-2px);
+        }
+
+        &__body {
+            padding: 16px 18px;
+        }
+
+        &__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        &__title {
+            font-size: 0.875rem;
+            color: v.$color-brown;
+        }
+
+        &__icon-box {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        &__value {
+            font-size: 26px;
+            font-weight: 700;
+            color: v.$color-text-main;
+            line-height: 1.2;
+        }
+
+        &--total {
+            border-left-color: v.$color-metric-total;
+
+            .metric-card__icon-box {
+                background-color: v.$bg-icon-total;
+                color: v.$color-metric-total;
+            }
+        }
+
+        &--auth {
+            border-left-color: v.$color-metric-auth;
+
+            .metric-card__icon-box {
+                background-color: v.$bg-icon-auth;
+                color: v.$color-metric-auth;
+            }
+        }
+
+        &--books {
+            border-left-color: v.$color-metric-books;
+
+            .metric-card__icon-box {
+                background-color: v.$bg-icon-books;
+                color: v.$color-metric-books;
+            }
+        }
+
+        &--users {
+            border-left-color: v.$color-metric-users;
+
+            .metric-card__icon-box {
+                background-color: v.$bg-icon-users;
+                color: v.$color-metric-users;
+            }
+        }
+
+        &--attendance {
+            border-left-color: v.$color-metric-attendance;
+
+            .metric-card__icon-box {
+                background-color: v.$bg-icon-attendance;
+                color: v.$color-metric-attendance;
+            }
+        }
+
+        &--system {
+            border-left-color: v.$color-metric-system;
+
+            .metric-card__icon-box {
+                background-color: v.$bg-icon-system;
+                color: v.$color-metric-system;
+            }
+        }
+    }
+
+    &__filter-card {
+        border: 1px solid v.$color-border;
+        border-radius: v.$border-radius-md;
+        box-shadow: v.$shadow-card;
+        background-color: v.$color-white;
+
+        .card-body {
+            padding: 20px 24px;
+        }
+    }
+
+    &__filter-title {
+        font-size: v.$font-size-base;
+        color: v.$color-text-main;
+
+        i {
+            color: v.$color-metric-total;
+        }
+    }
+
+    &__filter-subtitle {
+        font-size: v.$font-size-base;
+        color: v.$color-brown;
+    }
+
+    &__search-box {
+        .input-group-text {
+            border-color: #e2e8f0;
+            padding-left: 14px;
+            padding-right: 10px;
+        }
+
+        .form-control {
+            border-color: #e2e8f0;
+            font-size: v.$font-size-base;
+            height: 42px;
+
+            &:focus {
+                border-color: v.$color-metric-total;
+                box-shadow: 0 0 0 0.2rem rgba(234, 88, 12, 0.15);
+            }
+
+            &::placeholder {
+                color: v.$color-text-light;
+            }
+        }
+    }
+
+    &__select {
+        height: 42px;
+        font-size: v.$font-size-base;
+        border-color: #e2e8f0;
+        border-radius: v.$border-radius-sm;
+        color: v.$color-text-main;
+
+        &:focus {
+            border-color: v.$color-metric-total;
+            box-shadow: 0 0 0 0.2rem rgba(234, 88, 12, 0.15);
+        }
+    }
+
+    &__feed-title {
+        font-size: v.$font-size-base;
+        color: v.$color-text-main;
+
+        i {
+            color: v.$color-metric-total;
+        }
+    }
+
+    &__feed-count {
+        font-size: v.$font-size-base;
+        color: v.$color-brown;
+    }
+}
+
+.log-item {
+    background-color: v.$color-white;
+    border: 1px solid v.$color-border;
+    border-radius: v.$border-radius-md;
+    box-shadow: v.$shadow-card;
+    transition: v.$transition-base;
+
+    &:hover {
+        box-shadow: v.$shadow-card-hover;
+    }
+
+    &__body {
+        padding: 18px 22px;
+    }
+
+    &__row {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    &__icon-col {
+        margin-right: 18px;
+        flex-shrink: 0;
+    }
+
+    &__icon-box {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+
+        &--books {
+            background-color: v.$bg-icon-books;
+            color: v.$color-metric-books;
+        }
+
+        &--users {
+            background-color: v.$bg-icon-users;
+            color: v.$color-metric-users;
+        }
+
+        &--authentication {
+            background-color: v.$bg-icon-total;
+            color: v.$color-metric-total;
+        }
+
+        &--system {
+            background-color: v.$bg-icon-system;
+            color: v.$color-metric-system;
+        }
+
+        &--attendance {
+            background-color: v.$bg-icon-attendance;
+            color: v.$color-metric-attendance;
+        }
+    }
+
+    &__content-col {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__action-title {
+        font-size: 14px;
+        color: v.$color-text-main;
+    }
+
+    &__desc {
+        font-size: v.$font-size-base;
+        line-height: 1.5;
+        color: v.$color-brown;
+    }
+
+    &__badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: v.$border-radius-pill;
+        text-transform: capitalize;
+        letter-spacing: 0.2px;
+
+        &--books {
+            background-color: v.$color-metric-books;
+            color: v.$color-white;
+        }
+
+        &--users {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        &--authentication {
+            background-color: v.$color-metric-total;
+            color: v.$color-white;
+        }
+
+        &--system {
+            background-color: v.$color-metric-system;
+            color: v.$color-white;
+        }
+
+        &--attendance {
+            background-color: v.$color-metric-attendance;
+            color: v.$color-white;
+        }
+    }
+
+    &__time {
+        font-size: 0.75rem;
+        color: v.$color-brown;
+        white-space: nowrap;
+    }
+
+    &__actor-box {
+        background-color: #f0f7ff;
+        border-radius: v.$border-radius-sm;
+        padding: 8px 14px;
+        display: inline-block;
+        min-width: 220px;
+    }
+
+    &__actor-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #2563eb;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    &__actor-name {
+        font-size: 0.875rem;
+        color: #2563eb;
+    }
+}

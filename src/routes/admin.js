@@ -19,5 +19,6 @@ router.get('/alerts', requireAuth, requireAdmin, adminController.overdueAlerts);
 router.get('/alerts/export', requireAuth, requireAdmin, adminController.exportOverdueCsv);
 router.post('/alerts/:id/remind', requireAuth, requireAdmin, adminController.sendReminder);
 router.post('/alerts/bulk-remind', requireAuth, requireAdmin, adminController.sendBulkReminders);
+router.get('/logs', requireAuth, requireAdmin, adminController.activityLogs);
 
 module.exports = router;

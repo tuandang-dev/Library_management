@@ -6078,4 +6078,281 @@ dialog.book-modal:not([open]) {
   color: #ffffff;
 }
 
+.activity-logs {
+  background-color: #f8faf9;
+  min-height: calc(100vh - 140px);
+}
+.activity-logs__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+.activity-logs__title-icon {
+  color: #ea580c;
+}
+.activity-logs__subtitle {
+  font-size: 14px;
+  color: #92400e;
+}
+.activity-logs .metric-card {
+  background-color: #ffffff;
+  border: 1px solid #ede8df;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease-in-out;
+  border-left: 5px solid transparent;
+  height: 100%;
+  padding: 0;
+}
+.activity-logs .metric-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+.activity-logs .metric-card__body {
+  padding: 16px 18px;
+}
+.activity-logs .metric-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.activity-logs .metric-card__title {
+  font-size: 0.875rem;
+  color: #92400e;
+}
+.activity-logs .metric-card__icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.activity-logs .metric-card__value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #2d3748;
+  line-height: 1.2;
+}
+.activity-logs .metric-card--total {
+  border-left-color: #ea580c;
+}
+.activity-logs .metric-card--total .metric-card__icon-box {
+  background-color: #fff7ed;
+  color: #ea580c;
+}
+.activity-logs .metric-card--auth {
+  border-left-color: #2563eb;
+}
+.activity-logs .metric-card--auth .metric-card__icon-box {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+.activity-logs .metric-card--books {
+  border-left-color: #16a34a;
+}
+.activity-logs .metric-card--books .metric-card__icon-box {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+.activity-logs .metric-card--users {
+  border-left-color: #7c3aed;
+}
+.activity-logs .metric-card--users .metric-card__icon-box {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+}
+.activity-logs .metric-card--attendance {
+  border-left-color: #d97706;
+}
+.activity-logs .metric-card--attendance .metric-card__icon-box {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+.activity-logs .metric-card--system {
+  border-left-color: #dc2626;
+}
+.activity-logs .metric-card--system .metric-card__icon-box {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+.activity-logs__filter-card {
+  border: 1px solid #ede8df;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  background-color: #ffffff;
+}
+.activity-logs__filter-card .card-body {
+  padding: 20px 24px;
+}
+.activity-logs__filter-title {
+  font-size: 14px;
+  color: #2d3748;
+}
+.activity-logs__filter-title i {
+  color: #ea580c;
+}
+.activity-logs__filter-subtitle {
+  font-size: 14px;
+  color: #92400e;
+}
+.activity-logs__search-box .input-group-text {
+  border-color: #e2e8f0;
+  padding-left: 14px;
+  padding-right: 10px;
+}
+.activity-logs__search-box .form-control {
+  border-color: #e2e8f0;
+  font-size: 14px;
+  height: 42px;
+}
+.activity-logs__search-box .form-control:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 0.2rem rgba(234, 88, 12, 0.15);
+}
+.activity-logs__search-box .form-control::placeholder {
+  color: #a0aec0;
+}
+.activity-logs__select {
+  height: 42px;
+  font-size: 14px;
+  border-color: #e2e8f0;
+  border-radius: 6px;
+  color: #2d3748;
+}
+.activity-logs__select:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 0.2rem rgba(234, 88, 12, 0.15);
+}
+.activity-logs__feed-title {
+  font-size: 14px;
+  color: #2d3748;
+}
+.activity-logs__feed-title i {
+  color: #ea580c;
+}
+.activity-logs__feed-count {
+  font-size: 14px;
+  color: #92400e;
+}
+
+.log-item {
+  background-color: #ffffff;
+  border: 1px solid #ede8df;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease-in-out;
+}
+.log-item:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.log-item__body {
+  padding: 18px 22px;
+}
+.log-item__row {
+  display: flex;
+  align-items: flex-start;
+}
+.log-item__icon-col {
+  margin-right: 18px;
+  flex-shrink: 0;
+}
+.log-item__icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.log-item__icon-box--books {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+.log-item__icon-box--users {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+}
+.log-item__icon-box--authentication {
+  background-color: #fff7ed;
+  color: #ea580c;
+}
+.log-item__icon-box--system {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+.log-item__icon-box--attendance {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+.log-item__content-col {
+  flex: 1;
+  min-width: 0;
+}
+.log-item__action-title {
+  font-size: 14px;
+  color: #2d3748;
+}
+.log-item__desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #92400e;
+}
+.log-item__badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 50px;
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+}
+.log-item__badge--books {
+  background-color: #16a34a;
+  color: #ffffff;
+}
+.log-item__badge--users {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+.log-item__badge--authentication {
+  background-color: #ea580c;
+  color: #ffffff;
+}
+.log-item__badge--system {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+.log-item__badge--attendance {
+  background-color: #d97706;
+  color: #ffffff;
+}
+.log-item__time {
+  font-size: 0.75rem;
+  color: #92400e;
+  white-space: nowrap;
+}
+.log-item__actor-box {
+  background-color: #f0f7ff;
+  border-radius: 6px;
+  padding: 8px 14px;
+  display: inline-block;
+  min-width: 220px;
+}
+.log-item__actor-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2563eb;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.log-item__actor-name {
+  font-size: 0.875rem;
+  color: #2563eb;
+}
+
 /*# sourceMappingURL=app.css.map */

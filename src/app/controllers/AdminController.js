@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Book = require('../models/Book');
 const Category = require('../models/Category');
 const BorrowRecord = require('../models/BorrowRecord');
+const ActivityLog = require('../models/ActivityLog');
 const borrowHelper = require('../../util/borrowHelper');
 const { sendEmail } = require('../helpers/emailHelper');
 
@@ -1130,6 +1131,126 @@ class AdminController {
             return res.status(500).render('error', {
                 layout: 'user',
                 message: 'Không thể xuất báo cáo danh sách sách quá hạn.',
+            });
+        }
+    }
+
+    // [GET] /admin/logs
+    async activityLogs(req, res) {
+        try {
+            const { search, category } = req.query;
+            const filter = {};
+
+            if (category && category !== 'all') {
+                filter.category = category.trim().toLowerCase();
+            }
+
+            if (search && search.trim() !== '') {
+                const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const keyword = escapeRegex(search.trim());
+                filter.$or = [
+                    { action: { $regex: keyword, $options: 'i' } },
+                    { description: { $regex: keyword, $options: 'i' } },
+                    { 'actor.name': { $regex: keyword, $options: 'i' } },
+                    { 'actor.role': { $regex: keyword, $options: 'i' } },
+                    { categoryLabel: { $regex: keyword, $options: 'i' } },
+                ];
+            }
+
+            const [
+                rawLogs,
+                totalLogsCount,
+                authCount,
+                booksCount,
+                usersCount,
+                attendanceCount,
+                systemCount,
+            ] = await Promise.all([
+                ActivityLog.find(filter).sort({ createdAt: -1 }).lean(),
+                ActivityLog.countDocuments(),
+                ActivityLog.countDocuments({ category: 'authentication' }),
+                ActivityLog.countDocuments({ category: 'books' }),
+                ActivityLog.countDocuments({ category: 'users' }),
+                ActivityLog.countDocuments({ category: 'attendance' }),
+                ActivityLog.countDocuments({ category: 'system' }),
+            ]);
+
+            const formatLogTime = (date) => {
+                if (!date) return 'N/A';
+                const d = new Date(date);
+                if (isNaN(d.getTime())) return 'N/A';
+
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = months[d.getMonth()];
+                const day = d.getDate();
+
+                let hours = d.getHours();
+                const minutes = d.getMinutes().toString().padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours.toString().padStart(2, '0') : '12';
+
+                return `${month} ${day} · ${hours}:${minutes} ${ampm}`;
+            };
+
+            const logs = rawLogs.map((log) => {
+                const formattedTime = formatLogTime(log.createdAt);
+                const isSystem = !log.actor?.name || log.actor.name.toLowerCase() === 'system';
+
+                const actorDisplayText = isSystem
+                    ? 'System'
+                    : `${log.actor.name}${log.actor.role ? ` (${log.actor.role})` : ''}`;
+
+                return {
+                    ...log,
+                    formattedTime,
+                    actorDisplayText,
+                    badgeModifier: log.category || 'system',
+                };
+            });
+
+            const metrics = {
+                total: totalLogsCount,
+                auth: authCount,
+                books: booksCount,
+                users: usersCount,
+                attendance: attendanceCount,
+                system: systemCount,
+            };
+
+            const categoryOptions = [
+                { value: 'all', label: 'All Categories', isSelected: !category || category === 'all' },
+                { value: 'authentication', label: 'Authentication', isSelected: category === 'authentication' },
+                { value: 'books', label: 'Books', isSelected: category === 'books' },
+                { value: 'users', label: 'Users', isSelected: category === 'users' },
+                { value: 'attendance', label: 'Attendance', isSelected: category === 'attendance' },
+                { value: 'system', label: 'System', isSelected: category === 'system' },
+            ];
+
+            return res.render('admin/activity-logs', {
+                layout: 'user',
+                title: 'Global Activity Logs - UCC Library',
+                isAdminPortal: true,
+                isAdmin: true,
+                user: {
+                    ...req.session.user,
+                    isAdmin: true,
+                },
+                metrics,
+                logs,
+                showingCount: logs.length,
+                totalLogsCount,
+                categoryOptions,
+                filters: {
+                    search: search || '',
+                    category: category || 'all',
+                },
+            });
+        } catch (error) {
+            console.error('Lỗi khi tải Global Activity Logs:', error);
+            return res.status(500).render('error', {
+                layout: 'user',
+                message: 'Không thể tải nhật ký hoạt động hệ thống.',
             });
         }
     }
