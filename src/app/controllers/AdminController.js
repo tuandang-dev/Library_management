@@ -5,7 +5,9 @@ const Book = require('../models/Book');
 const Category = require('../models/Category');
 const BorrowRecord = require('../models/BorrowRecord');
 const ActivityLog = require('../models/ActivityLog');
+const Attendance = require('../models/Attendance');
 const borrowHelper = require('../../util/borrowHelper');
+const attendanceHelper = require('../helpers/attendanceHelper');
 const { sendEmail } = require('../helpers/emailHelper');
 
 const DEFAULT_BOOK_COVER = 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400';
@@ -1251,6 +1253,155 @@ class AdminController {
             return res.status(500).render('error', {
                 layout: 'user',
                 message: 'Không thể tải nhật ký hoạt động hệ thống.',
+            });
+        }
+    }
+
+    // [GET] /admin/attendance
+    async attendance(req, res) {
+        try {
+            const { period = 'week', search, date = 'today' } = req.query;
+
+            const periodRange = attendanceHelper.getPeriodDateRange(period);
+
+            const attendanceFilter = {};
+            const dateRange = attendanceHelper.getDateFilterRange(date);
+            if (dateRange) {
+                attendanceFilter.checkInTime = dateRange;
+            }
+
+            if (search && search.trim() !== '') {
+                const keyword = search.trim();
+                const matchedUsers = await User.find({
+                    $or: [
+                        { fullname: { $regex: keyword, $options: 'i' } },
+                        { email: { $regex: keyword, $options: 'i' } },
+                    ],
+                }).select('_id').lean();
+
+                const userIds = matchedUsers.map((u) => u._id);
+                attendanceFilter.userId = { $in: userIds };
+            }
+
+            const [periodVisitorsCount, rawRecords] = await Promise.all([
+                Attendance.countDocuments({
+                    checkInTime: { $gte: periodRange.start, $lte: periodRange.end },
+                }),
+                Attendance.find(attendanceFilter)
+                    .populate('userId', 'fullname email')
+                    .sort({ checkInTime: -1 })
+                    .lean(),
+            ]);
+
+            const records = rawRecords.map(attendanceHelper.formatAttendanceRecord);
+
+            return res.render('admin/attendance', {
+                layout: 'user',
+                title: 'Attendance Logs - UCC Library',
+                isAdminPortal: true,
+                isAdmin: true,
+                isAttendancePage: true,
+                user: {
+                    ...req.session.user,
+                    isAdmin: true,
+                },
+                periodVisitorsCount,
+                periodLabel: periodRange.label,
+                records,
+                showingCount: records.length,
+                filters: {
+                    period,
+                    search: search || '',
+                    date,
+                    isWeek: period === 'week',
+                    isMonth: period === 'month',
+                    isYear: period === 'year',
+                    isDateToday: date === 'today',
+                    isDateYesterday: date === 'yesterday',
+                    isDateAll: date === 'all',
+                },
+            });
+        } catch (error) {
+            console.error('Lỗi khi tải trang Quản lý Điểm danh:', error);
+            return res.status(500).render('error', {
+                layout: 'user',
+                message: 'Không thể tải nhật ký điểm danh và dữ liệu phân tích lượt khách.',
+            });
+        }
+    }
+
+    // [GET] /admin/attendance/export
+    async exportAttendanceLogs(req, res) {
+        try {
+            const { search, date } = req.query;
+            const filter = {};
+
+            if (date && date !== 'all') {
+                const dateRange = attendanceHelper.getDateFilterRange(date);
+                if (dateRange) {
+                    filter.checkInTime = dateRange;
+                }
+            }
+
+            if (search && search.trim() !== '') {
+                const keyword = search.trim();
+                const matchedUsers = await User.find({
+                    $or: [
+                        { fullname: { $regex: keyword, $options: 'i' } },
+                        { email: { $regex: keyword, $options: 'i' } },
+                    ],
+                }).select('_id').lean();
+
+                const userIds = matchedUsers.map((u) => u._id);
+                filter.userId = { $in: userIds };
+            }
+
+            const rawRecords = await Attendance.find(filter)
+                .populate('userId', 'fullname email')
+                .sort({ checkInTime: -1 })
+                .lean();
+
+            const headers = [
+                'Student Name',
+                'Student Email',
+                'Date',
+                'Day of Week',
+                'Check-in Time',
+                'Method',
+                'Location',
+                'Status',
+            ];
+
+            const escapeCsv = (str) => {
+                if (str === null || str === undefined) return '""';
+                const clean = String(str).replace(/"/g, '""');
+                return `"${clean}"`;
+            };
+
+            const rows = rawRecords.map((record) => {
+                const formatted = attendanceHelper.formatAttendanceRecord(record);
+                return [
+                    escapeCsv(formatted.studentName),
+                    escapeCsv(formatted.studentEmail),
+                    escapeCsv(formatted.monthDay),
+                    escapeCsv(formatted.dayOfWeek),
+                    escapeCsv(formatted.checkInTimeFormatted),
+                    escapeCsv(formatted.method),
+                    escapeCsv(formatted.location),
+                    escapeCsv(formatted.statusLabel),
+                ].join(',');
+            });
+
+            const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+
+            res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+            res.setHeader('Content-Disposition', 'attachment; filename="attendance-logs-report.csv"');
+            return res.send(csvContent);
+        } catch (error) {
+            console.error('Lỗi khi xuất danh sách điểm danh ra CSV:', error);
+            return res.status(500).render('error', {
+                layout: 'user',
+                message: 'Không thể xuất dữ liệu nhật ký điểm danh ra file CSV.',
             });
         }
     }

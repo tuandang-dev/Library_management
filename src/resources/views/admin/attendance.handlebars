@@ -1,0 +1,138 @@
+<div class="admin-attendance">
+    <div class="admin-attendance__header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="admin-attendance__title">
+                <i class="fa-regular fa-calendar-days admin-attendance__title-icon mr-2"></i>Attendance Logs
+            </h1>
+            <p class="admin-attendance__subtitle mb-0">Monitor student visits and library usage patterns.</p>
+        </div>
+        <div>
+            <a href="/admin/attendance/export?date={{filters.date}}&search={{filters.search}}"
+                class="btn admin-attendance__export-btn" title="Export records to CSV">
+                <i class="fa-solid fa-download mr-1"></i> Export Logs
+            </a>
+        </div>
+    </div>
+
+    <div class="card admin-attendance__card mb-4">
+        <div class="card-body p-4">
+            <div class="mb-3">
+                <h5 class="admin-attendance__card-title mb-1">Total Visitors</h5>
+                <p class="admin-attendance__card-desc mb-0">View visitor statistics by time period</p>
+            </div>
+
+            <div class="admin-attendance__period-toolbar mb-4">
+                <div class="admin-attendance__period-pill">
+                    <a href="/admin/attendance?period=week&date={{filters.date}}&search={{filters.search}}"
+                        class="admin-attendance__period-btn {{#if filters.isWeek}}admin-attendance__period-btn--active{{/if}}">
+                        Week
+                    </a>
+                    <a href="/admin/attendance?period=month&date={{filters.date}}&search={{filters.search}}"
+                        class="admin-attendance__period-btn {{#if filters.isMonth}}admin-attendance__period-btn--active{{/if}}">
+                        Month
+                    </a>
+                    <a href="/admin/attendance?period=year&date={{filters.date}}&search={{filters.search}}"
+                        class="admin-attendance__period-btn {{#if filters.isYear}}admin-attendance__period-btn--active{{/if}}">
+                        Year
+                    </a>
+                </div>
+            </div>
+
+            <div class="admin-attendance__stat-display text-center py-2">
+                <div class="admin-attendance__stat-period small mb-1">
+                    <i class="fa-regular fa-user mr-1"></i> {{periodLabel}}
+                </div>
+                <div class="admin-attendance__stat-count">
+                    {{periodVisitorsCount}}
+                </div>
+                <div class="admin-attendance__stat-caption small">
+                    Total visitors
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card admin-attendance__card mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+                <i class="fa-solid fa-filter admin-attendance__filter-icon mr-2"></i>
+                <h6 class="admin-attendance__filter-heading mb-0">Filter Logs</h6>
+            </div>
+
+            <form method="GET" action="/admin/attendance" id="adminAttendanceFilterForm">
+                <input type="hidden" name="period" value="{{filters.period}}">
+
+                <div class="form-row align-items-center">
+                    <div class="col-md-9 mb-2 mb-md-0">
+                        <div class="admin-attendance__search-wrapper">
+                            <input type="text" name="search" class="form-control admin-attendance__search-input"
+                                placeholder="Search by student name or email..." value="{{filters.search}}"
+                                autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="admin-attendance__select-wrapper">
+                            <select name="date" class="form-control admin-attendance__select"
+                                onchange="document.getElementById('adminAttendanceFilterForm').submit()">
+                                <option value="today" {{#if filters.isDateToday}}selected{{/if}}>Today</option>
+                                <option value="yesterday" {{#if filters.isDateYesterday}}selected{{/if}}>Yesterday
+                                </option>
+                                <option value="all" {{#if filters.isDateAll}}selected{{/if}}>All dates</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="admin-attendance__records-section">
+        <div class="mb-3">
+            <h5 class="admin-attendance__records-title mb-1">Attendance Records</h5>
+            <p class="admin-attendance__records-count small mb-0">Showing {{showingCount}} records</p>
+        </div>
+
+        {{#if records.length}}
+        <div class="admin-attendance__records-list">
+            {{#each records}}
+            <div class="admin-attendance__record-item d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <div class="admin-attendance__date-block text-left mr-4">
+                        <div class="admin-attendance__date-day">{{this.monthDay}}</div>
+                        <div class="admin-attendance__date-weekday small">{{this.dayOfWeek}}</div>
+                    </div>
+
+                    <div class="admin-attendance__user-block">
+                        <div class="admin-attendance__user-name d-flex align-items-center">
+                            <i class="fa-regular fa-user admin-attendance__user-icon mr-2"></i>
+                            <span class="text-dark">{{this.studentName}}</span>
+                        </div>
+                        <div class="admin-attendance__checkin-time small mt-1">
+                            Check-in: {{this.checkInTimeFormatted}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-attendance__status-block text-right">
+                    <div class="admin-attendance__status-text text-dark">
+                        {{this.statusLabel}}
+                    </div>
+                    <div class="admin-attendance__status-sub small">
+                        {{this.statusDescription}}
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{else}}
+        <div class="card admin-attendance__card py-5 text-center">
+            <div class="admin-attendance__empty-icon mb-3 text-muted">
+                <i class="fa-regular fa-calendar-xmark fa-3x"></i>
+            </div>
+            <h6 class="font-weight-bold text-dark mb-1">No attendance records found</h6>
+            <p class="text-muted small mb-0">There are no check-in logs matching your search and filter criteria.</p>
+        </div>
+        {{/if}}
+    </div>
+</div>

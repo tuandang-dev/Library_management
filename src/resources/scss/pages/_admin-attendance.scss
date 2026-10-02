@@ -1,0 +1,285 @@
+@use '../abstracts/variables' as v;
+
+.admin-attendance {
+
+    &__header {
+        margin-bottom: v.$spacing-lg;
+    }
+
+    &__title {
+        font-size: v.$font-size-xl;
+        font-weight: 700;
+        color: v.$color-text-main;
+        display: flex;
+        align-items: center;
+        line-height: 1.2;
+    }
+
+    &__title-icon {
+        font-size: 22px;
+        color: v.$color-text-main;
+    }
+
+    &__subtitle {
+        font-size: v.$font-size-sm;
+        color: v.$color-brown;
+    }
+
+    &__export-btn {
+        background-color: v.$color-white;
+        color: v.$color-text-main;
+        border: 1px solid v.$color-border;
+        border-radius: v.$border-radius-sm;
+        font-size: v.$font-size-sm;
+        font-weight: 600;
+        padding: 8px 16px;
+        transition: v.$transition-base;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+        &:hover {
+            background-color: #fdfbf7;
+            border-color: darken(#ede8df, 10%);
+            color: v.$color-primary;
+            text-decoration: none;
+        }
+    }
+
+    &__card {
+        background-color: v.$color-white;
+        border: 1px solid v.$color-border;
+        border-radius: v.$border-radius-md;
+        box-shadow: v.$shadow-card;
+    }
+
+    &__card-title {
+        font-size: v.$font-size-md;
+        font-weight: 700;
+        color: v.$color-text-main;
+    }
+
+    &__card-desc {
+        font-size: v.$font-size-xs;
+        color: v.$color-brown;
+    }
+
+    &__period-toolbar {
+        width: 100%;
+    }
+
+    &__period-pill {
+        display: flex;
+        background-color: #fbf5eb;
+        border-radius: v.$border-radius-pill;
+        padding: 4px;
+        width: 100%;
+    }
+
+    &__period-btn {
+        flex: 1;
+        text-align: center;
+        padding: 8px 16px;
+        border-radius: v.$border-radius-pill;
+        font-size: v.$font-size-sm;
+        font-weight: 500;
+        color: #6b5e51;
+        text-decoration: none;
+        transition: v.$transition-base;
+
+        &:hover {
+            color: v.$color-text-main;
+            text-decoration: none;
+        }
+
+        &--active {
+            background-color: v.$color-white;
+            color: v.$color-text-main;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+            &:hover {
+                color: v.$color-text-main;
+            }
+        }
+    }
+
+    &__stat-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__stat-period {
+        font-size: v.$font-size-xs;
+        font-weight: 600;
+        color: v.$color-brown;
+    }
+
+    &__stat-count {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: v.$color-text-main;
+        line-height: 1.1;
+        margin: 4px 0;
+    }
+
+    &__stat-caption {
+        font-size: v.$font-size-xs;
+        color: v.$color-brown;
+    }
+
+    &__filter-icon {
+        font-size: 14px;
+    }
+
+    &__filter-heading {
+        font-size: v.$font-size-sm;
+        color: v.$color-text-main;
+    }
+
+    &__search-input {
+        background-color: v.$color-bg-input;
+        border: 1px solid transparent;
+        border-radius: v.$border-radius-sm;
+        font-size: v.$font-size-sm;
+        color: v.$color-text-main;
+        padding: 10px 16px;
+        height: 42px;
+        transition: v.$transition-base;
+
+        &::placeholder {
+            color: #a0aec0;
+            font-size: v.$font-size-sm;
+        }
+
+        &:focus {
+            background-color: v.$color-white;
+            border-color: #fbd38d;
+            box-shadow: 0 0 0 3px rgba(230, 92, 0, 0.1);
+        }
+    }
+
+    &__select {
+        background-color: v.$color-bg-input;
+        border: 1px solid transparent;
+        border-radius: v.$border-radius-sm;
+        font-size: v.$font-size-sm;
+        color: v.$color-text-main;
+        height: 42px;
+        padding: 6px 12px;
+        cursor: pointer;
+        transition: v.$transition-base;
+
+        &:focus {
+            background-color: v.$color-white;
+            border-color: #fbd38d;
+            box-shadow: 0 0 0 3px rgba(230, 92, 0, 0.1);
+        }
+    }
+
+    &__records-title {
+        font-size: v.$font-size-md;
+        font-weight: 700;
+        color: v.$color-text-main;
+    }
+
+    &__records-count {
+        font-size: v.$font-size-xs;
+        color: v.$color-brown;
+    }
+
+    &__records-list {
+        background-color: v.$color-white;
+        border: 1px solid v.$color-border;
+        border-radius: v.$border-radius-md;
+        box-shadow: v.$shadow-card;
+        overflow: hidden;
+    }
+
+    &__record-item {
+        padding: 16px 24px;
+        border-bottom: 1px solid v.$color-border;
+        background-color: v.$color-white;
+        transition: v.$transition-base;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: #fdfbf7;
+        }
+    }
+
+    &__date-block {
+        min-width: 60px;
+    }
+
+    &__date-day {
+        font-size: v.$font-size-sm;
+        color: v.$color-text-main;
+        line-height: 1.2;
+    }
+
+    &__date-weekday {
+        font-size: 11px;
+        color: v.$color-brown;
+    }
+
+    &__user-icon {
+        font-size: 13px;
+        color: v.$color-brown;
+    }
+
+    &__user-name {
+        font-size: v.$font-size-sm;
+        color: v.$color-text-main;
+    }
+
+    &__checkin-time {
+        font-size: v.$font-size-xs;
+        color: v.$color-brown;
+    }
+
+    &__status-block {
+        flex-shrink: 0;
+    }
+
+    &__status-text {
+        font-size: v.$font-size-sm;
+        color: v.$color-text-main;
+    }
+
+    &__status-sub {
+        font-size: 11px;
+        color: v.$color-brown;
+        font-weight: 500;
+    }
+
+    &__empty-icon {
+        color: #d1c7bd;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-attendance {
+        &__header {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 12px;
+        }
+
+        &__record-item {
+            padding: 14px 16px;
+        }
+
+        &__stat-count {
+            font-size: 32px;
+        }
+
+        &__period-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+    }
+}

@@ -99,7 +99,7 @@
                     </a>
                 </li>
                 <li class="user-header__nav-item">
-                    <a href="/attendance"
+                    <a href="{{#if isAdmin}}/admin/attendance{{else}}/attendance{{/if}}"
                         class="user-header__nav-link {{#if isAttendancePage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-user-check"></i>
                         <span>Attendance</span>
