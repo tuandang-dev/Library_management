@@ -113,7 +113,7 @@
                     </a>
                 </li>
                 <li class="user-header__nav-item">
-                    <a href="/history"
+                    <a href="{{#if isAdmin}}/admin/history{{else}}/history{{/if}}"
                         class="user-header__nav-link {{#if isHistoryPage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                         <span>History</span>

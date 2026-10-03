@@ -1405,6 +1405,191 @@ class AdminController {
             });
         }
     }
+
+    // [GET] /admin/history
+    async history(req, res) {
+        try {
+            const { search, status } = req.query;
+            const now = new Date();
+            const queryFilter = {};
+
+            if (status && status !== 'all') {
+                if (status === 'returned') {
+                    queryFilter.returnDate = { $ne: null };
+                } else if (status === 'borrowed') {
+                    queryFilter.returnDate = null;
+                    queryFilter.dueDate = { $gte: now };
+                } else if (status === 'overdue') {
+                    queryFilter.returnDate = null;
+                    queryFilter.dueDate = { $lt: now };
+                }
+            }
+
+            if (search && search.trim() !== '') {
+                const keyword = search.trim();
+                const [matchedUsers, matchedBooks] = await Promise.all([
+                    User.find({ fullname: { $regex: keyword, $options: 'i' } }).select('_id').lean(),
+                    Book.find({ title: { $regex: keyword, $options: 'i' } }).select('_id').lean(),
+                ]);
+
+                const userIds = matchedUsers.map((u) => u._id);
+                const bookIds = matchedBooks.map((b) => b._id);
+
+                queryFilter.$or = [
+                    { userId: { $in: userIds } },
+                    { bookId: { $in: bookIds } },
+                ];
+            }
+
+            const [
+                totalRecordsCount,
+                currentlyBorrowedCount,
+                returnedCount,
+                overdueCount,
+                rawRecords,
+            ] = await Promise.all([
+                BorrowRecord.countDocuments(),
+                BorrowRecord.countDocuments({ returnDate: null, dueDate: { $gte: now } }),
+                BorrowRecord.countDocuments({ returnDate: { $ne: null } }),
+                BorrowRecord.countDocuments({ returnDate: null, dueDate: { $lt: now } }),
+                BorrowRecord.find(queryFilter)
+                    .populate('userId', 'fullname email')
+                    .populate('bookId', 'title author isbn category')
+                    .sort({ borrowDate: -1, createdAt: -1 })
+                    .lean(),
+            ]);
+
+            const records = rawRecords.map(borrowHelper.formatAdminBorrowRecord);
+
+            const metrics = {
+                total: totalRecordsCount,
+                borrowed: currentlyBorrowedCount,
+                returned: returnedCount,
+                overdue: overdueCount,
+            };
+
+            return res.render('admin/history', {
+                layout: 'user',
+                title: 'Borrowing History - UCC Library',
+                isAdminPortal: true,
+                isAdmin: true,
+                isHistoryPage: true,
+                user: {
+                    ...req.session.user,
+                    isAdmin: true,
+                },
+                metrics,
+                records,
+                showingCount: records.length,
+                totalRecordsCount,
+                filters: {
+                    search: search || '',
+                    status: status || 'all',
+                    isStatusAll: !status || status === 'all',
+                    isStatusBorrowed: status === 'borrowed',
+                    isStatusReturned: status === 'returned',
+                    isStatusOverdue: status === 'overdue',
+                },
+            });
+        } catch (error) {
+            console.error('Lỗi khi tải lịch sử mượn trả toàn hệ thống:', error);
+            return res.status(500).render('error', {
+                layout: 'user',
+                message: 'Không thể tải lịch sử mượn trả sách toàn hệ thống.',
+            });
+        }
+    }
+
+    // [GET] /admin/history/export
+    async exportHistoryCsv(req, res) {
+        try {
+            const { search, status } = req.query;
+            const now = new Date();
+            const queryFilter = {};
+
+            if (status && status !== 'all') {
+                if (status === 'returned') {
+                    queryFilter.returnDate = { $ne: null };
+                } else if (status === 'borrowed') {
+                    queryFilter.returnDate = null;
+                    queryFilter.dueDate = { $gte: now };
+                } else if (status === 'overdue') {
+                    queryFilter.returnDate = null;
+                    queryFilter.dueDate = { $lt: now };
+                }
+            }
+
+            if (search && search.trim() !== '') {
+                const keyword = search.trim();
+                const [matchedUsers, matchedBooks] = await Promise.all([
+                    User.find({ fullname: { $regex: keyword, $options: 'i' } }).select('_id').lean(),
+                    Book.find({ title: { $regex: keyword, $options: 'i' } }).select('_id').lean(),
+                ]);
+
+                const userIds = matchedUsers.map((u) => u._id);
+                const bookIds = matchedBooks.map((b) => b._id);
+
+                queryFilter.$or = [
+                    { userId: { $in: userIds } },
+                    { bookId: { $in: bookIds } },
+                ];
+            }
+
+            const rawRecords = await BorrowRecord.find(queryFilter)
+                .populate('userId', 'fullname email')
+                .populate('bookId', 'title author isbn category')
+                .sort({ borrowDate: -1, createdAt: -1 })
+                .lean();
+
+            const records = rawRecords.map(borrowHelper.formatAdminBorrowRecord);
+
+            const headers = [
+                'Book Title',
+                'Author',
+                'ISBN',
+                'Student Name',
+                'Student Email',
+                'Borrow Date',
+                'Due Date',
+                'Return Date',
+                'Staff',
+                'Status',
+                'Days Overdue',
+            ];
+
+            const escapeCsv = (str) => {
+                if (str === null || str === undefined) return '""';
+                const clean = String(str).replace(/"/g, '""');
+                return `"${clean}"`;
+            };
+
+            const rows = records.map((r) => [
+                escapeCsv(r.bookTitle),
+                escapeCsv(r.bookAuthor),
+                escapeCsv(r.bookIsbn),
+                escapeCsv(r.studentName),
+                escapeCsv(r.studentEmail),
+                escapeCsv(r.borrowDateFormatted),
+                escapeCsv(r.dueDateFormatted),
+                escapeCsv(r.returnDateFormatted),
+                escapeCsv(r.staffName),
+                escapeCsv(r.badgeText),
+                escapeCsv(r.overdueDays),
+            ].join(','));
+
+            const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+
+            res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+            res.setHeader('Content-Disposition', 'attachment; filename="borrowing-history-report.csv"');
+            return res.send(csvContent);
+        } catch (error) {
+            console.error('Lỗi khi xuất danh sách lịch sử mượn trả ra CSV:', error);
+            return res.status(500).render('error', {
+                layout: 'user',
+                message: 'Không thể xuất dữ liệu lịch sử mượn trả sách ra file CSV.',
+            });
+        }
+    }
 }
 
 module.exports = new AdminController();

@@ -1,0 +1,170 @@
+@use '../abstracts/variables' as v;
+
+.history-page {
+    &__export-btn {
+        color: #000;
+        background-color: v.$color-white;
+        border: 1px solid v.$color-border;
+        font-size: 0.875rem;
+        font-weight: 600;
+        padding: 8px 18px;
+        border-radius: v.$border-radius-sm;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: v.$transition-base;
+
+        i {
+            font-size: 0.9rem;
+            color: #000;
+            transition: v.$transition-base;
+        }
+
+        &:hover {
+            background-color: #fffaf5;
+            border-color: v.$color-primary;
+            color: v.$color-primary;
+            text-decoration: none;
+            transform: translateY(-1px);
+            box-shadow: v.$shadow-card;
+
+            i {
+                color: v.$color-primary;
+            }
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+.history-filter-card {
+    background-color: v.$color-white;
+    border: 1px solid v.$color-border;
+    border-radius: v.$border-radius-md;
+    box-shadow: v.$shadow-card;
+
+    &__header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        padding-bottom: 12px;
+    }
+
+    &__title {
+        color: v.$color-text-main;
+        font-size: 1.05rem;
+    }
+
+    &__subtitle {
+        color: v.$color-brown;
+    }
+}
+
+.history-search-box {
+    border: 1px solid v.$color-border;
+    border-radius: v.$border-radius-sm;
+    background-color: v.$color-white;
+    transition: v.$transition-base;
+    overflow: hidden;
+
+    .input-group-text {
+        border: none;
+        background-color: transparent;
+        padding-left: 14px;
+        padding-right: 8px;
+        color: v.$color-brown;
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        border: none;
+        font-size: 0.9rem;
+        color: v.$color-text-main;
+        padding: 10px 14px 10px 0;
+        box-shadow: none;
+
+        &::placeholder {
+            color: #9ca3af;
+            font-size: 0.88rem;
+        }
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    &:focus-within {
+        border-color: v.$color-primary;
+        box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+    }
+}
+
+.history-status-select-wrap {
+    position: relative;
+
+    .history-status-select {
+        height: auto;
+        padding: 9px 36px 9px 14px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: v.$color-text-main;
+        background-color: #fdfbf7;
+        border: 1px solid v.$color-border;
+        border-radius: v.$border-radius-sm;
+        cursor: pointer;
+        transition: v.$transition-base;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%237c4a1e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 11px 11px;
+
+        &:hover {
+            background-color: #fff7ed;
+            border-color: #fdba74;
+        }
+
+        &:focus {
+            border-color: v.$color-primary;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+            outline: none;
+        }
+
+        option {
+            background-color: v.$color-white;
+            color: v.$color-text-main;
+            padding: 8px 12px;
+        }
+    }
+}
+
+.history-empty-state {
+    background-color: v.$color-white;
+    border: 1px dashed v.$color-border !important;
+    border-radius: v.$border-radius-md;
+
+    &__icon-wrap {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background-color: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+            color: #94a3b8;
+            font-size: 1.5rem;
+        }
+    }
+
+    &__title {
+        color: v.$color-text-main;
+    }
+
+    &__text {
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

@@ -1,0 +1,228 @@
+<div class="history-page">
+    <div class="history-page__header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+        <div>
+            <h1 class="history-page__title mb-1">
+                <i class="fa-solid fa-clock-rotate-left history-page__title-icon mr-2"></i>
+                Borrowing History
+            </h1>
+            <p class="history-page__subtitle mb-0">
+                Complete log of all book borrowing transactions with detailed tracking.
+            </p>
+        </div>
+        <div class="history-page__actions mt-3 mt-md-0">
+            <a href="/admin/history/export?search={{filters.search}}&status={{filters.status}}"
+                class="btn btn-outline-secondary history-page__export-btn shadow-sm">
+                <i class="fa-solid fa-download mr-1"></i>
+                Export Data
+            </a>
+        </div>
+    </div>
+
+    <div class="history-stats row mb-4">
+        <div class="col-12 col-sm-6 col-lg-3 mb-3 mb-lg-0">
+            <div class="metric-card metric-card--total">
+                <div class="metric-card__inner">
+                    <div class="metric-card__content">
+                        <span class="metric-card__title">Total Records</span>
+                        <span class="metric-card__value">{{metrics.total}}</span>
+                    </div>
+                    <div class="metric-card__icon-box">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3 mb-3 mb-lg-0">
+            <div class="metric-card metric-card--active">
+                <div class="metric-card__inner">
+                    <div class="metric-card__content">
+                        <span class="metric-card__title">Currently Borrowed</span>
+                        <span class="metric-card__value">{{metrics.borrowed}}</span>
+                    </div>
+                    <div class="metric-card__icon-box">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3 mb-3 mb-lg-0">
+            <div class="metric-card metric-card--returned">
+                <div class="metric-card__inner">
+                    <div class="metric-card__content">
+                        <span class="metric-card__title">Returned</span>
+                        <span class="metric-card__value">{{metrics.returned}}</span>
+                    </div>
+                    <div class="metric-card__icon-box">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3 mb-3 mb-lg-0">
+            <div class="metric-card metric-card--overdue">
+                <div class="metric-card__inner">
+                    <div class="metric-card__content">
+                        <span class="metric-card__title">Overdue</span>
+                        <span class="metric-card__value">{{metrics.overdue}}</span>
+                    </div>
+                    <div class="metric-card__icon-box">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-filter-card card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <div class="history-filter-card__header mb-3">
+                <div class="d-flex align-items-center mb-1">
+                    <i class="fa-solid fa-filter text-orange mr-2"></i>
+                    <h5 class="history-filter-card__title mb-0">Filter & Search</h5>
+                </div>
+                <p class="history-filter-card__subtitle small mb-0">
+                    Refine your search to find specific borrowing records
+                </p>
+            </div>
+
+            <form method="GET" action="/admin/history" class="history-filter-card__form">
+                <div class="form-row align-items-center">
+                    <div class="col-12 col-md-8 col-lg-9 mb-3 mb-md-0">
+                        <div class="input-group history-search-box">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-white border-right-0 text-muted">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+                            </div>
+                            <input type="text" name="search" class="form-control border-left-0 pl-0"
+                                placeholder="Search by book title or student name..." value="{{filters.search}}">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div class="history-status-select-wrap">
+                            <select name="status" class="custom-select history-status-select"
+                                onchange="this.form.submit()">
+                                <option value="all" {{#if filters.isStatusAll}}selected{{/if}}>All Status</option>
+                                <option value="borrowed" {{#if filters.isStatusBorrowed}}selected{{/if}}>Currently
+                                    Borrowed</option>
+                                <option value="returned" {{#if filters.isStatusReturned}}selected{{/if}}>Returned
+                                </option>
+                                <option value="overdue" {{#if filters.isStatusOverdue}}selected{{/if}}>Overdue</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="borrow-records">
+        <div class="borrow-records__header d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <div class="borrow-records__header-left d-flex align-items-center">
+                    <i class="fa-solid fa-book-open borrow-records__header-icon mr-2"></i>
+                    <h2 class="borrow-records__title h5 mb-0">Transaction History</h2>
+                </div>
+                <p class="borrow-records__subtitle small mb-0">
+                    Showing {{showingCount}} of {{totalRecordsCount}} records
+                </p>
+            </div>
+        </div>
+
+        <div class="borrow-records__list">
+            {{#if records.length}}
+            {{#each records}}
+            <div class="history-card mb-3">
+                <div class="history-card__header d-flex justify-content-between align-items-start mb-3">
+                    <div class="history-card__book-info">
+                        <div class="history-card__title-row d-flex align-items-center mb-1">
+                            <i class="fa-solid fa-book-open history-card__book-icon mr-2"></i>
+                            <h3 class="history-card__book-title h6 font-weight-bold mb-0">{{this.bookTitle}}</h3>
+                        </div>
+                        <div class="history-card__author-row d-flex align-items-center text-muted small">
+                            <i class="fa-solid fa-user history-card__author-icon mr-2"></i>
+                            <span class="history-card__author">{{this.studentName}}</span>
+                        </div>
+                    </div>
+                    <div class="history-card__badge-wrap">
+                        <span class="badge {{this.badgeClass}} px-3 py-2 font-weight-bold">
+                            {{this.badgeText}}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="history-card__meta-grid">
+                    <div class="meta-chip meta-chip--borrowed">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-solid fa-calendar-days meta-chip__icon"></i>
+                            <span class="meta-chip__label">Borrowed</span>
+                        </div>
+                        <span class="meta-chip__val">{{this.borrowDateFormatted}}</span>
+                    </div>
+
+                    <div class="meta-chip meta-chip--due">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-regular fa-clock meta-chip__icon"></i>
+                            <span class="meta-chip__label">Due Date</span>
+                        </div>
+                        <span class="meta-chip__val">{{this.dueDateFormatted}}</span>
+                    </div>
+
+                    {{#if this.isReturned}}
+                    <div class="meta-chip meta-chip--returned">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-solid fa-calendar-check meta-chip__icon"></i>
+                            <span class="meta-chip__label">Returned</span>
+                        </div>
+                        <span class="meta-chip__val">{{this.returnDateFormatted}}</span>
+                    </div>
+                    {{else}}
+                    <div class="meta-chip meta-chip--not-returned">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-solid fa-calendar-xmark meta-chip__icon"></i>
+                            <span class="meta-chip__label">Returned</span>
+                        </div>
+                        <span class="meta-chip__val">Not returned</span>
+                    </div>
+                    {{/if}}
+
+                    <div class="meta-chip meta-chip--staff">
+                        <div class="meta-chip__label-box">
+                            <i class="fa-solid fa-user-tie meta-chip__icon"></i>
+                            <span class="meta-chip__label">Staff</span>
+                        </div>
+                        <span class="meta-chip__val">{{this.staffName}}</span>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+            {{else}}
+            <div class="history-empty-state card border-0 shadow-sm text-center py-5">
+                <div class="card-body">
+                    <div class="history-empty-state__icon-wrap mb-3">
+                        <i class="fa-solid fa-magnifying-glass fa-3x text-muted"></i>
+                    </div>
+                    <h4 class="history-empty-state__title h5 font-weight-bold text-dark mb-2">No Transactions Found</h4>
+                    <p class="history-empty-state__text text-muted small mb-3">
+                        No borrowing records match your search keyword or selected filter.
+                    </p>
+                    <a href="/admin/history" class="btn btn-outline-primary btn-sm px-3">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Clear Filters
+                    </a>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class="floating-guide">
+        <a href="#guide" class="floating-guide__btn">
+            <i class="fa-regular fa-compass floating-guide__icon"></i>
+            Demo Guide
+        </a>
+    </div>
+</div>

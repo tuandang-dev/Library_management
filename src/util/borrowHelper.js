@@ -169,6 +169,33 @@ const processBorrowStatus = (record) => {
     };
 };
 
+/**
+ * @param {Object} record
+ * @returns {Object}
+ */
+const formatAdminBorrowRecord = (record) => {
+    if (!record) return null;
+
+    const statusInfo = processBorrowStatus(record);
+    const isReturned = Boolean(record.returnDate);
+
+    return {
+        _id: record._id,
+        ticketId: record.ticketId || '',
+        bookTitle: record.bookId?.title || 'Unknown Book',
+        bookAuthor: record.bookId?.author || 'Unknown Author',
+        bookIsbn: record.bookId?.isbn || 'N/A',
+        studentName: record.userId?.fullname || 'Unknown Student',
+        studentEmail: record.userId?.email || 'N/A',
+        staffName: record.staffName || 'Sarah Chen',
+        borrowDateFormatted: formatDate(record.borrowDate),
+        dueDateFormatted: formatDate(record.dueDate),
+        returnDateFormatted: formatDate(record.returnDate),
+        isReturned,
+        ...statusInfo,
+    };
+};
+
 module.exports = {
     formatDate,
     formatDateDisplay,
@@ -177,4 +204,5 @@ module.exports = {
     generateDefaultEmailMessage,
     calculateOverdueSummary,
     processBorrowStatus,
+    formatAdminBorrowRecord,
 };

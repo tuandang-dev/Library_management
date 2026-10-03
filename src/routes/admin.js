@@ -22,5 +22,7 @@ router.post('/alerts/bulk-remind', requireAuth, requireAdmin, adminController.se
 router.get('/logs', requireAuth, requireAdmin, adminController.activityLogs);
 router.get('/attendance', requireAuth, requireAdmin, adminController.attendance);
 router.get('/attendance/export', requireAuth, requireAdmin, adminController.exportAttendanceLogs);
+router.get('/history', requireAuth, requireAdmin, adminController.history);
+router.get('/history/export', requireAuth, requireAdmin, adminController.exportHistoryCsv);
 
 module.exports = router;
