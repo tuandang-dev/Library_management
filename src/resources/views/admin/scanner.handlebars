@@ -1,0 +1,167 @@
+<div class="admin-scanner">
+    <header class="admin-scanner__header">
+        <h1 class="admin-scanner__title">
+            <i class="fa-solid fa-qrcode admin-scanner__title-icon"></i>
+            <span>QR Code Scanner</span>
+        </h1>
+        <p class="admin-scanner__subtitle">Scan student QR tickets for borrowing, returns, and attendance.</p>
+    </header>
+
+    <div class="row">
+        <div class="col-lg-6 col-12 mb-4">
+            <div class="admin-scanner__card">
+                <div class="admin-scanner__card-header">
+                    <h2 class="admin-scanner__card-title">Scanner</h2>
+                    <p class="admin-scanner__card-desc">Scan QR codes or enter ticket IDs manually</p>
+                </div>
+
+                <div class="admin-scanner__card-body">
+                    <div class="admin-scanner__viewport-box" id="scannerViewport">
+                        <div class="admin-scanner__viewport-placeholder" id="scannerPlaceholder">
+                            <i class="fa-solid fa-qrcode admin-scanner__viewport-icon"></i>
+                            <p class="admin-scanner__viewport-text">Click "Start Scanning" to begin</p>
+                        </div>
+                        <div id="qrReader" class="admin-scanner__viewport-reader d-none"></div>
+                    </div>
+
+                    <div class="text-center my-3">
+                        <button type="button" class="admin-scanner__btn-scan" id="btnToggleScan">
+                            <i class="fa-solid fa-camera mr-2"></i>
+                            <span id="btnScanText">Start Scanning</span>
+                        </button>
+                    </div>
+
+                    <div class="admin-scanner__manual-group">
+                        <label for="manualTicketInput" class="admin-scanner__manual-label">Manual Ticket Entry</label>
+                        <div class="input-group">
+                            <input type="text" id="manualTicketInput" class="form-control admin-scanner__manual-input"
+                                placeholder="Enter ticket ID or JSON data" autocomplete="off">
+                            <div class="input-group-append">
+                                <button type="button" class="btn admin-scanner__btn-verify" id="btnManualVerify">
+                                    Verify
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-12 mb-4">
+            <div class="admin-scanner__card">
+                <div class="admin-scanner__card-header">
+                    <h2 class="admin-scanner__card-title">Scan Result</h2>
+                    <p class="admin-scanner__card-desc">Student information and available actions</p>
+                </div>
+
+                <div class="admin-scanner__card-body">
+                    <div class="admin-scanner__empty-state" id="scanResultEmpty">
+                        <div class="admin-scanner__empty-icon-wrap">
+                            <i class="fa-regular fa-circle-xmark admin-scanner__empty-icon"></i>
+                        </div>
+                        <h3 class="admin-scanner__empty-title">No ticket scanned yet</h3>
+                        <p class="admin-scanner__empty-desc">Scan a QR code or enter ticket ID manually</p>
+                    </div>
+
+                    <div class="admin-scanner__result d-none" id="scanResultContent">
+                        <div class="admin-scanner__alert-success mb-3">
+                            <i class="fa-solid fa-circle-check admin-scanner__alert-icon"></i>
+                            <span>Valid ticket scanned</span>
+                        </div>
+
+                        <div class="admin-scanner__info-box mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h3 class="admin-scanner__student-name" id="resStudentName">Alex Johnson</h3>
+                                <span class="admin-scanner__student-badge" id="resStudentCode">STU-001</span>
+                            </div>
+                            <div class="admin-scanner__info-row">
+                                <span class="admin-scanner__info-label">Ticket ID:</span>
+                                <span class="admin-scanner__info-val" id="resTicketId">TKT-1710234567</span>
+                            </div>
+                            <div class="admin-scanner__info-row">
+                                <span class="admin-scanner__info-label">Generated:</span>
+                                <span class="admin-scanner__info-val" id="resGeneratedAt">10/14/2026, 03:30:00 PM</span>
+                            </div>
+                        </div>
+
+                        <div class="admin-scanner__books-box mb-3">
+                            <h4 class="admin-scanner__section-title" id="resBooksCountHeader">Books (1)</h4>
+                            <div class="admin-scanner__books-list" id="resBooksList">
+                                <div class="admin-scanner__book-item">
+                                    <span class="admin-scanner__book-index">1.</span>
+                                    <div class="admin-scanner__book-meta">
+                                        <p class="admin-scanner__book-title">Clean Code: A Handbook of Agile Software
+                                            Craftsmanship</p>
+                                        <p class="admin-scanner__book-author">Robert C. Martin</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-scanner__actions-box">
+                            <h4 class="admin-scanner__section-title">Available Actions</h4>
+                            <div class="admin-scanner__actions-grid">
+                                <button type="button"
+                                    class="admin-scanner__btn-action admin-scanner__btn-action--primary"
+                                    id="btnActionCheckout">
+                                    <i class="fa-solid fa-check mr-2"></i>
+                                    <span id="btnCheckoutText">Complete Checkout (1 book)</span>
+                                </button>
+                                <button type="button"
+                                    class="admin-scanner__btn-action admin-scanner__btn-action--outline"
+                                    id="btnActionReturn">
+                                    <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                                    <span>Process Book Return</span>
+                                </button>
+                                <button type="button"
+                                    class="admin-scanner__btn-action admin-scanner__btn-action--outline"
+                                    id="btnActionAttendance">
+                                    <i class="fa-solid fa-clipboard-user mr-2"></i>
+                                    <span>Record Attendance</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="admin-scanner__card admin-scanner__card--history">
+        <div class="admin-scanner__card-header">
+            <h2 class="admin-scanner__card-title">Scan History</h2>
+            <p class="admin-scanner__card-desc">Recent QR code scans and transactions</p>
+        </div>
+
+        <div class="admin-scanner__card-body p-0">
+            <div class="admin-scanner__history-list" id="scanHistoryList">
+                {{#if recentScans.length}}
+                {{#each recentScans}}
+                <div class="admin-scanner__history-item">
+                    <div class="admin-scanner__history-left">
+                        <div class="admin-scanner__history-user">
+                            <span class="admin-scanner__history-name">{{this.studentName}}</span>
+                            <span class="admin-scanner__history-id">({{this.studentIdentifier}})</span>
+                        </div>
+                        <div class="admin-scanner__history-desc">{{this.description}}</div>
+                        <div class="admin-scanner__history-staff">Processed by: {{this.staffName}}</div>
+                    </div>
+                    <div class="admin-scanner__history-right">
+                        <span class="admin-scanner__badge {{this.badgeClass}}">{{this.badgeText}}</span>
+                        <span class="admin-scanner__history-time">{{this.formattedTime}}</span>
+                    </div>
+                </div>
+                {{/each}}
+                {{else}}
+                <div class="text-center py-4 text-muted">
+                    <i class="fa-regular fa-clock mb-2" style="font-size: 24px;"></i>
+                    <p class="mb-0">No scans recorded yet today.</p>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script src="/js/admin-scanner.js"></script>

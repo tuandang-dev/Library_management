@@ -106,7 +106,7 @@
                     </a>
                 </li>
                 <li class="user-header__nav-item">
-                    <a href="/book"
+                    <a href="{{#if isAdmin}}/admin/books{{else}}/book{{/if}}"
                         class="user-header__nav-link {{#if isBooksPage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-book-open"></i>
                         <span>Books</span>
@@ -120,7 +120,7 @@
                     </a>
                 </li>
                 <li class="user-header__nav-item">
-                    <a href="/scanner"
+                    <a href="{{#if isAdmin}}/admin/scanner{{else}}/scanner{{/if}}"
                         class="user-header__nav-link {{#if isScannerPage}}user-header__nav-link--active{{/if}}">
                         <i class="fa-solid fa-qrcode"></i>
                         <span>QR Scanner</span>

@@ -24,5 +24,10 @@ router.get('/attendance', requireAuth, requireAdmin, adminController.attendance)
 router.get('/attendance/export', requireAuth, requireAdmin, adminController.exportAttendanceLogs);
 router.get('/history', requireAuth, requireAdmin, adminController.history);
 router.get('/history/export', requireAuth, requireAdmin, adminController.exportHistoryCsv);
+router.get('/scanner', requireAuth, requireAdmin, adminController.scanner);
+router.post('/scanner/verify', requireAuth, requireAdmin, adminController.verifyTicket);
+router.post('/scanner/checkout', requireAuth, requireAdmin, adminController.checkoutTicket);
+router.post('/scanner/return', requireAuth, requireAdmin, adminController.returnBooks);
+router.post('/scanner/attendance', requireAuth, requireAdmin, adminController.recordAttendanceScan);
 
 module.exports = router;

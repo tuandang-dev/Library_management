@@ -1,0 +1,398 @@
+@use '../abstracts/variables' as v;
+
+.admin-scanner {
+
+    &__header {
+        margin-bottom: 1.75rem;
+    }
+
+    &__title {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #1c1917;
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+    }
+
+    &__subtitle {
+        font-size: 0.9375rem;
+        color: v.$color-brown;
+        margin-bottom: 0;
+    }
+
+    &__card {
+        background-color: #ffffff;
+        border: 1px solid #e7e5e4;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        height: 100%;
+
+        &--history {
+            height: auto;
+            margin-top: 0.5rem;
+        }
+
+        &-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f5f5f4;
+            background-color: #ffffff;
+        }
+
+        &-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1c1917;
+            margin-bottom: 0.2rem;
+        }
+
+        &-desc {
+            font-size: 1rem;
+            font-weight: 400;
+            color: v.$color-brown;
+            margin-bottom: 0;
+        }
+
+        &-body {
+            padding: 1.5rem;
+        }
+    }
+
+    &__viewport-box {
+        background-color: #fff7ed;
+        border: 1px dashed #fdba74;
+        border-radius: 10px;
+        min-height: 230px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    &__viewport-placeholder {
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+
+    &__viewport-icon {
+        font-size: 3.5rem;
+        color: v.$color-brown;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    &__viewport-text {
+        font-size: 0.875rem;
+        color: v.$color-brown;
+        font-weight: 500;
+        margin-bottom: 0;
+    }
+
+    &__viewport-reader {
+        width: 100%;
+        min-height: 230px;
+    }
+
+    &__btn-scan {
+        background-color: #ea580c;
+        color: #ffffff;
+        border: none;
+        padding: 0.625rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: #c2410c;
+            color: #ffffff;
+        }
+    }
+
+    &__manual {
+        &-group {
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #f5f5f4;
+        }
+
+        &-label {
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        &-input {
+            border: 1px solid #d6d3d1;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            padding: 0.55rem 0.875rem;
+            margin-right: 8px;
+
+            &:focus {
+                border-color: #ea580c;
+                box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.15);
+            }
+        }
+    }
+
+    &__btn-verify {
+        background-color: #ffffff;
+        border: 1px solid #d6d3d1;
+        color: #44403c;
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.55rem 1.125rem;
+        border-radius: 6px;
+
+        &:hover {
+            background-color: #f5f5f4;
+            color: #1c1917;
+        }
+    }
+
+    &__empty {
+        &-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+
+        &-icon-wrap {
+            margin-bottom: 1rem;
+        }
+
+        &-icon {
+            font-size: 2.75rem;
+            color: v.$color-brown;
+        }
+
+        &-title {
+            font-size: 0.875rem;
+            color: v.$color-brown;
+            margin-bottom: 0.35rem;
+        }
+
+        &-desc {
+            font-size: 0.875rem;
+            color: v.$color-brown;
+            margin-bottom: 0;
+        }
+    }
+
+    &__alert-success {
+        background-color: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+        padding: 0.65rem 1rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    &__info-box {
+        background-color: #fafaf9;
+        border: 1px solid #e7e5e4;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    &__student-name {
+        font-size: 1.0625rem;
+        font-weight: 700;
+        color: #1c1917;
+        margin: 0;
+    }
+
+    &__student-badge {
+        font-size: 0.75rem;
+        background-color: #e7e5e4;
+        color: #44403c;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+
+    &__info-row {
+        font-size: 0.8125rem;
+        margin-top: 0.25rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    &__info-label {
+        color: #78716c;
+    }
+
+    &__info-val {
+        color: #292524;
+        font-weight: 600;
+    }
+
+    &__section-title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #44403c;
+        margin-bottom: 0.625rem;
+    }
+
+    &__books-box {
+        background-color: #ffffff;
+        border: 1px solid #e7e5e4;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    &__book-item {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+    }
+
+    &__book-index {
+        font-weight: 700;
+        color: #78716c;
+    }
+
+    &__book-title {
+        margin: 0;
+        font-weight: 600;
+        color: #1c1917;
+    }
+
+    &__book-author {
+        margin: 0;
+        color: #78716c;
+        font-size: 0.75rem;
+    }
+
+    &__actions-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    &__btn-action {
+        width: 100%;
+        padding: 0.65rem 1rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        &--primary {
+            background-color: #ea580c;
+            color: #ffffff;
+            border: 1px solid #ea580c;
+
+            &:hover {
+                background-color: #c2410c;
+            }
+        }
+
+        &--outline {
+            background-color: #ffffff;
+            color: #44403c;
+            border: 1px solid #d6d3d1;
+
+            &:hover {
+                background-color: #f5f5f4;
+                color: #1c1917;
+            }
+        }
+    }
+
+    &__history {
+        &-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f5f5f4;
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+
+        &-left {
+            max-width: 65%;
+        }
+
+        &-user {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.2rem;
+        }
+
+        &-name {
+            font-weight: 700;
+            color: #1c1917;
+            font-size: 0.9375rem;
+        }
+
+        &-id {
+            color: #78716c;
+            font-size: 0.8125rem;
+        }
+
+        &-desc {
+            font-size: 0.8125rem;
+            color: #44403c;
+            margin-bottom: 0.2rem;
+        }
+
+        &-staff {
+            font-size: 0.75rem;
+            color: #a8a29e;
+        }
+
+        &-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.35rem;
+        }
+
+        &-time {
+            font-size: 0.75rem;
+            color: #78716c;
+            font-family: monospace;
+        }
+    }
+
+    &__badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.625rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        display: inline-block;
+
+        &--checkout {
+            background-color: #ffedd5;
+            color: #c2410c;
+        }
+
+        &--return {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        &--neutral {
+            background-color: #f5f5f4;
+            color: #57534e;
+        }
+    }
+}

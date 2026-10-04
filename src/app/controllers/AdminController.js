@@ -6,6 +6,7 @@ const Category = require('../models/Category');
 const BorrowRecord = require('../models/BorrowRecord');
 const ActivityLog = require('../models/ActivityLog');
 const Attendance = require('../models/Attendance');
+const BorrowTicket = require('../models/BorrowTicket');
 const borrowHelper = require('../../util/borrowHelper');
 const attendanceHelper = require('../helpers/attendanceHelper');
 const { sendEmail } = require('../helpers/emailHelper');
@@ -1587,6 +1588,453 @@ class AdminController {
             return res.status(500).render('error', {
                 layout: 'user',
                 message: 'Không thể xuất dữ liệu lịch sử mượn trả sách ra file CSV.',
+            });
+        }
+    }
+
+    // [GET] /admin/scanner
+    async scanner(req, res) {
+        try {
+            const recentLogs = await ActivityLog.find({
+                category: { $in: ['books', 'attendance'] },
+            })
+                .sort({ createdAt: -1 })
+                .limit(5)
+                .lean();
+
+            const formatScanTime = (date) => {
+                if (!date) return 'N/A';
+                const d = new Date(date);
+                if (isNaN(d.getTime())) return 'N/A';
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            };
+
+            const recentScans = recentLogs.map((log) => {
+                const isCheckout = log.action && log.action.toLowerCase().includes('borrow');
+                const isReturn = log.action && log.action.toLowerCase().includes('return');
+
+                let badgeClass = 'admin-scanner__badge--neutral';
+                let badgeText = log.categoryLabel || 'Recorded';
+
+                if (isCheckout) {
+                    badgeClass = 'admin-scanner__badge--checkout';
+                    badgeText = 'Checkout Completed';
+                } else if (isReturn) {
+                    badgeClass = 'admin-scanner__badge--return';
+                    badgeText = 'Book Returned';
+                }
+
+                return {
+                    _id: log._id,
+                    studentName: log.actor?.name || 'Student Reader',
+                    studentIdentifier: log.actor?.role === 'user' ? 'STU-VERIFIED' : (log.actor?.role || 'STUDENT'),
+                    description: log.description || 'Processed transaction at desk',
+                    staffName: req.session.user?.fullname || 'Sarah Chen',
+                    formattedTime: formatScanTime(log.createdAt),
+                    badgeClass,
+                    badgeText,
+                };
+            });
+
+            return res.render('admin/scanner', {
+                layout: 'user',
+                title: 'QR Code Scanner - UCC Library',
+                isAdminPortal: true,
+                isAdmin: true,
+                isScannerPage: true,
+                user: {
+                    ...req.session.user,
+                    isAdmin: true,
+                },
+                recentScans,
+            });
+        } catch (error) {
+            console.error('Lỗi khi tải trang Admin Scanner:', error);
+            return res.status(500).render('error', {
+                layout: 'user',
+                message: 'Không thể khởi tạo trình quét mã QR quản trị.',
+            });
+        }
+    }
+
+    // [POST] /admin/scanner/verify
+    async verifyTicket(req, res) {
+        try {
+            const { ticketData } = req.body;
+            if (!ticketData || String(ticketData).trim() === '') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Vui lòng cung cấp mã vé hoặc dữ liệu quét QR hợp lệ.',
+                });
+            }
+
+            let searchKey = String(ticketData).trim();
+
+            if (searchKey.startsWith('{') && searchKey.endsWith('}')) {
+                try {
+                    const parsedJson = JSON.parse(searchKey);
+                    if (parsedJson.ticketId) {
+                        searchKey = String(parsedJson.ticketId).trim();
+                    }
+                } catch (e) {
+
+                }
+            }
+
+            const formatTicketDate = (date) => {
+                const d = date ? new Date(date) : new Date();
+                if (isNaN(d.getTime())) return new Date().toLocaleString('en-US');
+                const pad = (n) => String(n).padStart(2, '0');
+                const month = pad(d.getMonth() + 1);
+                const day = pad(d.getDate());
+                const year = d.getFullYear();
+                let hours = d.getHours();
+                const minutes = pad(d.getMinutes());
+                const seconds = pad(d.getSeconds());
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? pad(hours) : '12';
+                return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds} ${ampm}`;
+            };
+
+            const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const safeSearchPattern = new RegExp(`^${escapeRegex(searchKey)}$`, 'i');
+
+            const ticket = await BorrowTicket.findOne({
+                ticketId: { $regex: safeSearchPattern },
+            })
+                .populate('userId', 'fullname email')
+                .lean();
+
+            if (ticket) {
+                if (ticket.status === 'COMPLETED') {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Vé mượn "${ticket.ticketId}" đã được làm thủ tục mượn sách trước đó!`,
+                    });
+                }
+
+                if (ticket.status === 'CANCELLED') {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Vé mượn "${ticket.ticketId}" đã bị hủy bỏ!`,
+                    });
+                }
+
+                const studentName = ticket.userId?.fullname || 'Student Reader';
+                const studentCode = ticket.userId?.email
+                    ? ticket.userId.email.split('@')[0].toUpperCase()
+                    : 'STU-001';
+
+                const books = (ticket.items || []).map((item) => ({
+                    bookId: item.bookId,
+                    title: item.title,
+                    author: item.author,
+                    isbn: item.isbn || 'N/A',
+                    category: item.category || 'General',
+                }));
+
+                return res.json({
+                    success: true,
+                    message: 'Xác thực vé mượn thành công!',
+                    data: {
+                        ticketId: ticket.ticketId,
+                        ticketDbId: ticket._id,
+                        userId: ticket.userId?._id,
+                        studentName,
+                        studentCode,
+                        studentEmail: ticket.userId?.email || 'N/A',
+                        generatedAt: formatTicketDate(ticket.generatedAt || ticket.createdAt),
+                        status: ticket.status,
+                        books,
+                    },
+                });
+            }
+
+            const userFilter = [{ email: searchKey.toLowerCase() }];
+            if (mongoose.Types.ObjectId.isValid(searchKey)) {
+                userFilter.push({ _id: searchKey });
+            }
+
+            const matchedUser = await User.findOne({ $or: userFilter }).lean();
+
+            if (matchedUser) {
+                const activeBorrowRecords = await BorrowRecord.find({
+                    userId: matchedUser._id,
+                    returnDate: null,
+                })
+                    .populate('bookId', 'title author isbn category')
+                    .lean();
+
+                const books = activeBorrowRecords.map((record) => ({
+                    bookId: record.bookId?._id || record.bookId,
+                    title: record.bookId?.title || 'Unknown Title',
+                    author: record.bookId?.author || 'Unknown Author',
+                    isbn: record.bookId?.isbn || 'N/A',
+                    category: record.bookId?.category || 'General',
+                    borrowRecordId: record._id,
+                }));
+
+                return res.json({
+                    success: true,
+                    message: 'Nhận diện độc giả thành công!',
+                    data: {
+                        ticketId: `USER-${matchedUser._id.toString().slice(-6).toUpperCase()}`,
+                        ticketDbId: null,
+                        userId: matchedUser._id,
+                        studentName: matchedUser.fullname,
+                        studentCode: matchedUser.email.split('@')[0].toUpperCase(),
+                        studentEmail: matchedUser.email,
+                        generatedAt: formatTicketDate(new Date()),
+                        status: 'ACTIVE',
+                        books,
+                    },
+                });
+            }
+
+            return res.status(404).json({
+                success: false,
+                message: `Không tìm thấy vé mượn hoặc độc giả với dữ liệu "${searchKey}".`,
+            });
+        } catch (error) {
+            console.error('Lỗi khi xác thực vé mượn QR:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Lỗi máy chủ khi xác thực mã vé: ' + error.message,
+            });
+        }
+    }
+
+    // [POST] /admin/scanner/checkout
+    async checkoutTicket(req, res) {
+        try {
+            const { ticketId, userId } = req.body;
+            const staffName = req.session.user?.fullname;
+
+            if (!ticketId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Thiếu mã vé mượn để tiến hành thủ tục mượn sách.',
+                });
+            }
+
+            const ticket = await BorrowTicket.findOne({ ticketId }).populate('userId');
+            if (!ticket) {
+                return res.status(404).json({
+                    success: false,
+                    message: `Không tìm thấy vé mượn với mã "${ticketId}".`,
+                });
+            }
+
+            if (ticket.status === 'COMPLETED') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Vé mượn này đã được xử lý hoàn tất trước đó.',
+                });
+            }
+
+            if (!ticket.items || ticket.items.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Vé mượn không chứa đầu sách nào hợp lệ.',
+                });
+            }
+
+            const bookIds = ticket.items.map((item) => item.bookId);
+            const booksInDb = await Book.find({ _id: { $in: bookIds } });
+
+            for (const book of booksInDb) {
+                if (book.availableQuantity <= 0) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Cuốn sách "${book.title}" hiện đã hết hàng trong kho.`,
+                    });
+                }
+            }
+
+            const borrowerId = ticket.userId?._id || userId;
+            const dueDate = ticket.expectedReturnDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+
+            const recordPromises = ticket.items.map(async (item) => {
+                await Book.findByIdAndUpdate(item.bookId, {
+                    $inc: { availableQuantity: -1 },
+                });
+
+                return BorrowRecord.create({
+                    userId: borrowerId,
+                    bookId: item.bookId,
+                    ticketId: ticket.ticketId,
+                    borrowDate: new Date(),
+                    dueDate: dueDate,
+                    staffName: staffName,
+                    status: 'BORROWED',
+                });
+            });
+
+            await Promise.all(recordPromises);
+
+            ticket.status = 'COMPLETED';
+            await ticket.save();
+
+            const studentName = ticket.userId?.fullname || 'Student Reader';
+            const bookTitles = ticket.items.map((i) => i.title).join(', ');
+            await ActivityLog.create({
+                category: 'books',
+                categoryLabel: 'Books',
+                action: 'Complete Checkout',
+                description: `Completed checkout of ${ticket.items.length} book(s) [${bookTitles}] for ${studentName}`,
+                actor: {
+                    name: staffName,
+                    role: req.session.user?.role || 'admin',
+                },
+            });
+
+            return res.json({
+                success: true,
+                message: `Đã hoàn tất mượn ${ticket.items.length} cuốn sách thành công cho ${studentName}!`,
+            });
+        } catch (error) {
+            console.error('Lỗi khi thực hiện Checkout vé mượn:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Lỗi máy chủ khi hoàn tất mượn sách: ' + error.message,
+            });
+        }
+    }
+
+    // [POST] /admin/scanner/return
+    async returnBooks(req, res) {
+        try {
+            const { userId, books } = req.body;
+            const staffName = req.session.user?.fullname || 'Sarah Chen';
+
+            if (!userId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Không xác định được độc giả cần trả sách.',
+                });
+            }
+
+            const student = await User.findById(userId).lean();
+            const studentName = student?.fullname || 'Student Reader';
+
+            let query = {
+                userId: userId,
+                returnDate: null,
+            };
+
+            if (Array.isArray(books) && books.length > 0) {
+                const bookIds = books.map((b) => b.bookId || b._id).filter(Boolean);
+                if (bookIds.length > 0) {
+                    query.bookId = { $in: bookIds };
+                }
+            }
+
+            const activeRecords = await BorrowRecord.find(query).populate('bookId');
+
+            if (!activeRecords || activeRecords.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Độc giả ${studentName} không có sách nào cần trả lúc này.`,
+                });
+            }
+
+            const returnedBookTitles = [];
+            for (const record of activeRecords) {
+                record.returnDate = new Date();
+                record.status = 'RETURNED';
+                record.staffName = staffName;
+                await record.save();
+
+                await Book.findByIdAndUpdate(record.bookId._id || record.bookId, {
+                    $inc: { availableQuantity: 1 },
+                });
+
+                if (record.bookId?.title) {
+                    returnedBookTitles.push(record.bookId.title);
+                }
+            }
+
+            await ActivityLog.create({
+                category: 'books',
+                categoryLabel: 'Books',
+                action: 'Book Returned',
+                description: `Processed return of ${activeRecords.length} book(s) [${returnedBookTitles.join(', ')}] for ${studentName}`,
+                actor: {
+                    name: staffName,
+                    role: req.session.user?.role || 'admin',
+                },
+            });
+
+            return res.json({
+                success: true,
+                message: `Đã nhận trả thành công ${activeRecords.length} cuốn sách từ ${studentName}!`,
+            });
+        } catch (error) {
+            console.error('Lỗi khi xử lý trả sách:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Lỗi máy chủ khi nhận trả sách: ' + error.message,
+            });
+        }
+    }
+
+    // [POST] /admin/scanner/attendance
+    async recordAttendanceScan(req, res) {
+        try {
+            const { userId, studentCode } = req.body;
+            const staffName = req.session.user?.fullname || 'Sarah Chen';
+
+            if (!userId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Không tìm thấy thông tin sinh viên để ghi nhận điểm danh.',
+                });
+            }
+
+            const student = await User.findById(userId).lean();
+            if (!student) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Không tìm thấy thông tin người dùng trong cơ sở dữ liệu.',
+                });
+            }
+
+            const newAttendance = await Attendance.create({
+                userId: student._id,
+                studentId: studentCode || student.studentId || student.email.split('@')[0].toUpperCase(),
+                checkInTime: new Date(),
+                method: 'QR_CODE',
+                location: 'Desk Scanner',
+                notes: 'Recorded via Admin QR Scanner desk',
+            });
+
+            await ActivityLog.create({
+                category: 'attendance',
+                categoryLabel: 'Attendance',
+                action: 'Record Attendance',
+                description: `Recorded library check-in for ${student.fullname} (${student.email})`,
+                actor: {
+                    name: staffName,
+                    role: req.session.user?.role || 'admin',
+                },
+            });
+
+            return res.json({
+                success: true,
+                message: `Đã ghi nhận điểm danh thành công cho sinh viên ${student.fullname}!`,
+                data: {
+                    attendanceId: newAttendance._id,
+                    studentName: student.fullname,
+                    checkInTime: newAttendance.checkInTime,
+                },
+            });
+        } catch (error) {
+            console.error('Lỗi khi ghi nhận điểm danh qua Scanner:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Lỗi máy chủ khi ghi nhận điểm danh: ' + error.message,
             });
         }
     }
