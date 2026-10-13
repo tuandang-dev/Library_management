@@ -10,6 +10,8 @@ const BorrowTicket = require('../models/BorrowTicket');
 const borrowHelper = require('../../util/borrowHelper');
 const attendanceHelper = require('../helpers/attendanceHelper');
 const { sendEmail } = require('../helpers/emailHelper');
+const escapeRegex = require('../../util/escapeRegex');
+const { generateUniqueCategorySlug } = require('../../util/slugify');
 
 const DEFAULT_BOOK_COVER = 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400';
 
@@ -73,7 +75,7 @@ class AdminController {
             const filter = {};
 
             if (search && search.trim() !== '') {
-                const keyword = search.trim();
+                const keyword = escapeRegex(search.trim());
                 filter.$or = [
                     { fullname: { $regex: keyword, $options: 'i' } },
                     { email: { $regex: keyword, $options: 'i' } },
@@ -141,7 +143,7 @@ class AdminController {
     // [POST] /admin/users
     async createUser(req, res) {
         try {
-            const { fullname, email, role } = req.body;
+            const { fullname, email, role, studentId } = req.body;
             let { permissions } = req.body;
 
             if (!permissions) {
@@ -162,6 +164,7 @@ class AdminController {
             const newUser = new User({
                 fullname: fullname.trim(),
                 email: email.trim().toLowerCase(),
+                studentId: studentId ? String(studentId).trim() : undefined,
                 password: '123456',
                 role: role || 'user',
                 status: 'active',
@@ -199,6 +202,7 @@ class AdminController {
                     const newUser = new User({
                         fullname: item.fullname.trim(),
                         email: emailClean,
+                        studentId: item.studentId ? String(item.studentId).trim() : undefined,
                         role,
                         password: '123456',
                         status: 'active',
@@ -298,7 +302,7 @@ class AdminController {
             const filter = {};
 
             if (search && search.trim() !== '') {
-                const keyword = search.trim();
+                const keyword = escapeRegex(search.trim());
                 filter.$or = [
                     { title: { $regex: keyword, $options: 'i' } },
                     { author: { $regex: keyword, $options: 'i' } },
@@ -370,6 +374,7 @@ class AdminController {
                 title: 'Admin Book Management - UCC Library',
                 isAdminPortal: true,
                 isAdmin: true,
+                isBooksPage: true,
                 books,
                 categoryOptions,
                 showingCount: books.length,
@@ -446,13 +451,13 @@ class AdminController {
 
             const categoryName = category && category.trim() !== '' ? category.trim() : 'General';
             let categoryDoc = await Category.findOne({
-                name: { $regex: new RegExp(`^${categoryName}$`, 'i') },
+                name: { $regex: new RegExp(`^${escapeRegex(categoryName)}$`, 'i') },
             });
 
             if (!categoryDoc) {
                 categoryDoc = new Category({
                     name: categoryName,
-                    slug: categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+                    slug: await generateUniqueCategorySlug(categoryName, Category),
                 });
                 await categoryDoc.save();
             }
@@ -554,13 +559,13 @@ class AdminController {
             if (category && category.trim() !== '') {
                 const categoryName = category.trim();
                 let categoryDoc = await Category.findOne({
-                    name: { $regex: new RegExp(`^${categoryName}$`, 'i') },
+                    name: { $regex: new RegExp(`^${escapeRegex(categoryName)}$`, 'i') },
                 });
 
                 if (!categoryDoc) {
                     categoryDoc = new Category({
                         name: categoryName,
-                        slug: categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+                        slug: await generateUniqueCategorySlug(categoryName, Category),
                     });
                     await categoryDoc.save();
                 }
@@ -755,13 +760,13 @@ class AdminController {
 
                 const categoryName = item.category && item.category.trim() !== '' ? item.category.trim() : 'General';
                 let categoryDoc = await Category.findOne({
-                    name: { $regex: new RegExp(`^${categoryName}$`, 'i') },
+                    name: { $regex: new RegExp(`^${escapeRegex(categoryName)}$`, 'i') },
                 });
 
                 if (!categoryDoc) {
                     categoryDoc = new Category({
                         name: categoryName,
-                        slug: categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+                        slug: await generateUniqueCategorySlug(categoryName, Category),
                     });
                     await categoryDoc.save();
                 }
@@ -1149,7 +1154,6 @@ class AdminController {
             }
 
             if (search && search.trim() !== '') {
-                const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const keyword = escapeRegex(search.trim());
                 filter.$or = [
                     { action: { $regex: keyword, $options: 'i' } },
@@ -1272,7 +1276,7 @@ class AdminController {
             }
 
             if (search && search.trim() !== '') {
-                const keyword = search.trim();
+                const keyword = escapeRegex(search.trim());
                 const matchedUsers = await User.find({
                     $or: [
                         { fullname: { $regex: keyword, $options: 'i' } },
@@ -1289,7 +1293,7 @@ class AdminController {
                     checkInTime: { $gte: periodRange.start, $lte: periodRange.end },
                 }),
                 Attendance.find(attendanceFilter)
-                    .populate('userId', 'fullname email')
+                    .populate('userId', 'fullname email studentId')
                     .sort({ checkInTime: -1 })
                     .lean(),
             ]);
@@ -1345,7 +1349,7 @@ class AdminController {
             }
 
             if (search && search.trim() !== '') {
-                const keyword = search.trim();
+                const keyword = escapeRegex(search.trim());
                 const matchedUsers = await User.find({
                     $or: [
                         { fullname: { $regex: keyword, $options: 'i' } },
@@ -1358,7 +1362,7 @@ class AdminController {
             }
 
             const rawRecords = await Attendance.find(filter)
-                .populate('userId', 'fullname email')
+                .populate('userId', 'fullname email studentId')
                 .sort({ checkInTime: -1 })
                 .lean();
 
@@ -1427,7 +1431,7 @@ class AdminController {
             }
 
             if (search && search.trim() !== '') {
-                const keyword = search.trim();
+                const keyword = escapeRegex(search.trim());
                 const [matchedUsers, matchedBooks] = await Promise.all([
                     User.find({ fullname: { $regex: keyword, $options: 'i' } }).select('_id').lean(),
                     Book.find({ title: { $regex: keyword, $options: 'i' } }).select('_id').lean(),
@@ -1521,7 +1525,7 @@ class AdminController {
             }
 
             if (search && search.trim() !== '') {
-                const keyword = search.trim();
+                const keyword = escapeRegex(search.trim());
                 const [matchedUsers, matchedBooks] = await Promise.all([
                     User.find({ fullname: { $regex: keyword, $options: 'i' } }).select('_id').lean(),
                     Book.find({ title: { $regex: keyword, $options: 'i' } }).select('_id').lean(),
@@ -1698,7 +1702,6 @@ class AdminController {
                 return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds} ${ampm}`;
             };
 
-            const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const safeSearchPattern = new RegExp(`^${escapeRegex(searchKey)}$`, 'i');
 
             const ticket = await BorrowTicket.findOne({
@@ -1819,81 +1822,147 @@ class AdminController {
                 });
             }
 
-            const ticket = await BorrowTicket.findOne({ ticketId }).populate('userId');
-            if (!ticket) {
+            const initialTicket = await BorrowTicket.findOne({ ticketId });
+            if (!initialTicket) {
                 return res.status(404).json({
                     success: false,
                     message: `Không tìm thấy vé mượn với mã "${ticketId}".`,
                 });
             }
 
-            if (ticket.status === 'COMPLETED') {
+            if (initialTicket.expiresAt && new Date() > new Date(initialTicket.expiresAt)) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Vé mượn này đã được xử lý hoàn tất trước đó.',
+                    message: 'Vé mượn đã hết hạn sử dụng. Vui lòng tạo vé mới.',
                 });
             }
 
-            if (!ticket.items || ticket.items.length === 0) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Vé mượn không chứa đầu sách nào hợp lệ.',
-                });
-            }
+            const ticket = await BorrowTicket.findOneAndUpdate(
+                { ticketId, status: 'ACTIVE' },
+                { $set: { status: 'PROCESSING' } },
+                { new: true }
+            ).populate('userId');
 
-            const bookIds = ticket.items.map((item) => item.bookId);
-            const booksInDb = await Book.find({ _id: { $in: bookIds } });
-
-            for (const book of booksInDb) {
-                if (book.availableQuantity <= 0) {
-                    return res.status(400).json({
+            if (!ticket) {
+                const currentTicket = await BorrowTicket.findOne({ ticketId });
+                if (!currentTicket) {
+                    return res.status(404).json({
                         success: false,
-                        message: `Cuốn sách "${book.title}" hiện đã hết hàng trong kho.`,
+                        message: `Không tìm thấy vé mượn với mã "${ticketId}".`,
                     });
                 }
+                if (currentTicket.status === 'COMPLETED') {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Vé mượn này đã được xử lý hoàn tất trước đó.',
+                    });
+                }
+                return res.status(400).json({
+                    success: false,
+                    message: currentTicket.status === 'PROCESSING'
+                        ? 'Vé mượn này đang được xử lý bởi một yêu cầu khác.'
+                        : `Vé mượn này đã được xử lý hoặc không ở trạng thái sẵn sàng (trạng thái: ${currentTicket.status}).`,
+                });
             }
 
-            const borrowerId = ticket.userId?._id || userId;
-            const dueDate = ticket.expectedReturnDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+            const borrowerId = ticket.userId?._id || ticket.userId;
+            if (!borrowerId) {
+                await BorrowTicket.updateOne({ _id: ticket._id }, { $set: { status: 'ACTIVE' } });
+                return res.status(400).json({
+                    success: false,
+                    message: 'Không tìm thấy thông tin chủ sở hữu vé mượn.',
+                });
+            }
 
-            const recordPromises = ticket.items.map(async (item) => {
-                await Book.findByIdAndUpdate(item.bookId, {
-                    $inc: { availableQuantity: -1 },
+            if (userId && userId.toString() !== borrowerId.toString()) {
+                await BorrowTicket.updateOne({ _id: ticket._id }, { $set: { status: 'ACTIVE' } });
+                return res.status(400).json({
+                    success: false,
+                    message: 'Thông tin người dùng không khớp với chủ sở hữu vé mượn.',
+                });
+            }
+
+            const deductedBookIds = [];
+            try {
+                if (!ticket.items || ticket.items.length === 0) {
+                    await BorrowTicket.updateOne({ _id: ticket._id }, { $set: { status: 'ACTIVE' } });
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Vé mượn không chứa đầu sách nào hợp lệ.',
+                    });
+                }
+
+                for (const item of ticket.items) {
+                    const updatedBook = await Book.findOneAndUpdate(
+                        { _id: item.bookId, availableQuantity: { $gt: 0 } },
+                        { $inc: { availableQuantity: -1 } },
+                        { new: true }
+                    );
+
+                    if (!updatedBook) {
+                        if (deductedBookIds.length > 0) {
+                            await Book.updateMany(
+                                { _id: { $in: deductedBookIds } },
+                                { $inc: { availableQuantity: 1 } }
+                            );
+                        }
+
+                        await BorrowTicket.updateOne({ _id: ticket._id }, { $set: { status: 'ACTIVE' } });
+
+                        return res.status(400).json({
+                            success: false,
+                            message: `Cuốn sách "${item.title || 'không xác định'}" hiện đã hết hàng trong kho.`,
+                        });
+                    }
+
+                    deductedBookIds.push(item.bookId);
+                }
+
+                const dueDate = ticket.expectedReturnDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+
+                const recordPromises = ticket.items.map((item) => {
+                    return BorrowRecord.create({
+                        userId: borrowerId,
+                        bookId: item.bookId,
+                        ticketId: ticket.ticketId,
+                        borrowDate: new Date(),
+                        dueDate: dueDate,
+                        staffName: staffName,
+                        status: 'BORROWED',
+                    });
                 });
 
-                return BorrowRecord.create({
-                    userId: borrowerId,
-                    bookId: item.bookId,
-                    ticketId: ticket.ticketId,
-                    borrowDate: new Date(),
-                    dueDate: dueDate,
-                    staffName: staffName,
-                    status: 'BORROWED',
+                await Promise.all(recordPromises);
+
+                await BorrowTicket.updateOne({ _id: ticket._id }, { $set: { status: 'COMPLETED' } });
+
+                const studentName = ticket.userId?.fullname || 'Student Reader';
+                const bookTitles = ticket.items.map((i) => i.title).join(', ');
+                await ActivityLog.create({
+                    category: 'books',
+                    categoryLabel: 'Books',
+                    action: 'Complete Checkout',
+                    description: `Completed checkout of ${ticket.items.length} book(s) [${bookTitles}] for ${studentName}`,
+                    actor: {
+                        name: staffName,
+                        role: req.session.user?.role || 'admin',
+                    },
                 });
-            });
 
-            await Promise.all(recordPromises);
-
-            ticket.status = 'COMPLETED';
-            await ticket.save();
-
-            const studentName = ticket.userId?.fullname || 'Student Reader';
-            const bookTitles = ticket.items.map((i) => i.title).join(', ');
-            await ActivityLog.create({
-                category: 'books',
-                categoryLabel: 'Books',
-                action: 'Complete Checkout',
-                description: `Completed checkout of ${ticket.items.length} book(s) [${bookTitles}] for ${studentName}`,
-                actor: {
-                    name: staffName,
-                    role: req.session.user?.role || 'admin',
-                },
-            });
-
-            return res.json({
-                success: true,
-                message: `Đã hoàn tất mượn ${ticket.items.length} cuốn sách thành công cho ${studentName}!`,
-            });
+                return res.json({
+                    success: true,
+                    message: `Đã hoàn tất mượn ${ticket.items.length} cuốn sách thành công cho ${studentName}!`,
+                });
+            } catch (processError) {
+                if (deductedBookIds.length > 0) {
+                    await Book.updateMany(
+                        { _id: { $in: deductedBookIds } },
+                        { $inc: { availableQuantity: 1 } }
+                    );
+                }
+                await BorrowTicket.updateOne({ _id: ticket._id }, { $set: { status: 'ACTIVE' } });
+                throw processError;
+            }
         } catch (error) {
             console.error('Lỗi khi thực hiện Checkout vé mượn:', error);
             return res.status(500).json({
@@ -1942,18 +2011,44 @@ class AdminController {
 
             const returnedBookTitles = [];
             for (const record of activeRecords) {
-                record.returnDate = new Date();
-                record.status = 'RETURNED';
-                record.staffName = staffName;
-                await record.save();
+                const updatedRecord = await BorrowRecord.findOneAndUpdate(
+                    {
+                        _id: record._id,
+                        returnDate: null,
+                    },
+                    {
+                        $set: {
+                            returnDate: new Date(),
+                            status: 'RETURNED',
+                            staffName: staffName,
+                        },
+                    },
+                    { new: true }
+                ).populate('bookId');
 
-                await Book.findByIdAndUpdate(record.bookId._id || record.bookId, {
-                    $inc: { availableQuantity: 1 },
-                });
+                if (updatedRecord) {
+                    const targetBookId = updatedRecord.bookId?._id || updatedRecord.bookId;
+                    await Book.findOneAndUpdate(
+                        {
+                            _id: targetBookId,
+                            $expr: { $lt: ['$availableQuantity', '$totalQuantity'] },
+                        },
+                        {
+                            $inc: { availableQuantity: 1 },
+                        }
+                    );
 
-                if (record.bookId?.title) {
-                    returnedBookTitles.push(record.bookId.title);
+                    if (updatedRecord.bookId?.title) {
+                        returnedBookTitles.push(updatedRecord.bookId.title);
+                    }
                 }
+            }
+
+            if (returnedBookTitles.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Các sách yêu cầu đã được xử lý trả trước đó.`,
+                });
             }
 
             await ActivityLog.create({
@@ -2001,9 +2096,12 @@ class AdminController {
                 });
             }
 
+            const dateKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
+
             const newAttendance = await Attendance.create({
                 userId: student._id,
                 studentId: studentCode || student.studentId || student.email.split('@')[0].toUpperCase(),
+                dateKey: dateKey,
                 checkInTime: new Date(),
                 method: 'QR_CODE',
                 location: 'Desk Scanner',
@@ -2031,6 +2129,12 @@ class AdminController {
                 },
             });
         } catch (error) {
+            if (error.code === 11000) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Bạn đã điểm danh hôm nay',
+                });
+            }
             console.error('Lỗi khi ghi nhận điểm danh qua Scanner:', error);
             return res.status(500).json({
                 success: false,

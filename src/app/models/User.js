@@ -6,6 +6,7 @@ const mongooseDelete = require('mongoose-delete');
 const User = new Schema(
     {
         fullname: { type: String, required: true, maxLength: 255 },
+        studentId: { type: String, trim: true },
         email: { type: String, required: true, unique: true, maxLength: 255 },
         password: { type: String, required: true },
         role: { type: String, enum: ['user', 'admin'], default: 'user' },

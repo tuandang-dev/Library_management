@@ -54,9 +54,12 @@ class ScannerController {
                 studentId = userInDb?.studentId || 'N/A';
             }
 
+            const dateKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
+
             const newAttendance = await Attendance.create({
                 userId: currentUser._id,
                 studentId: studentId,
+                dateKey: dateKey,
                 checkInTime: new Date(),
                 method: 'QR_CODE',
                 location: location,
@@ -79,6 +82,12 @@ class ScannerController {
                 },
             });
         } catch (error) {
+            if (error.code === 11000) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Bạn đã điểm danh hôm nay',
+                });
+            }
             console.error('Lỗi tại ScannerController.checkIn:', error);
             return res.status(500).json({
                 success: false,

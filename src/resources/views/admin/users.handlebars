@@ -66,6 +66,9 @@
                             <div class="user-mgmt__user-info">
                                 <span class="user-mgmt__user-name">{{this.fullname}}</span>
                                 <span class="user-mgmt__user-email">{{this.email}}</span>
+                                {{#if this.studentId}}
+                                <span class="user-mgmt__user-id small text-muted">MSSV: {{this.studentId}}</span>
+                                {{/if}}
                             </div>
                         </td>
                         <td class="user-mgmt__td user-mgmt__td--role">
@@ -145,12 +148,19 @@
                                     placeholder="user@university.edu" required>
                             </div>
                         </div>
-                        <div class="form-group user-modal__field">
-                            <label class="user-modal__label" for="addRole">Role</label>
-                            <select class="form-control user-modal__select" id="addRole" name="role">
-                                <option value="user" selected>Student</option>
-                                <option value="admin">Admin</option>
-                            </select>
+                        <div class="form-row">
+                            <div class="form-group col-md-6 user-modal__field">
+                                <label class="user-modal__label" for="addRole">Role</label>
+                                <select class="form-control user-modal__select" id="addRole" name="role">
+                                    <option value="user" selected>Student</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6 user-modal__field">
+                                <label class="user-modal__label" for="addStudentId">Mã sinh viên</label>
+                                <input type="text" class="form-control user-modal__input" id="addStudentId"
+                                    name="studentId" placeholder="Nhập mã sinh viên (tùy chọn)">
+                            </div>
                         </div>
                     </div>
 
@@ -331,7 +341,7 @@
                     <input type="file" id="csvFileInput" accept=".csv" class="import-modal__file-input" hidden>
                     <i class="fa-solid fa-arrow-up-from-bracket import-modal__upload-icon"></i>
                     <p class="import-modal__drop-title">Drop CSV file here or click to browse</p>
-                    <span class="import-modal__drop-hint">Expected format: Name, Email, Role</span>
+                    <span class="import-modal__drop-hint">Expected format: Name, Email, Role, StudentId (optional)</span>
                 </div>
             </div>
 
@@ -489,6 +499,7 @@
                             fullname: cols[0],
                             email: cols[1],
                             role: cols[2] ? cols[2].toLowerCase() : 'user',
+                            studentId: cols[3] ? cols[3].trim() : '',
                         });
                     }
                 }

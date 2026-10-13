@@ -53,7 +53,12 @@ class ProfileController {
 
             const user = await User.findById(currentUser._id);
             if (!user) {
-                return res.redirect('/logout');
+                return req.session.destroy((err) => {
+                    if (err) {
+                        console.error('Lỗi khi hủy session tại ProfileController:', err);
+                    }
+                    res.redirect('/login');
+                });
             }
 
             const isMatch = await bcrypt.compare(currentPassword, user.password);

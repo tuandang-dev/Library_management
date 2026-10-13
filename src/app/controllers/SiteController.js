@@ -1,6 +1,6 @@
 const Book = require('../models/Book');
 const Category = require('../models/Category');
-const { mutipleMongooseToObject } = require('../../util/mongoose');
+const escapeRegex = require('../../util/escapeRegex');
 
 class SiteController {
     // [GET] /
@@ -62,12 +62,13 @@ class SiteController {
                 filterConditions.categoryId = category;
             }
 
-            if (keyword) {
+            if (keyword && keyword.trim() !== '') {
+                const safeKeyword = escapeRegex(keyword.trim());
                 filterConditions.$or = [
-                    { title: { $regex: keyword, $options: 'i' } },
-                    { isbn: { $regex: keyword, $options: 'i' } },
-                    { accessionNumber: { $regex: keyword, $options: 'i' } },
-                    { author: { $regex: keyword, $options: 'i' } },
+                    { title: { $regex: safeKeyword, $options: 'i' } },
+                    { isbn: { $regex: safeKeyword, $options: 'i' } },
+                    { accessionNumber: { $regex: safeKeyword, $options: 'i' } },
+                    { author: { $regex: safeKeyword, $options: 'i' } },
                 ];
             }
 
@@ -88,8 +89,8 @@ class SiteController {
                         },
                     },
                 ]),
-                Book.countDocuments({}).lean(),
-                Book.countDocuments({ availableQuantity: { $gt: 0 } }).lean(),
+                Book.countDocuments({}),
+                Book.countDocuments({ availableQuantity: { $gt: 0 } }),
             ]);
 
             const totalCopies =
@@ -105,7 +106,7 @@ class SiteController {
                 layout: false,
             });
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).send('Lỗi server!');
         }
     }

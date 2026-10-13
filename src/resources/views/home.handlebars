@@ -70,13 +70,13 @@
             <div class="d-flex align-items-center gap-3">
                 <div class="results-icon-box"><i class="bi bi-book-half"></i></div>
                 <div>
-                    <p class="results-title">Tìm Thấy {{books.length}} Cuốn Sách</p>
-                    <p class="results-sub">Tổng bộ sưu tập: {{countDocuments}} cuốn sách</p>
+                    <p class="results-title">{{books.length}} Books Found</p>
+                    <p class="results-sub">Total collection: {{countDocuments}} books</p>
                 </div>
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <span class="stat-chip avail">Sẵn Có: {{availableQuantityTotal}}</span>
-                <span class="stat-chip total">Tổng Số Bản Sao: {{totalCopies}}</span>
+                <span class="stat-chip avail">Available: {{availableQuantityTotal}}</span>
+                <span class="stat-chip total">Total Copies: {{totalCopies}}</span>
             </div>
         </div>
 
@@ -200,12 +200,12 @@
     openBtn.forEach((item, index) => {
         item.addEventListener('click', () => {
             dialog.showModal();
-            document.querySelector('.dialog-title').innerHTML = item.dataset.title;
-            document.querySelector('.dialog-subtitle').innerHTML = item.dataset.author;
-            document.querySelector('.dialog-accession-number').innerHTML = item.dataset.accessionNumber;
-            document.querySelector('.dialog-category').innerHTML = item.dataset.category;
-            document.querySelector('.dialog-isbn').innerHTML = item.dataset.isbn;
-            document.querySelector('.dialog-copies').innerHTML = item.dataset.totalQuantity;
+            document.querySelector('.dialog-title').textContent = item.dataset.title;
+            document.querySelector('.dialog-subtitle').textContent = item.dataset.author;
+            document.querySelector('.dialog-accession-number').textContent = item.dataset.accessionNumber;
+            document.querySelector('.dialog-category').textContent = item.dataset.category;
+            document.querySelector('.dialog-isbn').textContent = item.dataset.isbn;
+            document.querySelector('.dialog-copies').textContent = item.dataset.totalQuantity;
             document.querySelector('.book-image').src = item.dataset.image;
         });
     })

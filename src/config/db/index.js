@@ -5,13 +5,14 @@ async function connect() {
 
     try {
 
-        await mongoose.connect('mongodb://127.0.0.1:27017/library-management');
+        await mongoose.connect(process.env.MONGODB_URI);
 
         console.log('Connect successfully!!!');
-        seedAdmin();
+        await seedAdmin();
 
     } catch (error) {
         console.log('Connect failure!!!');
+        throw error;
     }
 
 }

@@ -1,14 +1,11 @@
 const BorrowRecord = require('../models/BorrowRecord');
 const { formatDate, processBorrowStatus } = require('../../util/borrowHelper');
-const { seedBorrowRecordsForUser } = require('../services/borrowRecordSeeder');
 
 class HistoryController {
     // [GET] /history
     async index(req, res, next) {
         try {
             const currentUser = req.session.user;
-
-            await seedBorrowRecordsForUser(currentUser._id);
 
             const rawRecords = await BorrowRecord.find({ userId: currentUser._id })
                 .populate('bookId')

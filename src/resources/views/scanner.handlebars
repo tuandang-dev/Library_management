@@ -121,8 +121,6 @@
                             { facingMode: "environment" },
                             config,
                             async (decodedText, decodedResult) => {
-                                console.log(`QR Decoded: ${decodedText}`);
-
                                 await stopScanning();
 
                                 await sendCheckInRequest(decodedText);

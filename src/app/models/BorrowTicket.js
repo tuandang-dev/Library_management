@@ -23,7 +23,7 @@ const BorrowTicketSchema = new Schema(
         ],
         qrCodeDataUrl: { type: String, default: '' },
         expectedReturnDate: { type: Date, required: true },
-        status: { type: String, enum: ['ACTIVE', 'COMPLETED', 'EXPIRED', 'CANCELLED'], default: 'ACTIVE' },
+        status: { type: String, enum: ['ACTIVE', 'PROCESSING', 'COMPLETED', 'EXPIRED', 'CANCELLED'], default: 'ACTIVE' },
         generatedAt: { type: Date, default: Date.now },
         expiresAt: { type: Date, required: true },
     },

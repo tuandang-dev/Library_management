@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const { sendEmail } = require('../helpers/emailHelper');
 const bcrypt = require('bcryptjs');
+const escapeRegex = require('../../util/escapeRegex');
 
 class AuthController {
     // [GET] /login 
@@ -19,53 +20,73 @@ class AuthController {
     }
 
     // [POST] /login 
-    async processLogin(req, res) {
+    async processLogin(req, res, next) {
         try {
             const { email, password } = req.body;
+            const loginIdentifier = (email || '').trim();
+            const safeIdentifier = escapeRegex(loginIdentifier);
 
-            const user = await User.findOne({ email: email });
+            const user = await User.findOne({
+                $or: [
+                    { email: { $regex: new RegExp(`^${safeIdentifier}$`, 'i') } },
+                    { studentId: loginIdentifier }
+                ]
+            });
 
             if (!user) {
-                return res.render('auth/login', {
+                return res.status(401).render('auth/login', {
                     layout: 'auth',
                     errorMessage: 'Tài khoản hoặc mật khẩu không chính xác!'
                 });
             }
 
             if (user.status === 'disable') {
-                return res.render('auth/login', {
-                    error: 'Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ Quản trị viên.',
+                return res.status(403).render('auth/login', {
+                    layout: 'auth',
+                    errorMessage: 'Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ Quản trị viên.',
                 });
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (!isMatch) {
-                return res.render('auth/login', {
+                return res.status(401).render('auth/login', {
                     layout: 'auth',
                     errorMessage: 'Tài khoản hoặc mật khẩu không chính xác!'
                 });
             }
 
-            req.session.user = {
-                _id: user._id,
-                fullname: user.fullname,
-                email: user.email,
-                role: user.role,
-                avatar: user.avatar
-            };
+            req.session.regenerate((err) => {
+                if (err) {
+                    console.error('Lỗi khi regenerate session:', err);
+                    return next(err);
+                }
 
-            console.log('Session hiện tại:', req.session.user);
+                req.session.user = {
+                    _id: user._id,
+                    fullname: user.fullname,
+                    email: user.email,
+                    role: user.role,
+                    avatar: user.avatar
+                };
 
-            if (user.role === 'admin') {
-                res.redirect('/admin/dashboard');
-            } else {
-                res.redirect('/');
-            }
+                req.session.save((saveErr) => {
+                    if (saveErr) {
+                        console.error('Lỗi khi lưu session:', saveErr);
+                        return next(saveErr);
+                    }
+
+                    if (user.role === 'admin') {
+                        return res.redirect('/admin/dashboard');
+                    } else {
+                        return res.redirect('/');
+                    }
+                });
+            });
 
         } catch (error) {
             console.error('Lỗi khi xử lý đăng nhập:', error);
-            res.status(500).send('Lỗi Server nội bộ');
+            next(error);
         }
     }
 
@@ -73,19 +94,23 @@ class AuthController {
     async processForgotPassword(req, res, next) {
         try {
             const { email } = req.body;
+            const normalizedEmail = (email || '').trim().toLowerCase();
+            const responseMessage = 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.';
 
-            const user = await User.findOne({ email: email });
+            const safeEmailPattern = new RegExp(`^${escapeRegex(normalizedEmail)}$`, 'i');
+            const user = await User.findOne({ email: { $regex: safeEmailPattern } });
 
             if (!user) {
                 return res.render('auth/forgot-password', {
                     layout: 'auth',
-                    successMessage: 'Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi một đường link khôi phục.'
+                    successMessage: responseMessage
                 });
             }
 
             const resetToken = crypto.randomBytes(20).toString('hex');
+            const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-            user.resetPasswordToken = resetToken;
+            user.resetPasswordToken = hashedToken;
             user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
             await user.save();
 
@@ -101,11 +126,15 @@ class AuthController {
                 <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này và mật khẩu của bạn sẽ được giữ an toàn.</p>
             `;
 
-            await sendEmail(user.email, emailSubject, emailHtml);
+            try {
+                await sendEmail(user.email, emailSubject, emailHtml);
+            } catch (emailErr) {
+                console.error('Lỗi khi gửi email đặt lại mật khẩu:', emailErr.message);
+            }
 
             return res.render('auth/forgot-password', {
                 layout: 'auth',
-                successMessage: 'Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi một đường link khôi phục.'
+                successMessage: responseMessage
             });
 
         } catch (error) {
@@ -123,6 +152,14 @@ class AuthController {
             const { password, confirmPassword } = req.body;
             const { token } = req.params;
 
+            if (!password || password.length < 6) {
+                return res.render('auth/reset-password', {
+                    layout: 'auth',
+                    token: token,
+                    errorMessage: 'Mật khẩu mới phải có độ dài tối thiểu 6 ký tự!'
+                });
+            }
+
             if (password !== confirmPassword) {
                 return res.render('auth/reset-password', {
                     layout: 'auth',
@@ -131,21 +168,24 @@ class AuthController {
                 });
             }
 
+            const rawToken = token || '';
+            const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
             const user = await User.findOne({
-                resetPasswordToken: token,
+                resetPasswordToken: hashedToken,
                 resetPasswordExpires: { $gt: Date.now() }
             });
 
             if (!user) {
                 return res.render('auth/forgot-password', {
                     layout: 'auth',
-                    errorMessage: 'Token không hợp lệ hoặc đã quá hạn 15 phút. Vui lòng yêu cầu link mới.'
+                    errorMessage: 'Token không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu link mới.'
                 });
             }
 
             user.password = password;
-            user.resetPasswordToken = undefined;
-            user.resetPasswordExpires = undefined;
+            user.resetPasswordToken = null;
+            user.resetPasswordExpires = null;
             await user.save();
 
             return res.render('auth/login', {
@@ -162,8 +202,11 @@ class AuthController {
     // [GET] /reset-password/:token
     async showResetPassword(req, res, next) {
         try {
+            const rawToken = req.params.token || '';
+            const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
             const user = await User.findOne({
-                resetPasswordToken: req.params.token,
+                resetPasswordToken: hashedToken,
                 resetPasswordExpires: { $gt: Date.now() }
             });
 
@@ -177,7 +220,7 @@ class AuthController {
             res.render('auth/reset-password', {
                 layout: 'auth',
                 title: 'Đặt lại mật khẩu',
-                token: req.params.token
+                token: rawToken
             });
         } catch (error) {
             console.error('Lỗi khi hiển thị trang reset password:', error);
@@ -185,7 +228,7 @@ class AuthController {
         }
     }
 
-    // [GET] /logout
+    // [POST] /logout
     logout(req, res) {
         req.session.destroy((err) => {
             if (err) {

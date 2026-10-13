@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const Category = new Schema({
     name: { type: String, required: true, unique: true },
-    slug: { type: String, slug: 'name', unique: true }
+    slug: { type: String, unique: true }
 }, {
     timestamps: true
 });

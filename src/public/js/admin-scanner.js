@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { facingMode: 'environment' },
                 cameraConfig,
                 async (decodedText) => {
-                    console.log('[Admin Scanner] Đã đọc mã QR:', decodedText);
                     await stopScanning();
                     await processTicketData(decodedText);
                 },
@@ -192,9 +191,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        if (text === null || text === undefined) return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+        };
+        return String(text).replace(/[&<>"']/g, (m) => map[m]);
     }
 
     const btnActionCheckout = document.getElementById('btnActionCheckout');

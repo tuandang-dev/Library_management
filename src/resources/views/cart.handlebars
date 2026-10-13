@@ -254,6 +254,18 @@
                         document.getElementById('ticketGeneratedAt').textContent = ticket.generatedAtFormatted;
                         document.getElementById('ticketExpiresAt').textContent = ticket.expiresAtFormatted;
 
+                        function escapeHtml(text) {
+                            if (text === null || text === undefined) return '';
+                            const map = {
+                                '&': '&amp;',
+                                '<': '&lt;',
+                                '>': '&gt;',
+                                '"': '&quot;',
+                                "'": '&#39;',
+                            };
+                            return String(text).replace(/[&<>"']/g, (m) => map[m]);
+                        }
+
                         const itemsContainer = document.getElementById('ticketItemsList');
                         itemsContainer.innerHTML = '';
                         ticket.items.forEach((item, index) => {
@@ -263,8 +275,8 @@
                             <div class="ticket-modal__item-left">
                                 <span class="ticket-modal__item-idx">${index + 1}</span>
                                 <div>
-                                    <h4 class="ticket-modal__item-title">${item.title}</h4>
-                                    <p class="ticket-modal__item-author">by ${item.author}</p>
+                                    <h4 class="ticket-modal__item-title">${escapeHtml(item.title)}</h4>
+                                    <p class="ticket-modal__item-author">by ${escapeHtml(item.author)}</p>
                                 </div>
                             </div>
                             <span class="ticket-modal__item-tag">Book</span>

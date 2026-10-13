@@ -73,11 +73,13 @@ const formatAttendanceRecord = (record) => {
 
     const studentName = record.userId?.fullname || 'Unknown Visitor';
     const studentEmail = record.userId?.email || 'N/A';
+    const studentId = record.studentId || record.userId?.studentId || '';
 
     return {
         _id: record._id,
         studentName,
         studentEmail,
+        studentId,
         monthDay,
         dayOfWeek,
         checkInTimeFormatted,

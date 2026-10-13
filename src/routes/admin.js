@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require('../app/controllers/AdminController');
 const { requireAuth, requireAdmin } = require('../app/middlewares/authMiddleware');
 
+router.get('/', requireAuth, requireAdmin, (req, res) => res.redirect('/admin/dashboard'));
 router.get('/dashboard', requireAuth, requireAdmin, adminController.dashboard);
 router.get('/users', requireAuth, requireAdmin, adminController.users);
 router.post('/users', requireAuth, requireAdmin, adminController.createUser);

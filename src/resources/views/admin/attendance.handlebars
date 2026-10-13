@@ -107,6 +107,9 @@
                         <div class="admin-attendance__user-name d-flex align-items-center">
                             <i class="fa-regular fa-user admin-attendance__user-icon mr-2"></i>
                             <span class="text-dark">{{this.studentName}}</span>
+                            {{#if this.studentId}}
+                            <span class="badge badge-light border ml-2 text-muted">MSSV: {{this.studentId}}</span>
+                            {{/if}}
                         </div>
                         <div class="admin-attendance__checkin-time small mt-1">
                             Check-in: {{this.checkInTimeFormatted}}

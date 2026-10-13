@@ -1,5 +1,6 @@
 const Book = require('../models/Book');
 const Category = require('../models/Category');
+const escapeRegex = require('../../util/escapeRegex');
 
 class BookController {
     // [GET] /book
@@ -11,8 +12,8 @@ class BookController {
             // 1. Xây dựng điều kiện lọc (Filter Conditions)
             let filterConditions = {};
 
-            if (searchbook) {
-                const searchRegex = new RegExp(searchbook.trim(), 'i');
+            if (searchbook && searchbook.trim() !== '') {
+                const searchRegex = new RegExp(escapeRegex(searchbook.trim()), 'i');
                 filterConditions.$or = [
                     { title: searchRegex },
                     { author: searchRegex },

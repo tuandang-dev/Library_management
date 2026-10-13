@@ -1,3 +1,8 @@
 node_modules/
 .postman/
 postman/
+.env
+.env.local
+.env.production
+AGENTS.md
+tests/
