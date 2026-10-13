@@ -1,6 +1,6 @@
 # Library Management System
 
-A full-stack, server-side rendered (SSR) web application for academic and institutional library management. Built with **Node.js**, **Express 5**, **Express-Handlebars**, and **MongoDB (Mongoose 9)**, the application follows the Model-View-Controller (MVC) architectural pattern to deliver book cataloging, circulation tracking, attendance monitoring, and role-based administration.
+A full-stack, server-side rendered web application for academic and institutional library management. Built with **Node.js**, **Express 5**, **Express-Handlebars**, and **MongoDB (Mongoose 9)**, the application follows the Model-View-Controller architectural pattern to deliver book cataloging, circulation tracking, attendance monitoring, and role-based administration.
 
 ---
 
@@ -285,13 +285,13 @@ The application reads configuration from `.env` via the Node.js `--env-file=.env
 
 | Variable Name | Required | Description | Safe Example Value |
 | :--- | :---: | :--- | :--- |
-| `PORT` | Optional | Port on which the HTTP server listens (defaults to `3000`) | `3000` |
-| `MONGODB_URI` | **Yes** | MongoDB connection string for the development database | `mongodb://127.0.0.1:27017/library-management` |
-| `SESSION_SECRET` | **Yes** | Secret string used to sign session cookies | `your_random_session_secret_key_here` |
-| `EMAIL_USER` | Optional | Gmail/SMTP username for sending notifications | `your_library_email@gmail.com` |
-| `EMAIL_PASS` | Optional | App-specific password for SMTP authentication | `your_gmail_app_password` |
-| `NODE_ENV` | Optional | Environment mode (`development`, `production`, `test`) | `development` |
-| `ADMIN_DEFAULT_PASSWORD` | **Yes** | Password used when auto-seeding the default admin | `AdminStrongPassword123!` |
+| `PORT` | Optional | Port on which the HTTP server listens|
+| `MONGODB_URI` | **Yes** | MongoDB connection string for the development database |
+| `SESSION_SECRET` | **Yes** | Secret string used to sign session cookies |
+| `EMAIL_USER` | Optional | Gmail/SMTP username for sending notifications |
+| `EMAIL_PASS` | Optional | App-specific password for SMTP authentication |
+| `NODE_ENV` | Optional | Environment mode (`development`, `production`, `test`) |
+| `ADMIN_DEFAULT_PASSWORD` | **Yes** | Password used when auto-seeding the default admin |
 
 > [!WARNING]
 > Never commit your `.env` file or real secrets to version control. Keep credentials safe and use app-specific passwords when configuring SMTP.
@@ -438,8 +438,7 @@ The project includes `seedBorrowRecordsForUser(userId)` (`src/app/services/borro
 
 ## Author / Contact
 
-- **Author:** `[Your Name]`
-- **GitHub:** `[https://github.com/your-username]`
-- **Email:** `[your-email@example.com]`
-- **LinkedIn:** `[https://linkedin.com/in/your-profile]`
+- **Author:** `[Đặng Anh Tuấn]`
+- **GitHub:** `[https://github.com/tuandang-dev]`
+- **Email:** `[danganht456@gmail.com]`
 - **Project Repository:** [https://github.com/tuandang-dev/nodejs_library_management](https://github.com/tuandang-dev/nodejs_library_management)
