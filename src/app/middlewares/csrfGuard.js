@@ -8,7 +8,7 @@ function isApiOrFetch(req) {
 }
 
 function sendForbidden(req, res) {
-    const message = 'Yêu cầu bị từ chối.';
+    const message = 'Request forbidden.';
 
     if (isApiOrFetch(req)) {
         return res.status(403).json({

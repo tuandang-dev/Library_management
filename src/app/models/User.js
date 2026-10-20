@@ -16,6 +16,7 @@ const User = new Schema(
         avatar: { type: String, default: '/img/default-avatar.png' },
         resetPasswordToken: { type: String, default: null },
         resetPasswordExpires: { type: Date, default: null },
+        mustChangePassword: { type: Boolean, default: false },
     },
     {
         timestamps: true,
@@ -44,7 +45,7 @@ User.pre('save', async function () {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
     } catch (error) {
-        throw new Error('Lỗi khi mã hóa mật khẩu');
+        throw new Error('Error hashing password');
     }
 });
 
@@ -52,5 +53,11 @@ User.plugin(mongooseDelete, {
     deletedAt: true,
     overrideMethods: 'all',
 });
+
+User.index({ studentId: 1 }, { sparse: true });
+User.index({ role: 1, status: 1 });
+User.index({ fullname: 1 });
+User.index({ createdAt: -1 });
+User.index({ resetPasswordToken: 1 }, { sparse: true });
 
 module.exports = mongoose.model('User', User);

@@ -34,7 +34,7 @@
             </div>
             <div>
                 <p class="results-title">
-                    {{#if books.length}}{{books.length}}{{else}}0{{/if}} Books Found
+                    {{#if pagination.totalItems}}{{pagination.totalItems}}{{else if books.length}}{{books.length}}{{else}}0{{/if}} Books Found
                 </p>
                 <p class="results-sub">
                     Total collection: {{#if countDocuments}}{{countDocuments}}{{else}}0{{/if}} books
@@ -46,7 +46,7 @@
             <span class="stat-chip avail">
                 Available: {{#if availableQuantityTotal}}{{availableQuantityTotal}}{{else}}0{{/if}}
             </span>
-            <button type="button" class="btn-cart-summary" id="openCartBtn" title="Xem giỏ sách">
+            <button type="button" class="btn-cart-summary" id="openCartBtn" title="View book cart">
                 <i class="fa-solid fa-cart-shopping me-1"></i>
                 <span id="cartCountBadge">0 in cart</span>
             </button>
@@ -84,6 +84,7 @@
         </div>
         {{/each}}
     </div>
+    {{> pagination pagination=pagination}}
     {{else}}
     <div class="empty-card my-5">
         <div class="empty-icon-wrap">
@@ -208,7 +209,7 @@
                     updateCartBadgeUI(data.cartCount);
                 }
             } catch (err) {
-                console.error('Không thể lấy số lượng giỏ hàng:', err);
+                console.error('Failed to get cart count:', err);
             }
         }
         syncCartCount();
@@ -328,7 +329,7 @@
                 const bookId = dialogAddToCartBtn.dataset.bookId;
 
                 if (!bookId) {
-                    alert('Không tìm thấy thông tin sách!');
+                    alert('Book information not found!');
                     return;
                 }
 
@@ -362,13 +363,13 @@
                         }
 
                         dialog.close();
-                        alert(data.message || 'Đã thêm sách vào giỏ mượn thành công!');
+                        alert(data.message || 'Book added to cart successfully!');
                     } else {
-                        alert(data.message || 'Không thể thêm sách vào giỏ!');
+                        alert(data.message || 'Unable to add book to cart!');
                     }
                 } catch (err) {
-                    console.error('Lỗi khi thêm sách vào giỏ:', err);
-                    alert('Có lỗi xảy ra khi kết nối máy chủ!');
+                    console.error('Error adding book to cart:', err);
+                    alert('A server connection error occurred!');
                 } finally {
                     dialogAddToCartBtn.disabled = false;
                     dialogAddToCartBtn.innerHTML = '<i class="fa-solid fa-cart-shopping"></i><span>Add to Cart</span>';

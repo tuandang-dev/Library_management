@@ -26,14 +26,20 @@
   "author": "tuanda",
   "type": "commonjs",
   "main": "src/index.js",
+  "engines": {
+    "node": ">=20.6"
+  },
   "scripts": {
     "beautiful": "lint-staged",
-    "start": "nodemon --env-file=.env --inspect src/index.js",
+    "start": "node src/index.js",
+    "dev": "nodemon --env-file=.env src/index.js",
     "watch": "sass --watch src/resources/scss/app.scss:src/public/css/app.css",
-    "test": "node --env-file=tests/test.env --test \"tests/*.test.js\""
+    "test": "node --env-file=tests/test.env --test \"tests/*.test.js\"",
+    "seed:demo": "node --env-file=.env src/util/demoSeeder.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "connect-mongo": "^6.0.0",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "express-handlebars": "^8.0.4",
@@ -42,13 +48,13 @@
     "method-override": "^3.0.0",
     "mongoose": "^9.0.1",
     "mongoose-delete": "^1.0.7",
+    "morgan": "^1.10.1",
     "nodemailer": "^9.0.3",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "morgan": "^1.10.1",
     "nodemon": "^3.1.11",
     "prettier": "^3.7.4",
     "sass": "^1.98.0"

@@ -22,7 +22,7 @@
                         {{#if studentId}}
                         {{studentId}}
                         {{else}}
-                        <span class="text-muted">Chưa cập nhật</span>
+                        <span class="text-muted">Not updated</span>
                         {{/if}}
                     </div>
                 </div>
@@ -46,7 +46,7 @@
         </div>
 
         <div class="attendance-card__body">
-            <nav class="time-filter mb-4" aria-label="Lọc lịch sử theo thời gian">
+            <nav class="time-filter mb-4" aria-label="Filter history by time">
                 <ul class="time-filter__list">
                     <li class="time-filter__item">
                         <a href="/attendance?period=day"
@@ -68,8 +68,7 @@
             </nav>
 
             <p class="attendance-card__status-text">
-                Your library visits for this {{#if selectedPeriod}}{{selectedPeriod}}{{else}}month{{/if}} ({{#if
-                records.length}}{{records.length}}{{else}}0{{/if}} records)
+                Your library visits for this {{#if selectedPeriod}}{{selectedPeriod}}{{else}}month{{/if}} ({{#if pagination.totalItems}}{{pagination.totalItems}}{{else if records.length}}{{records.length}}{{else}}0{{/if}} records)
             </p>
 
             {{#if records.length}}
@@ -77,9 +76,9 @@
                 <table class="attendance-table">
                     <thead>
                         <tr>
-                            <th>Thời gian</th>
-                            <th>Địa điểm</th>
-                            <th>Phương thức</th>
+                            <th>Time</th>
+                            <th>Location</th>
+                            <th>Method</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,6 +92,7 @@
                     </tbody>
                 </table>
             </div>
+            {{> pagination pagination=pagination}}
             {{else}}
             <div class="empty-state">
                 <div class="empty-state__icon-box">

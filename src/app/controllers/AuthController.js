@@ -36,14 +36,14 @@ class AuthController {
             if (!user) {
                 return res.status(401).render('auth/login', {
                     layout: 'auth',
-                    errorMessage: 'Tài khoản hoặc mật khẩu không chính xác!'
+                    errorMessage: 'Incorrect username or password!'
                 });
             }
 
             if (user.status === 'disable') {
                 return res.status(403).render('auth/login', {
                     layout: 'auth',
-                    errorMessage: 'Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ Quản trị viên.',
+                    errorMessage: 'Your account has been disabled. Please contact the Administrator.',
                 });
             }
 
@@ -52,7 +52,7 @@ class AuthController {
             if (!isMatch) {
                 return res.status(401).render('auth/login', {
                     layout: 'auth',
-                    errorMessage: 'Tài khoản hoặc mật khẩu không chính xác!'
+                    errorMessage: 'Incorrect username or password!'
                 });
             }
 
@@ -67,7 +67,8 @@ class AuthController {
                     fullname: user.fullname,
                     email: user.email,
                     role: user.role,
-                    avatar: user.avatar
+                    avatar: user.avatar,
+                    mustChangePassword: Boolean(user.mustChangePassword),
                 };
 
                 req.session.save((saveErr) => {
@@ -95,7 +96,7 @@ class AuthController {
         try {
             const { email } = req.body;
             const normalizedEmail = (email || '').trim().toLowerCase();
-            const responseMessage = 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.';
+            const responseMessage = 'If the email exists, we have sent password reset instructions.';
 
             const safeEmailPattern = new RegExp(`^${escapeRegex(normalizedEmail)}$`, 'i');
             const user = await User.findOne({ email: { $regex: safeEmailPattern } });
@@ -116,14 +117,14 @@ class AuthController {
 
             const resetUrl = `http://${req.headers.host}/reset-password/${resetToken}`;
 
-            const emailSubject = '[UCC Library] Yêu cầu khôi phục mật khẩu';
+            const emailSubject = '[UCC Library] Password Reset Request';
             const emailHtml = `
-                <h3>Xin chào ${user.fullname || 'bạn'},</h3>
-                <p>Bạn nhận được email này vì đã yêu cầu khôi phục mật khẩu cho tài khoản tại hệ thống Thư viện UCC.</p>
-                <p>Vui lòng click vào đường link bên dưới để thiết lập lại mật khẩu:</p>
-                <a href="${resetUrl}" target="_blank" style="display:inline-block; padding:10px 20px; background-color:#d35400; color:#fff; text-decoration:none; border-radius:4px;">Khôi phục mật khẩu</a>
-                <p><i>Đường link này sẽ hết hạn sau 15 phút.</i></p>
-                <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này và mật khẩu của bạn sẽ được giữ an toàn.</p>
+                <h3>Hello ${user.fullname || 'there'},</h3>
+                <p>You are receiving this email because you requested a password reset for your UCC Library account.</p>
+                <p>Please click the link below to set a new password:</p>
+                <a href="${resetUrl}" target="_blank" style="display:inline-block; padding:10px 20px; background-color:#d35400; color:#fff; text-decoration:none; border-radius:4px;">Reset Password</a>
+                <p><i>This link will expire in 15 minutes.</i></p>
+                <p>If you did not request this, please ignore this email and your password will remain secure.</p>
             `;
 
             try {
@@ -141,7 +142,7 @@ class AuthController {
             console.error('Lỗi khi xử lý quên mật khẩu:', error);
             return res.render('auth/forgot-password', {
                 layout: 'auth',
-                errorMessage: 'Đã có lỗi xảy ra từ phía máy chủ. Vui lòng thử lại sau.'
+                errorMessage: 'A server error occurred. Please try again later.'
             });
         }
     }
@@ -156,7 +157,7 @@ class AuthController {
                 return res.render('auth/reset-password', {
                     layout: 'auth',
                     token: token,
-                    errorMessage: 'Mật khẩu mới phải có độ dài tối thiểu 6 ký tự!'
+                    errorMessage: 'New password must be at least 6 characters long!'
                 });
             }
 
@@ -164,7 +165,7 @@ class AuthController {
                 return res.render('auth/reset-password', {
                     layout: 'auth',
                     token: token,
-                    errorMessage: 'Mật khẩu xác nhận không khớp. Vui lòng nhập lại.'
+                    errorMessage: 'Confirm password does not match. Please re-enter.'
                 });
             }
 
@@ -179,18 +180,23 @@ class AuthController {
             if (!user) {
                 return res.render('auth/forgot-password', {
                     layout: 'auth',
-                    errorMessage: 'Token không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu link mới.'
+                    errorMessage: 'Token is invalid or has expired. Please request a new link.'
                 });
             }
 
             user.password = password;
             user.resetPasswordToken = null;
             user.resetPasswordExpires = null;
+            user.mustChangePassword = false;
             await user.save();
+
+            if (req.session && req.session.user) {
+                req.session.user.mustChangePassword = false;
+            }
 
             return res.render('auth/login', {
                 layout: 'auth',
-                successMessage: 'Mật khẩu của bạn đã được cập nhật thành công! Vui lòng đăng nhập lại.'
+                successMessage: 'Your password has been updated successfully! Please log in again.'
             });
 
         } catch (error) {
@@ -213,13 +219,13 @@ class AuthController {
             if (!user) {
                 return res.render('auth/forgot-password', {
                     layout: 'auth',
-                    errorMessage: 'Đường link khôi phục không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu link mới.'
+                    errorMessage: 'Reset link is invalid or has expired. Please request a new link.'
                 });
             }
 
             res.render('auth/reset-password', {
                 layout: 'auth',
-                title: 'Đặt lại mật khẩu',
+                title: 'Reset Password',
                 token: rawToken
             });
         } catch (error) {
@@ -233,7 +239,7 @@ class AuthController {
         req.session.destroy((err) => {
             if (err) {
                 console.error('Lỗi khi hủy session:', err);
-                return res.status(500).send('Lỗi khi đăng xuất');
+                return res.status(500).send('Error logging out');
             }
 
             res.clearCookie('connect.sid');

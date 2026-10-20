@@ -59,7 +59,7 @@
 
         <div class="admin-books__meta-bar">
             <div class="admin-books__meta-count">
-                Showing {{showingCount}} of {{totalBooksCount}} books
+                Showing {{#if pagination.showPagination}}{{pagination.showingFrom}}-{{pagination.showingTo}}{{else}}{{showingCount}}{{/if}} of {{totalBooksCount}} books
             </div>
             <div class="admin-books__meta-total">
                 Total Inventory: {{totalInventory}} copies
@@ -148,6 +148,7 @@
                 </tbody>
             </table>
         </div>
+        {{> pagination pagination=pagination}}
     </div>
 </div>
 
@@ -530,7 +531,7 @@
                 const password = securityPasswordInput.value;
 
                 if (!password) {
-                    securityAlert.textContent = 'Vui lòng nhập mật khẩu xác thực!';
+                    securityAlert.textContent = 'Please enter your password for verification!';
                     securityAlert.classList.remove('d-none');
                     return;
                 }
@@ -562,7 +563,7 @@
                         window.location.reload();
                     }
                 } catch (err) {
-                    securityAlert.textContent = 'Lỗi kết nối máy chủ. Vui lòng thử lại!';
+                    securityAlert.textContent = 'Server connection error. Please try again!';
                     securityAlert.classList.remove('d-none');
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Confirm Action';
@@ -633,7 +634,7 @@
 
         function handleCsvFile(file) {
             if (!file.name.toLowerCase().endsWith('.csv')) {
-                alert('Vui lòng chọn tệp tin có định dạng .csv!');
+                alert('Please select a .csv file!');
                 return;
             }
 
@@ -647,7 +648,7 @@
 
                     const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
                     if (lines.length < 2) {
-                        alert('Tệp CSV không chứa dữ liệu hoặc không có dòng tiêu đề!');
+                        alert('CSV file contains no data or missing headers!');
                         return;
                     }
 
@@ -669,7 +670,7 @@
                     }
 
                     if (parsedBooks.length === 0) {
-                        alert('Không tìm thấy dòng dữ liệu nào hợp lệ trong tệp CSV!');
+                        alert('No valid book records found in the CSV file!');
                         return;
                     }
 
@@ -694,7 +695,7 @@
 
                 } catch (err) {
                     console.error(err);
-                    alert('Không thể đọc nội dung tệp CSV: ' + err.message);
+                    alert('Cannot read CSV file: ' + err.message);
                 }
             };
 

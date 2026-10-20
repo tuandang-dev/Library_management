@@ -90,7 +90,7 @@
     <div class="admin-attendance__records-section">
         <div class="mb-3">
             <h5 class="admin-attendance__records-title mb-1">Attendance Records</h5>
-            <p class="admin-attendance__records-count small mb-0">Showing {{showingCount}} records</p>
+            <p class="admin-attendance__records-count small mb-0">Showing {{#if pagination.showPagination}}{{pagination.showingFrom}}-{{pagination.showingTo}}{{else}}{{showingCount}}{{/if}} of {{totalAttendanceCount}} records</p>
         </div>
 
         {{#if records.length}}
@@ -128,6 +128,7 @@
             </div>
             {{/each}}
         </div>
+        {{> pagination pagination=pagination}}
         {{else}}
         <div class="card admin-attendance__card py-5 text-center">
             <div class="admin-attendance__empty-icon mb-3 text-muted">

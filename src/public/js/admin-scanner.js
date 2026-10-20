@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             );
         } catch (err) {
-            console.error('[Admin Scanner] Lỗi khởi động camera:', err);
-            alert('Không thể truy cập camera! Vui lòng kiểm tra quyền truy cập trên trình duyệt.');
+            console.error('[Admin Scanner] Error starting camera:', err);
+            alert('Cannot access camera! Please check browser permissions.');
             await stopScanning();
         }
     }
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await html5QrCode.stop();
                 await html5QrCode.clear();
             } catch (err) {
-                console.warn('[Admin Scanner] Lỗi khi dừng camera:', err);
+                console.warn('[Admin Scanner] Error stopping camera:', err);
             }
         }
 
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleManualInput() {
         const rawValue = manualTicketInput.value.trim();
         if (!rawValue) {
-            alert('Vui lòng nhập Ticket ID hoặc dữ liệu vé QR!');
+            alert('Please enter a Ticket ID or QR code data!');
             manualTicketInput.focus();
             return;
         }
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok && result.success && result.data) {
                 renderTicketResult(result.data);
             } else {
-                alert(result.message || 'Mã vé không hợp lệ hoặc đã hết hạn sử dụng!');
+                alert(result.message || 'Invalid ticket code or ticket has expired!');
                 showEmptyState();
                 if (manualTicketInput) {
                     manualTicketInput.focus();
@@ -139,8 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } catch (error) {
-            console.error('[Admin Scanner] Lỗi khi xác thực vé:', error);
-            alert('Lỗi kết nối máy chủ khi kiểm tra vé. Vui lòng kiểm tra lại đường truyền!');
+            console.error('[Admin Scanner] Error verifying ticket:', error);
+            alert('Server connection error while verifying ticket. Please check your network!');
             showEmptyState();
         } finally {
             if (btnManualVerify) {
@@ -209,17 +209,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnActionCheckout) {
         btnActionCheckout.addEventListener('click', async () => {
             if (!window.currentTicketData) {
-                alert('Vui lòng quét hoặc xác thực vé mượn trước khi thực hiện!');
+                alert('Please scan or verify a borrow ticket first!');
                 return;
             }
 
             const ticket = window.currentTicketData;
             if (!ticket.books || ticket.books.length === 0) {
-                alert('Vé mượn này không có cuốn sách nào để mượn!');
+                alert('This ticket does not contain any books to borrow!');
                 return;
             }
 
-            const confirmMsg = `Xác nhận cho sinh viên ${ticket.studentName} mượn ${ticket.books.length} cuốn sách?`;
+            const confirmMsg = `Confirm checkout of ${ticket.books.length} book(s) for student ${ticket.studentName}?`;
             if (!confirm(confirmMsg)) return;
 
             try {
@@ -252,11 +252,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     showEmptyState();
                     if (manualTicketInput) manualTicketInput.value = '';
                 } else {
-                    alert(result.message || 'Không thể hoàn tất thủ tục mượn sách!');
+                    alert(result.message || 'Unable to complete checkout procedure!');
                 }
             } catch (err) {
-                console.error('[Admin Scanner] Lỗi khi Checkout:', err);
-                alert('Lỗi kết nối máy chủ khi thực hiện mượn sách!');
+                console.error('[Admin Scanner] Error during checkout:', err);
+                alert('Server connection error during book checkout!');
             } finally {
                 btnActionCheckout.disabled = false;
                 btnActionCheckout.innerHTML = `<i class="fa-solid fa-check mr-2"></i> <span id="btnCheckoutText">Complete Checkout</span>`;
@@ -267,12 +267,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnActionReturn) {
         btnActionReturn.addEventListener('click', async () => {
             if (!window.currentTicketData) {
-                alert('Vui lòng quét vé hoặc nhập thông tin độc giả cần trả sách!');
+                alert('Please scan a ticket or enter student details to return books!');
                 return;
             }
 
             const ticket = window.currentTicketData;
-            const confirmMsg = `Xác nhận nhận trả sách cho độc giả ${ticket.studentName}?`;
+            const confirmMsg = `Confirm book return for student ${ticket.studentName}?`;
             if (!confirm(confirmMsg)) return;
 
             try {
@@ -304,11 +304,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     showEmptyState();
                     if (manualTicketInput) manualTicketInput.value = '';
                 } else {
-                    alert(result.message || 'Không thể xử lý trả sách!');
+                    alert(result.message || 'Unable to process book return!');
                 }
             } catch (err) {
-                console.error('[Admin Scanner] Lỗi khi Return sách:', err);
-                alert('Lỗi kết nối máy chủ khi xử lý trả sách!');
+                console.error('[Admin Scanner] Error during book return:', err);
+                alert('Server connection error while processing book return!');
             } finally {
                 btnActionReturn.disabled = false;
                 btnActionReturn.innerHTML = `<i class="fa-solid fa-arrow-rotate-left mr-2"></i> <span>Process Book Return</span>`;
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnActionAttendance) {
         btnActionAttendance.addEventListener('click', async () => {
             if (!window.currentTicketData) {
-                alert('Vui lòng quét mã sinh viên để ghi nhận điểm danh!');
+                alert('Please scan student code to record attendance!');
                 return;
             }
 
@@ -352,11 +352,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     showEmptyState();
                     if (manualTicketInput) manualTicketInput.value = '';
                 } else {
-                    alert(result.message || 'Không thể ghi nhận điểm danh!');
+                    alert(result.message || 'Unable to record attendance!');
                 }
             } catch (err) {
-                console.error('[Admin Scanner] Lỗi khi điểm danh:', err);
-                alert('Lỗi kết nối máy chủ khi ghi nhận điểm danh!');
+                console.error('[Admin Scanner] Error recording attendance:', err);
+                alert('Server connection error while recording attendance!');
             } finally {
                 btnActionAttendance.disabled = false;
                 btnActionAttendance.innerHTML = `<i class="fa-solid fa-clipboard-user mr-2"></i> <span>Record Attendance</span>`;

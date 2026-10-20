@@ -6,11 +6,16 @@ class ProfileController {
     index(req, res, next) {
         try {
             const currentUser = req.session.user;
+            const errorMessage = req.session.errorMessage || null;
+            if (req.session.errorMessage) {
+                delete req.session.errorMessage;
+            }
 
             return res.render('profile', {
                 title: 'Change Password - UCC Library',
                 layout: 'user',
                 user: currentUser,
+                errorMessage,
             });
         } catch (error) {
             console.error('Lỗi tại ProfileController.index:', error);
@@ -29,7 +34,7 @@ class ProfileController {
                     title: 'Change Password - UCC Library',
                     layout: 'user',
                     user: currentUser,
-                    errorMessage: 'Vui lòng nhập đầy đủ các trường mật khẩu bắt buộc!',
+                    errorMessage: 'Please fill in all required password fields!',
                 });
             }
 
@@ -38,7 +43,7 @@ class ProfileController {
                     title: 'Change Password - UCC Library',
                     layout: 'user',
                     user: currentUser,
-                    errorMessage: 'Mật khẩu mới phải có độ dài tối thiểu 6 ký tự!',
+                    errorMessage: 'New password must be at least 6 characters long!',
                 });
             }
 
@@ -47,7 +52,7 @@ class ProfileController {
                     title: 'Change Password - UCC Library',
                     layout: 'user',
                     user: currentUser,
-                    errorMessage: 'Mật khẩu xác nhận không trùng khớp với mật khẩu mới!',
+                    errorMessage: 'Confirm password does not match new password!',
                 });
             }
 
@@ -67,7 +72,7 @@ class ProfileController {
                     title: 'Change Password - UCC Library',
                     layout: 'user',
                     user: currentUser,
-                    errorMessage: 'Mật khẩu hiện tại không chính xác!',
+                    errorMessage: 'Current password is incorrect!',
                 });
             }
 
@@ -77,18 +82,23 @@ class ProfileController {
                     title: 'Change Password - UCC Library',
                     layout: 'user',
                     user: currentUser,
-                    errorMessage: 'Mật khẩu mới không được trùng với mật khẩu hiện tại!',
+                    errorMessage: 'New password cannot be the same as current password!',
                 });
             }
 
             user.password = newPassword;
+            user.mustChangePassword = false;
             await user.save();
+
+            if (req.session && req.session.user) {
+                req.session.user.mustChangePassword = false;
+            }
 
             return res.render('profile', {
                 title: 'Change Password - UCC Library',
                 layout: 'user',
                 user: currentUser,
-                successMessage: 'Mật khẩu của bạn đã được cập nhật thành công!',
+                successMessage: 'Your password has been updated successfully!',
             });
         } catch (error) {
             console.error('Lỗi tại ProfileController.changePassword:', error);

@@ -1,6 +1,7 @@
 const Book = require('../models/Book');
 const Category = require('../models/Category');
 const escapeRegex = require('../../util/escapeRegex');
+const { getPaginationData } = require('../helpers/paginationHelper');
 
 class BookController {
     // [GET] /book
@@ -26,16 +27,27 @@ class BookController {
             }
 
             if (status) {
-                if (status === 'avaiable') {
+                if (status === 'available') {
                     filterConditions.availableQuantity = { $gt: 0 };
                 } else if (status === 'borrow') {
                     filterConditions.availableQuantity = { $lte: 0 };
                 }
             }
 
-            // 2. Truy vấn song song dữ liệu sách, danh mục và tổng tồn kho
+            // 2. Tính toán phân trang và truy vấn dữ liệu song song
+            const totalFilteredBooks = await Book.countDocuments(filterConditions);
+            const pagination = getPaginationData({
+                query: req.query,
+                totalItems: totalFilteredBooks,
+                limit: 12,
+            });
+
             const [books, categories, totalAvailableAgg] = await Promise.all([
-                Book.find(filterConditions).populate('categoryId').lean(),
+                Book.find(filterConditions)
+                    .populate('categoryId')
+                    .skip(pagination.skip)
+                    .limit(pagination.limit)
+                    .lean(),
                 Category.find({}).lean(),
                 Book.aggregate([
                     { $match: { deleted: { $ne: true } } },
@@ -65,6 +77,7 @@ class BookController {
                 keyword: searchbook || '',
                 countDocuments,
                 availableQuantityTotal,
+                pagination,
             });
         } catch (error) {
             console.error('Lỗi tại BookController.index:', error);

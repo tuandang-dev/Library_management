@@ -26,4 +26,9 @@ BorrowRecordSchema.plugin(mongooseDelete, {
     deletedAt: true,
 });
 
+BorrowRecordSchema.index({ returnDate: 1, dueDate: 1 });
+BorrowRecordSchema.index({ userId: 1, createdAt: -1 });
+BorrowRecordSchema.index({ bookId: 1 });
+BorrowRecordSchema.index({ borrowDate: -1, createdAt: -1 });
+
 module.exports = mongoose.model('BorrowRecord', BorrowRecordSchema);

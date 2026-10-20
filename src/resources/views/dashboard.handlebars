@@ -13,8 +13,7 @@
                     <div class="stat-card__icon-box stat-card__icon-box--warning">
                         <i class="fa-solid fa-book-open stat-card__icon"></i>
                     </div>
-                    <div class="stat-card__value">{{#if stats.borrowedCount}}{{stats.borrowedCount}}{{else}}3{{/if}}
-                    </div>
+                    <div class="stat-card__value">{{stats.borrowedCount}}</div>
                     <div class="stat-card__title">Books Borrowed</div>
                     <div class="stat-card__desc">Currently borrowed</div>
                 </div>
@@ -25,7 +24,7 @@
                     <div class="stat-card__icon-box stat-card__icon-box--success">
                         <i class="fa-regular fa-calendar-check stat-card__icon"></i>
                     </div>
-                    <div class="stat-card__value">{{#if stats.daysVisited}}{{stats.daysVisited}}{{else}}12{{/if}}</div>
+                    <div class="stat-card__value">{{stats.daysVisited}}</div>
                     <div class="stat-card__title">Days Visited</div>
                     <div class="stat-card__desc">This month</div>
                 </div>
@@ -36,7 +35,7 @@
                     <div class="stat-card__icon-box stat-card__icon-box--danger">
                         <i class="fa-solid fa-triangle-exclamation stat-card__icon"></i>
                     </div>
-                    <div class="stat-card__value">{{#if stats.overdueCount}}{{stats.overdueCount}}{{else}}1{{/if}}</div>
+                    <div class="stat-card__value">{{stats.overdueCount}}</div>
                     <div class="stat-card__title">Overdue Books</div>
                     <div class="stat-card__desc">Need attention</div>
                 </div>
@@ -66,31 +65,9 @@
                         </div>
                         {{/each}}
                         {{else}}
-                        <div class="borrow-item">
-                            <div class="borrow-item__info">
-                                <span class="borrow-item__title">Introduction to Computer Science</span>
-                                <span class="borrow-item__author">by John Smith</span>
-                                <span class="borrow-item__due">Due: 2025-08-15</span>
-                            </div>
-                            <span class="badge badge--borrowed">Borrowed</span>
-                        </div>
-
-                        <div class="borrow-item">
-                            <div class="borrow-item__info">
-                                <span class="borrow-item__title">Data Structures and Algorithms</span>
-                                <span class="borrow-item__author">by Jane Doe</span>
-                                <span class="borrow-item__due">Due: 2025-08-10</span>
-                            </div>
-                            <span class="badge badge--overdue">Overdue</span>
-                        </div>
-
-                        <div class="borrow-item">
-                            <div class="borrow-item__info">
-                                <span class="borrow-item__title">Database Management Systems</span>
-                                <span class="borrow-item__author">by Mike Johnson</span>
-                                <span class="borrow-item__due">Due: 2025-08-20</span>
-                            </div>
-                            <span class="badge badge--borrowed">Borrowed</span>
+                        <div class="p-4 text-center text-muted">
+                            <i class="fa-solid fa-book-open mb-2 d-block" style="font-size: 24px; opacity: 0.5;"></i>
+                            <span>No books currently borrowed.</span>
                         </div>
                         {{/if}}
                     </div>

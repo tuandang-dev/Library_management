@@ -37,4 +37,6 @@ BorrowTicketSchema.plugin(mongooseDelete, {
     deletedAt: true,
 });
 
+BorrowTicketSchema.index({ userId: 1, createdAt: -1 });
+
 module.exports = mongoose.model('BorrowTicket', BorrowTicketSchema);

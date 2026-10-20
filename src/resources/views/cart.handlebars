@@ -193,8 +193,8 @@
                         }
                     }
                 } catch (err) {
-                    console.error('Lỗi khi xóa mục giỏ hàng:', err);
-                    alert('Có lỗi xảy ra khi kết nối máy chủ!');
+                    console.error('Error deleting cart item:', err);
+                    alert('A server connection error occurred!');
                 }
             });
         });
@@ -202,7 +202,7 @@
         const clearCartBtn = document.getElementById('btnClearCart');
         if (clearCartBtn) {
             clearCartBtn.addEventListener('click', async () => {
-                if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ sách trong giỏ mượn?')) return;
+                if (!confirm('Are you sure you want to remove all books from your cart?')) return;
 
                 try {
                     const response = await fetch('/cart/clear', {
@@ -214,11 +214,11 @@
                     if (result.success) {
                         window.location.reload();
                     } else {
-                        alert(result.message || 'Không thể làm trống giỏ!');
+                        alert(result.message || 'Unable to clear cart!');
                     }
                 } catch (err) {
-                    console.error('Lỗi khi dọn giỏ:', err);
-                    alert('Có lỗi xảy ra khi kết nối máy chủ!');
+                    console.error('Error clearing cart:', err);
+                    alert('A server connection error occurred!');
                 }
             });
         }
@@ -286,11 +286,11 @@
 
                         ticketModal.showModal();
                     } else {
-                        alert(data.message || 'Không thể tạo vé mượn sách!');
+                        alert(data.message || 'Unable to create borrow ticket!');
                     }
                 } catch (err) {
-                    console.error('Lỗi khi checkout:', err);
-                    alert('Có lỗi xảy ra khi tạo vé mượn sách!');
+                    console.error('Error during checkout:', err);
+                    alert('A server error occurred while creating borrow ticket!');
                 } finally {
                     btnCheckoutQR.disabled = false;
                     btnCheckoutQR.innerHTML = '<i class="fa-solid fa-qrcode me-2"></i><span>Checkout All Items & Generate QR</span>';
@@ -314,11 +314,11 @@
                         ticketModal.close();
                         window.location.href = `/cart/ticket/${currentTicketId}`;
                     } else {
-                        alert(result.message || 'Không thể dọn sạch giỏ hàng!');
+                        alert(result.message || 'Unable to clear cart!');
                     }
                 } catch (err) {
-                    console.error('Lỗi khi hoàn tất đơn mượn:', err);
-                    alert('Có lỗi xảy ra khi hoàn tất đơn mượn!');
+                    console.error('Error completing borrow ticket:', err);
+                    alert('A server error occurred while completing borrow ticket!');
                 } finally {
                     btnCompleteClose.disabled = false;
                 }

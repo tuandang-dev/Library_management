@@ -1,0 +1,41 @@
+{{#if pagination.showPagination}}
+<nav aria-label="Page navigation" class="pagination-nav mt-4 d-flex justify-content-center">
+    <ul class="pagination pagination-sm mb-0 shadow-sm">
+        {{#if pagination.hasPrevPage}}
+            <li class="page-item">
+                <a class="page-link" href="{{pagination.prevPageUrl}}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {{else}}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
+        {{/if}}
+
+        {{#each pagination.pages}}
+            {{#if this.isCurrent}}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">{{this.pageNumber}}</span>
+                </li>
+            {{else}}
+                <li class="page-item">
+                    <a class="page-link" href="{{this.url}}">{{this.pageNumber}}</a>
+                </li>
+            {{/if}}
+        {{/each}}
+
+        {{#if pagination.hasNextPage}}
+            <li class="page-item">
+                <a class="page-link" href="{{pagination.nextPageUrl}}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {{else}}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&raquo;</span>
+            </li>
+        {{/if}}
+    </ul>
+</nav>
+{{/if}}

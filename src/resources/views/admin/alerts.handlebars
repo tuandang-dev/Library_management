@@ -103,7 +103,7 @@
                     <i class="fa-solid fa-book-open text-danger mr-2"></i>Overdue Books ({{totalOverdueCount}})
                 </h5>
                 <p class="admin-alerts__table-desc mb-0">
-                    Comprehensive overview of all overdue items requiring immediate attention
+                    Showing {{#if pagination.showPagination}}{{pagination.showingFrom}}-{{pagination.showingTo}}{{else}}{{records.length}}{{/if}} of {{totalOverdueCount}} overdue items requiring immediate attention
                 </p>
             </div>
 
@@ -179,6 +179,9 @@
                         {{/if}}
                     </tbody>
                 </table>
+            </div>
+            <div class="px-4 pb-3">
+                {{> pagination pagination=pagination}}
             </div>
         </div>
     </div>
@@ -299,7 +302,7 @@
                 const message = document.getElementById('modalEmailMessage').value;
 
                 if (!recordId) {
-                    alert('Lỗi: Không tìm thấy mã bản ghi mượn sách!');
+                    alert('Error: Borrow record ID not found!');
                     return;
                 }
 
@@ -328,13 +331,13 @@
                         }
 
                         $('#reminderModal').modal('hide');
-                        alert(result.message || 'Đã gửi email nhắc nhở thành công!');
+                        alert(result.message || 'Email reminder sent successfully!');
                     } else {
-                        alert(result.message || 'Không thể gửi email nhắc nhở. Vui lòng thử lại.');
+                        alert(result.message || 'Unable to send email reminder. Please try again.');
                     }
                 } catch (error) {
-                    console.error('Lỗi khi gửi AJAX nhắc nhở:', error);
-                    alert('Lỗi kết nối máy chủ khi thực hiện gửi email.');
+                    console.error('Error sending AJAX reminder:', error);
+                    alert('Server connection error while sending email.');
                 } finally {
                     btnSingle.disabled = false;
                     btnSingle.innerHTML = originalHtml;
@@ -361,14 +364,14 @@
 
                     if (result.success) {
                         $('#bulkReminderModal').modal('hide');
-                        alert(result.message || 'Đã kích hoạt gửi email nhắc nhở hàng loạt thành công!');
+                        alert(result.message || 'Bulk email reminders triggered successfully!');
                         window.location.reload();
                     } else {
-                        alert(result.message || 'Không thể gửi email hàng loạt.');
+                        alert(result.message || 'Unable to send bulk reminders.');
                     }
                 } catch (error) {
-                    console.error('Lỗi khi gửi email hàng loạt:', error);
-                    alert('Lỗi kết nối máy chủ khi kích hoạt gửi thư hàng loạt.');
+                    console.error('Error sending bulk emails:', error);
+                    alert('Server connection error while triggering bulk emails.');
                 } finally {
                     btnBulk.disabled = false;
                     btnBulk.innerHTML = originalHtml;

@@ -23,7 +23,7 @@ class CartController {
             });
         } catch (error) {
             console.error('Lỗi tại CartController.index:', error);
-            return res.status(500).send('Lỗi máy chủ nội bộ!');
+            return res.status(500).send('Internal server error!');
         }
     }
 
@@ -35,7 +35,7 @@ class CartController {
             if (!bookId) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Mã sách không hợp lệ!',
+                    message: 'Invalid book ID!',
                 });
             }
 
@@ -47,7 +47,7 @@ class CartController {
             if (isExist) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Cuốn sách này đã có trong giỏ mượn của bạn!',
+                    message: 'This book is already in your borrowing cart!',
                     cartCount: req.session.cart.length,
                 });
             }
@@ -56,14 +56,14 @@ class CartController {
             if (!book) {
                 return res.status(404).json({
                     success: false,
-                    message: 'Không tìm thấy thông tin cuốn sách trong hệ thống!',
+                    message: 'Book not found in the system!',
                 });
             }
 
             if (book.availableQuantity <= 0) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Sách này hiện đã hết bản sao khả dụng để mượn!',
+                    message: 'This book is currently out of available copies!',
                 });
             }
 
@@ -82,7 +82,7 @@ class CartController {
 
             return res.json({
                 success: true,
-                message: 'Đã thêm sách vào giỏ mượn thành công!',
+                message: 'Book added to cart successfully!',
                 cartCount: req.session.cart.length,
                 cart: req.session.cart,
             });
@@ -90,7 +90,7 @@ class CartController {
             console.error('Lỗi tại CartController.add:', error);
             return res.status(500).json({
                 success: false,
-                message: 'Lỗi hệ thống khi thêm vào giỏ!',
+                message: 'System error while adding to cart!',
             });
         }
     }
@@ -108,7 +108,7 @@ class CartController {
 
             return res.json({
                 success: true,
-                message: 'Đã xóa cuốn sách khỏi giỏ mượn!',
+                message: 'Book removed from cart!',
                 cartCount: req.session.cart.length,
                 cart: req.session.cart,
             });
@@ -116,7 +116,7 @@ class CartController {
             console.error('Lỗi tại CartController.remove:', error);
             return res.status(500).json({
                 success: false,
-                message: 'Lỗi hệ thống khi xóa sách!',
+                message: 'System error while removing book!',
             });
         }
     }
@@ -127,7 +127,7 @@ class CartController {
             req.session.cart = [];
             return res.json({
                 success: true,
-                message: 'Đã làm trống giỏ mượn sách!',
+                message: 'Cart cleared successfully!',
                 cartCount: 0,
                 cart: [],
             });
@@ -135,7 +135,7 @@ class CartController {
             console.error('Lỗi tại CartController.clear:', error);
             return res.status(500).json({
                 success: false,
-                message: 'Lỗi hệ thống khi dọn giỏ!',
+                message: 'System error while clearing cart!',
             });
         }
     }
@@ -158,7 +158,7 @@ class CartController {
             if (cart.length === 0) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Giỏ mượn sách đang trống! Vui lòng chọn ít nhất 1 cuốn sách.',
+                    message: 'Your cart is empty! Please select at least one book.',
                 });
             }
 
@@ -221,7 +221,7 @@ class CartController {
 
             return res.json({
                 success: true,
-                message: 'Tạo vé mượn sách thành công!',
+                message: 'Borrow ticket created successfully!',
                 ticket: {
                     _id: newTicket._id,
                     ticketId: newTicket.ticketId,
@@ -238,7 +238,7 @@ class CartController {
             console.error('Lỗi tại CartController.checkout:', error);
             return res.status(500).json({
                 success: false,
-                message: 'Có lỗi xảy ra khi tạo vé mượn QR!',
+                message: 'An error occurred while creating QR borrow ticket!',
             });
         }
     }
@@ -255,7 +255,7 @@ class CartController {
             }).lean();
 
             if (!ticket) {
-                return res.status(404).send('Không tìm thấy vé mượn sách!');
+                return res.status(404).send('Borrow ticket not found!');
             }
 
             const formatDateTime = (date) => {
@@ -289,7 +289,7 @@ class CartController {
             });
         } catch (error) {
             console.error('Lỗi tại CartController.ticket:', error);
-            return res.status(500).send('Lỗi máy chủ nội bộ!');
+            return res.status(500).send('Internal server error!');
         }
     }
 }

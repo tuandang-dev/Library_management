@@ -1,6 +1,9 @@
 const Book = require('../models/Book');
 const Category = require('../models/Category');
+const BorrowRecord = require('../models/BorrowRecord');
+const Attendance = require('../models/Attendance');
 const escapeRegex = require('../../util/escapeRegex');
+const { getPaginationData } = require('../helpers/paginationHelper');
 
 class SiteController {
     // [GET] /
@@ -11,39 +14,68 @@ class SiteController {
 
         try {
             if (req.session && req.session.user) {
+                const currentUser = req.session.user;
+                const now = new Date();
+
+                // Lấy đầu tháng hiện tại (00:00:00 ngày 1 của tháng)
+                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+
+                const [
+                    borrowedCount,
+                    daysVisited,
+                    overdueCount,
+                    activeBorrowRecords,
+                ] = await Promise.all([
+                    BorrowRecord.countDocuments({
+                        userId: currentUser._id,
+                        returnDate: null,
+                    }),
+                    Attendance.countDocuments({
+                        userId: currentUser._id,
+                        checkInTime: { $gte: startOfMonth },
+                    }),
+                    BorrowRecord.countDocuments({
+                        userId: currentUser._id,
+                        returnDate: null,
+                        dueDate: { $lt: now },
+                    }),
+                    BorrowRecord.find({
+                        userId: currentUser._id,
+                        returnDate: null,
+                    })
+                        .populate('bookId', 'title author')
+                        .sort({ dueDate: 1 })
+                        .limit(3)
+                        .lean(),
+                ]);
+
+                const borrowedBooks = activeBorrowRecords.map((record) => {
+                    const isOverdue = now > new Date(record.dueDate);
+                    const dueObj = new Date(record.dueDate);
+                    const formattedDue = isNaN(dueObj.getTime())
+                        ? 'N/A'
+                        : `${dueObj.getFullYear()}-${String(dueObj.getMonth() + 1).padStart(2, '0')}-${String(dueObj.getDate()).padStart(2, '0')}`;
+
+                    return {
+                        title: record.bookId?.title || 'Unknown Title',
+                        author: record.bookId?.author || 'Unknown Author',
+                        dueDate: formattedDue,
+                        statusType: isOverdue ? 'overdue' : 'borrowed',
+                        statusText: isOverdue ? 'Overdue' : 'Borrowed',
+                    };
+                });
+
                 return res.render('dashboard', {
-                    title: 'Trang chủ sinh viên - UCC Library',
+                    title: 'Student Portal - UCC Library',
                     layout: 'user',
-                    user: req.session.user,
+                    user: currentUser,
                     isHomePage: true,
                     stats: {
-                        borrowedCount: 3,
-                        daysVisited: 12,
-                        overdueCount: 1,
+                        borrowedCount: borrowedCount || 0,
+                        daysVisited: daysVisited || 0,
+                        overdueCount: overdueCount || 0,
                     },
-                    borrowedBooks: [
-                        {
-                            title: 'Introduction to Computer Science',
-                            author: 'John Smith',
-                            dueDate: '2025-08-15',
-                            statusType: 'borrowed',
-                            statusText: 'Borrowed',
-                        },
-                        {
-                            title: 'Data Structures and Algorithms',
-                            author: 'Jane Doe',
-                            dueDate: '2025-08-10',
-                            statusType: 'overdue',
-                            statusText: 'Overdue',
-                        },
-                        {
-                            title: 'Database Management Systems',
-                            author: 'Mike Johnson',
-                            dueDate: '2025-08-20',
-                            statusType: 'borrowed',
-                            statusText: 'Borrowed',
-                        },
-                    ],
+                    borrowedBooks,
                 });
             }
 
@@ -67,10 +99,17 @@ class SiteController {
                 filterConditions.$or = [
                     { title: { $regex: safeKeyword, $options: 'i' } },
                     { isbn: { $regex: safeKeyword, $options: 'i' } },
-                    { accessionNumber: { $regex: safeKeyword, $options: 'i' } },
+                    { bookId: { $regex: safeKeyword, $options: 'i' } },
                     { author: { $regex: safeKeyword, $options: 'i' } },
                 ];
             }
+
+            const totalFilteredBooks = await Book.countDocuments(filterConditions);
+            const pagination = getPaginationData({
+                query: req.query,
+                totalItems: totalFilteredBooks,
+                limit: 12,
+            });
 
             const [
                 books,
@@ -79,7 +118,11 @@ class SiteController {
                 countDocuments,
                 availableQuantityTotal,
             ] = await Promise.all([
-                Book.find(filterConditions).populate('categoryId').lean(),
+                Book.find(filterConditions)
+                    .populate('categoryId')
+                    .skip(pagination.skip)
+                    .limit(pagination.limit)
+                    .lean(),
                 Category.find({}).lean(),
                 Book.aggregate([
                     {
@@ -103,11 +146,12 @@ class SiteController {
                 totalCopies,
                 countDocuments,
                 availableQuantityTotal,
+                pagination,
                 layout: false,
             });
         } catch (error) {
             console.error(error);
-            res.status(500).send('Lỗi server!');
+            res.status(500).send('Server error!');
         }
     }
 }

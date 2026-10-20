@@ -38,7 +38,7 @@ class ScannerController {
             });
         } catch (error) {
             console.error('Lỗi tại ScannerController.index:', error);
-            return res.status(500).send('Lỗi máy chủ nội bộ!');
+            return res.status(500).send('Internal server error!');
         }
     }
 
@@ -72,7 +72,7 @@ class ScannerController {
 
             return res.status(201).json({
                 success: true,
-                message: 'Điểm danh vào thư viện thành công!',
+                message: 'Library check-in successful!',
                 data: {
                     attendanceId: newAttendance._id,
                     studentId: newAttendance.studentId,
@@ -85,13 +85,13 @@ class ScannerController {
             if (error.code === 11000) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Bạn đã điểm danh hôm nay',
+                    message: 'You have already checked in today',
                 });
             }
             console.error('Lỗi tại ScannerController.checkIn:', error);
             return res.status(500).json({
                 success: false,
-                message: 'Lỗi máy chủ khi ghi nhận điểm danh!',
+                message: 'Server error while recording check-in!',
             });
         }
     }

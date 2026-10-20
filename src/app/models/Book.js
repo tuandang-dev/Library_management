@@ -24,4 +24,10 @@ Book.plugin(mongooseDelete, {
     deletedAt: true
 });
 
+Book.index({ title: 1 });
+Book.index({ author: 1 });
+Book.index({ categoryId: 1 });
+Book.index({ category: 1 });
+Book.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Book', Book);

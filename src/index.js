@@ -2,12 +2,45 @@ const path = require('path')
 const express = require('express')
 const morgan = require('morgan')
 const session = require('express-session');
+const mongoose = require('mongoose');
+const { MongoStore } = require('connect-mongo');
 const methodOverride = require('method-override');
 const { engine } = require('express-handlebars');
 const app = express()
 const port = process.env.PORT || 3000
 
+// Kiem tra bien moi truong bat buoc khi chay moi truong production
+if (process.env.NODE_ENV === 'production') {
+  const missingEnvs = [];
+  if (!process.env.SESSION_SECRET) {
+    missingEnvs.push('SESSION_SECRET');
+  }
+  if (!process.env.MONGODB_URI) {
+    missingEnvs.push('MONGODB_URI');
+  }
+  if (missingEnvs.length > 0) {
+    console.error(`[FATAL] Production environment missing required variables: ${missingEnvs.join(', ')}`);
+    process.exit(1);
+  }
+}
+
 app.disable('x-powered-by');
+
+// Cau hinh trust proxy khi chay sau Reverse Proxy (Nginx, Caddy, Cloudflare, AWS ALB,...)
+// Mac dinh tat; neu TRUST_PROXY duoc thiet lap (vi du TRUST_PROXY=1 hoac TRUST_PROXY=true),
+// cau hinh app.set('trust proxy', ...) truoc session va rate limiters.
+if (process.env.TRUST_PROXY) {
+  const trustProxyVal = process.env.TRUST_PROXY.trim();
+  if (/^\d+$/.test(trustProxyVal)) {
+    app.set('trust proxy', parseInt(trustProxyVal, 10));
+  } else if (trustProxyVal.toLowerCase() === 'true') {
+    app.set('trust proxy', true);
+  } else if (trustProxyVal.toLowerCase() === 'false') {
+    app.set('trust proxy', false);
+  } else {
+    app.set('trust proxy', trustProxyVal);
+  }
+}
 
 // Middleware đặt header bảo mật cơ bản
 app.use((req, res, next) => {
@@ -57,10 +90,25 @@ app.engine('handlebars', engine({
 app.set('view engine', 'handlebars')
 app.set('views', path.join(__dirname, 'resources', 'views'))
 
+const clientPromise = new Promise((resolve) => {
+  if (mongoose.connection.readyState === 1) {
+    return resolve(mongoose.connection.getClient());
+  }
+  mongoose.connection.once('open', () => {
+    resolve(mongoose.connection.getClient());
+  });
+});
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    clientPromise,
+    collectionName: 'sessions',
+    ttl: 60 * 60 * 24, // 1 ngày
+    autoRemove: 'native',
+  }),
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
@@ -77,7 +125,7 @@ route(app);
 // 404 handler cho route khong ton tai theo cu phap Express 5
 app.use('/*splat', (req, res) => {
   res.status(404).render('error', {
-    message: 'Trang bạn tìm kiếm không tồn tại.',
+    message: 'The page you are looking for does not exist.',
   });
 });
 
@@ -94,11 +142,11 @@ app.use((err, req, res, next) => {
 
   if (err.name === 'CastError') {
     status = 400;
-    clientMessage = 'Dữ liệu không hợp lệ';
+    clientMessage = 'Invalid data';
   } else if (status >= 500) {
-    clientMessage = 'Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.';
+    clientMessage = 'A system error occurred. Please try again later.';
   } else {
-    clientMessage = err.message || 'Yêu cầu không hợp lệ.';
+    clientMessage = err.message || 'Invalid request.';
   }
 
   const isApiOrFetch = Boolean(
@@ -125,7 +173,7 @@ async function startServer() {
     await db.connect();
     const mongoose = require('mongoose');
     if (mongoose.connection.readyState !== 1) {
-      throw new Error('Kết nối cơ sở dữ liệu MongoDB thất bại');
+      throw new Error('MongoDB database connection failed');
     }
     await seedSampleLogs();
     const server = app.listen(port, () => {

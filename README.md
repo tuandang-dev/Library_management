@@ -14,10 +14,9 @@
 - Nền tảng: Node.js, Express 5.
 - Giao diện: Express-Handlebars, Sass.
 - Cơ sở dữ liệu: MongoDB, Mongoose 9, plugin mongoose-delete.
-- Xác thực & Phiên làm việc: express-session, bcryptjs.
+- Xác thực & Phiên làm việc: express-session, connect-mongo (lưu session trong MongoDB), bcryptjs.
 - Tiện ích: qrcode, nodemailer.
 - Giới hạn tần suất: express-rate-limit.
-- Kiểm thử: Bộ kiểm thử tích hợp sẵn của Node.js.
 
 ## Tính năng chính
 
@@ -25,8 +24,8 @@
 - Tra cứu danh mục sách theo từ khóa và thể loại.
 - Thêm sách vào giỏ mượn và tạo vé mượn điện tử kèm mã QR.
 - Xem vé mượn cá nhân và theo dõi lịch sử các lần mượn, trả sách.
-- Quét mã điểm danh ra vào thư viện hàng ngày và xem lịch sử điểm danh cá nhân.
-- Cập nhật thông tin tài khoản và đổi mật khẩu.
+- Quét mã điểm danh vào thư viện hàng ngày và xem lịch sử điểm danh cá nhân.
+- Đổi mật khẩu.
 
 ### Dành cho quản trị viên
 - Quản trị sách (thêm, sửa, ẩn sách, cập nhật số lượng tồn kho).
@@ -48,10 +47,11 @@
 ## Bảo mật cơ bản
 - Mật khẩu người dùng được băm an toàn bằng thư viện bcryptjs (10 vòng salt).
 - Cookie session thiết lập thuộc tính HttpOnly và SameSite; tạo mới ID session khi đăng nhập thành công.
-- Giới hạn tần suất: tối đa 10 lần đăng nhập sai trong 15 phút cho mỗi tài khoản; giới hạn số lần yêu cầu quên mật khẩu.
+- Giới hạn tần suất: tối đa 10 lần đăng nhập sai trong 15 phút cho mỗi tài khoản trên 1 địa chỉ IP; giới hạn số lần yêu cầu quên mật khẩu.
 - Token đặt lại mật khẩu được băm SHA-256 trong cơ sở dữ liệu, hết hạn sau 15 phút và tự hủy sau một lần sử dụng.
 - Dữ liệu hiển thị được escape tự động qua Handlebars; từ khóa tìm kiếm được xử lý ký tự đặc biệt trước khi truy vấn regex.
 - Phân quyền theo chủ sở hữu: sinh viên chỉ xem được vé mượn do chính mình tạo ra.
+- Tài khoản mới tạo phải đổi mật khẩu mặc định ở lần đăng nhập đầu
 
 ## Kiến trúc hệ thống
 Hệ thống được tổ chức theo mô hình MVC:
@@ -63,7 +63,7 @@ Hệ thống được tổ chức theo mô hình MVC:
 ```mermaid
 stateDiagram-v2
     [*] --> ACTIVE: Sinh viên checkout giỏ sách (chưa trừ kho)
-    ACTIVE --> PROCESSING: Thủ thư quét mã QR tại quầy
+    ACTIVE --> PROCESSING: Thủ thư bấm xác nhận cho mượn
     PROCESSING --> ACTIVE: Hủy xử lý hoặc thiếu sách trong kho (hoàn trạng thái)
     PROCESSING --> COMPLETED: Trừ kho thành công (-1) & tạo BorrowRecord
     COMPLETED --> [*]: Hoàn tất thủ tục mượn (hạn trả 14 ngày)
@@ -125,7 +125,12 @@ erDiagram
 Library-Management-System/
 ├── src/
 │   ├── app/
-│   │   ├── controllers/      # Bộ điều khiển xử lý nghiệp vụ (Admin, Auth, Book, Cart, v.v.)
+│   │   ├── controllers/      # AdminController (dashboard), Auth, Book, Cart, v.v.
+│   │   │   ├── AdminUserController.js        # Quản lý người dùng
+│   │   │   ├── AdminBookController.js        # Quản lý sách
+│   │   │   ├── AdminAlertController.js       # Cảnh báo quá hạn và nhắc nhở
+│   │   │   ├── AdminAttendanceController.js  # Điểm danh, lịch sử và nhật ký
+│   │   │   └── AdminScannerController.js     # Quét mã và mượn trả
 │   │   ├── helpers/          # Tiện ích hỗ trợ (gửi mail, ghi log, định dạng điểm danh)
 │   │   ├── middlewares/      # Middleware phân quyền và giới hạn tần suất
 │   │   ├── models/           # Mongoose Schema đại diện cho các bảng dữ liệu
@@ -166,23 +171,38 @@ Cấu hình các giá trị trong `.env`:
 | `MONGODB_URI` | **Có** | Chuỗi kết nối MongoDB. Không có sẽ không khởi động được ứng dụng. |
 | `SESSION_SECRET` | **Có** | Chuỗi bí mật ký session cookie. Bắt buộc để phiên hoạt động an toàn. |
 | `ADMIN_DEFAULT_PASSWORD` | **Có** | Mật khẩu tạo tài khoản admin đầu tiên (`admin@library.com`). |
-| `EMAIL_USER` / `EMAIL_PASS` | Không | Tài khoản Gmail/SMTP. Nếu thiếu, tính năng gửi email sẽ bị bỏ qua. |
+| `STUDENT_DEFAULT_PASSWORD` | **Có** | Mật khẩu mặc định khi tạo tài khoản sinh viên mới (qua admin hoặc CSV). Nếu thiếu, hệ thống không tạo tài khoản. |
+| `EMAIL_USER` / `EMAIL_PASS` | Không | Tài khoản Gmail và mật khẩu ứng dụng. Nếu thiếu một trong hai, email chưa được bật: helper ghi cảnh báo và trả `false`. Quên mật khẩu vẫn hiển thị thông báo chung “If the email exists, we have sent password reset instructions.” dù không gửi được email. Nhắc quá hạn đơn lẻ trả lỗi HTTP 500; nhắc hàng loạt trả số gửi thành công là 0 nếu không gửi được email nào. |
 | `NODE_ENV` | Không | Môi trường chạy (`development`, `production`, `test`). |
+| `TRUST_PROXY` | Không | Cấu hình trust proxy khi chạy sau Reverse Proxy (ví dụ `1` hoặc `true`). |
 
 4. Khởi chạy máy chủ phát triển:
 ```bash
-npm start
+npm run dev
 ```
 Truy cập ứng dụng tại `http://localhost:3000`.
 
 5. Hướng dẫn đăng nhập:
 - Đăng nhập Quản trị viên: Truy cập `/login`, nhập email `admin@library.com` và mật khẩu đã khai báo tại `ADMIN_DEFAULT_PASSWORD`.
-- Tạo tài khoản Sinh viên: Hệ thống không mở đăng ký tự do. Quản trị viên vào mục Quản lý người dùng (`/admin/users`) để thêm thủ công hoặc nạp tệp CSV. Mật khẩu ban đầu được hệ thống gán mặc định là `123456`. Sinh viên có thể đăng nhập bằng email hoặc mã sinh viên (`studentId`).
+- Tạo tài khoản Sinh viên: Hệ thống không mở đăng ký tự do. Quản trị viên vào mục Quản lý người dùng (`/admin/users`) để thêm thủ công hoặc nạp tệp CSV. Mật khẩu ban đầu được lấy từ biến môi trường `STUDENT_DEFAULT_PASSWORD`. Ở lần đăng nhập đầu tiên, sinh viên bắt buộc phải đổi mật khẩu tại `/profile` trước khi sử dụng các chức năng khác của hệ thống. Sinh viên có thể đăng nhập bằng email hoặc mã sinh viên (`studentId`).
+
+## Triển khai (Production)
+Khi triển khai ứng dụng lên các nền tảng đám mây (như Render, Railway, Docker, v.v.):
+1. Cấu hình các biến môi trường trực tiếp trên giao diện quản trị của nền tảng lưu trữ (các biến được cung cấp qua môi trường hệ thống của nền tảng, không cần và không đưa tệp `.env` lên môi trường chạy thật):
+   - `NODE_ENV=production`: Kích hoạt cookie session an toàn (`secure: true`).
+   - `SESSION_SECRET`: Chuỗi khóa ký phiên làm việc (ứng dụng sẽ thoát ngay nếu thiếu).
+   - `MONGODB_URI`: Đường dẫn kết nối cơ sở dữ liệu MongoDB (ứng dụng sẽ thoát ngay nếu thiếu).
+   - `TRUST_PROXY`: Cấu hình trust proxy (ví dụ `TRUST_PROXY=1` hoặc `true`) khi ứng dụng nằm sau Reverse Proxy (Render proxy, Cloudflare, Nginx, ALB) để cookie secure, nhận diện đúng địa chỉ IP (`req.ip`) phục vụ giới hạn tần suất và kiểm tra bảo vệ CSRF.
+   - `ADMIN_DEFAULT_PASSWORD`: Mật khẩu khởi tạo tài khoản quản trị viên mặc định (`admin@library.com`).
+   - `STUDENT_DEFAULT_PASSWORD`: Mật khẩu khởi tạo mặc định cho sinh viên mới.
+   - `EMAIL_USER` / `EMAIL_PASS`: (Tùy chọn) Tài khoản Gmail và mật khẩu ứng dụng. Nếu thiếu, helper ghi cảnh báo và không gửi email; quên mật khẩu vẫn hiển thị thông báo chung, nhắc quá hạn đơn lẻ báo lỗi HTTP 500, còn nhắc hàng loạt báo số gửi thành công là 0 nếu không gửi được email nào.
+2. Lệnh khởi chạy máy chủ chạy thật:
+   ```bash
+   npm start
+   ```
 
 ## Hướng phát triển
-- Lưu trữ session bền vững: Chuyển bộ lưu trữ session từ bộ nhớ trong sang MongoDB (`connect-mongo`) để dữ liệu không bị mất khi khởi động lại máy chủ.
 - Nhắc quá hạn tự động: Cài đặt tác vụ nền chạy định kỳ hàng ngày (cron job) để tự động quét sách quá hạn và gửi email thông báo.
-- Tái cấu trúc bộ điều khiển quản trị: Chia nhỏ `AdminController` thành các controller độc lập theo từng nghiệp vụ (sách, độc giả, lưu thông, báo cáo).
 - Bổ sung kiểm thử đơn vị: Mở rộng kiểm thử đơn vị (unit tests) cho các module tính toán thời gian mượn và phân loại mức độ quá hạn.
 
 ## Xử lý sự cố

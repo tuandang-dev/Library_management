@@ -94,7 +94,7 @@
                                     <option value="disable" {{#unless this.isActive}}selected{{/unless}}>Disable
                                     </option>
                                 </select>
-                                <button type="button" class="user-mgmt__btn-delete" title="Xóa tài khoản"
+                                <button type="button" class="user-mgmt__btn-delete" title="Delete user"
                                     data-user-id="{{this._id}}">
                                     <i class="fa-regular fa-trash-can"></i>
                                 </button>
@@ -104,13 +104,14 @@
                     {{else}}
                     <tr>
                         <td colspan="6" class="user-mgmt__td--empty text-center py-4">
-                            Không tìm thấy người dùng nào phù hợp với điều kiện tìm kiếm.
+                            No users found matching your search criteria.
                         </td>
                     </tr>
                     {{/each}}
                 </tbody>
             </table>
         </div>
+        {{> pagination pagination=pagination}}
     </div>
 </div>
 
@@ -157,9 +158,9 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-6 user-modal__field">
-                                <label class="user-modal__label" for="addStudentId">Mã sinh viên</label>
+                                <label class="user-modal__label" for="addStudentId">Student ID</label>
                                 <input type="text" class="form-control user-modal__input" id="addStudentId"
-                                    name="studentId" placeholder="Nhập mã sinh viên (tùy chọn)">
+                                    name="studentId" placeholder="Enter student ID (optional)">
                             </div>
                         </div>
                     </div>
@@ -457,7 +458,7 @@
 
         function handleCSVFile(file) {
             if (!file.name.toLowerCase().endsWith('.csv')) {
-                alert('Vui lòng chọn tập tin có định dạng .csv');
+                alert('Please select a .csv file');
                 return;
             }
 
@@ -475,7 +476,7 @@
                         const fallbackDecoder = new TextDecoder('windows-1258');
                         text = fallbackDecoder.decode(buffer);
                     } catch (err) {
-                        console.warn('Trình duyệt không hỗ trợ windows-1258, giữ nguyên bản mã utf-8');
+                        console.warn('Browser does not support windows-1258 fallback, keeping utf-8');
                     }
                 }
 
@@ -485,7 +486,7 @@
 
                 const lines = text.split(/\r\n|\n/).filter((line) => line.trim() !== '');
                 if (lines.length <= 1) {
-                    alert('File CSV không có dữ liệu người dùng.');
+                    alert('CSV file contains no user data.');
                     return;
                 }
 
@@ -505,7 +506,7 @@
                 }
 
                 if (parsedUsers.length === 0) {
-                    alert('Không tìm thấy dữ liệu hợp lệ trong file CSV.');
+                    alert('No valid user data found in CSV file.');
                     return;
                 }
 
@@ -517,14 +518,14 @@
                     });
                     const result = await response.json();
                     if (result.success) {
-                        alert(`Đã nạp thành công ${result.count} người dùng mới!`);
+                        alert(`Successfully imported ${result.count} new users!`);
                         window.location.reload();
                     } else {
-                        alert(result.message || 'Có lỗi xảy ra khi nạp người dùng.');
+                        alert(result.message || 'An error occurred while importing users.');
                     }
                 } catch (err) {
                     console.error('Fetch error:', err);
-                    alert('Không thể kết nối đến máy chủ.');
+                    alert('Unable to connect to the server.');
                 }
             };
         }
@@ -562,12 +563,12 @@
                             }
                         }
                     } else {
-                        alert(result.message || 'Không thể cập nhật trạng thái.');
+                        alert(result.message || 'Unable to update status.');
                         select.value = previousValue;
                     }
                 } catch (err) {
                     console.error('Fetch error:', err);
-                    alert('Lỗi kết nối khi cập nhật trạng thái.');
+                    alert('Connection error while updating status.');
                     select.value = previousValue;
                 }
             });
@@ -579,9 +580,9 @@
                 const userId = btn.getAttribute('data-user-id');
                 const row = btn.closest('.user-mgmt__tr');
                 const userNameEl = row ? row.querySelector('.user-mgmt__user-name') : null;
-                const userName = userNameEl ? userNameEl.textContent.trim() : 'người dùng này';
+                const userName = userNameEl ? userNameEl.textContent.trim() : 'this user';
 
-                const isConfirm = confirm(`Bạn có chắc chắn muốn xóa tài khoản "${userName}" không? Thao tác này không thể hoàn tác.`);
+                const isConfirm = confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`);
                 if (!isConfirm) return;
 
                 try {
@@ -601,16 +602,16 @@
                                 row.remove();
                                 const tbody = document.querySelector('.user-mgmt__table tbody');
                                 if (tbody && tbody.querySelectorAll('.user-mgmt__tr').length === 0) {
-                                    tbody.innerHTML = '<tr><td colspan="6" class="user-mgmt__td--empty text-center py-4">Không tìm thấy người dùng nào trong hệ thống.</td></tr>';
+                                    tbody.innerHTML = '<tr><td colspan="6" class="user-mgmt__td--empty text-center py-4">No users found in the system.</td></tr>';
                                 }
                             }, 300);
                         }
                     } else {
-                        alert(result.message || 'Không thể xóa người dùng.');
+                        alert(result.message || 'Unable to delete user.');
                     }
                 } catch (err) {
                     console.error('Fetch error:', err);
-                    alert('Lỗi kết nối khi xóa tài khoản.');
+                    alert('Connection error while deleting account.');
                 }
             });
         });

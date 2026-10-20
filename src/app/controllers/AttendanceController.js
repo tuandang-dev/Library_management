@@ -1,5 +1,6 @@
 const Attendance = require('../models/Attendance');
 const User = require('../models/User');
+const { getPaginationData } = require('../helpers/paginationHelper');
 
 class AttendanceController {
     // [GET] /attendance
@@ -34,15 +35,27 @@ class AttendanceController {
                     break;
             }
 
-            const [totalVisits, recordsData] = await Promise.all([
+            const attendanceFilter = {
+                userId: currentUser._id,
+                checkInTime: { $gte: startDate, $lte: endDate },
+            };
+
+            const [totalVisits, filteredCount] = await Promise.all([
                 Attendance.countDocuments({ userId: currentUser._id }),
-                Attendance.find({
-                    userId: currentUser._id,
-                    checkInTime: { $gte: startDate, $lte: endDate },
-                })
-                    .sort({ checkInTime: -1 })
-                    .lean(),
+                Attendance.countDocuments(attendanceFilter),
             ]);
+
+            const pagination = getPaginationData({
+                query: req.query,
+                totalItems: filteredCount,
+                limit: 10,
+            });
+
+            const recordsData = await Attendance.find(attendanceFilter)
+                .sort({ checkInTime: -1 })
+                .skip(pagination.skip)
+                .limit(pagination.limit)
+                .lean();
 
             const formattedRecords = recordsData.map((record) => {
                 const dateObj = new Date(record.checkInTime);
@@ -71,10 +84,11 @@ class AttendanceController {
                 isMonth: period === 'month' || !['day', 'week', 'year'].includes(period),
                 isYear: period === 'year',
                 isAttendancePage: true,
+                pagination,
             });
         } catch (error) {
             console.error('Lỗi tại AttendanceController.index:', error);
-            return res.status(500).send('Lỗi máy chủ!');
+            return res.status(500).send('Internal server error!');
         }
     }
 }

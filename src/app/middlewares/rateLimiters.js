@@ -6,7 +6,7 @@ const forgotPasswordIpLimiter = rateLimit({
     handler: (req, res) => {
         return res.status(429).render('auth/forgot-password', {
             layout: 'auth',
-            errorMessage: 'Bạn đã yêu cầu đặt lại mật khẩu quá nhiều lần. Vui lòng thử lại sau 15 phút.',
+            errorMessage: 'Too many password reset requests. Please try again after 15 minutes.',
         });
     },
 });
@@ -24,7 +24,7 @@ const forgotPasswordEmailLimiter = rateLimit({
     handler: (req, res) => {
         return res.status(429).render('auth/forgot-password', {
             layout: 'auth',
-            errorMessage: 'Bạn đã yêu cầu đặt lại mật khẩu cho email này quá nhiều lần. Vui lòng thử lại sau 15 phút.',
+            errorMessage: 'Too many password reset requests for this email. Please try again after 15 minutes.',
         });
     },
 });
@@ -36,7 +36,7 @@ const resetPasswordLimiter = rateLimit({
         return res.status(429).render('auth/reset-password', {
             layout: 'auth',
             token: req.params.token,
-            errorMessage: 'Bạn đã thử đặt lại mật khẩu quá nhiều lần. Vui lòng thử lại sau 15 phút.',
+            errorMessage: 'Too many attempts to reset password. Please try again after 15 minutes.',
         });
     },
 });
@@ -48,7 +48,7 @@ const loginIpLimiter = rateLimit({
     handler: (req, res) => {
         return res.status(429).render('auth/login', {
             layout: 'auth',
-            errorMessage: 'IP của bạn đã thực hiện quá nhiều lần đăng nhập không thành công. Vui lòng thử lại sau 15 phút.',
+            errorMessage: 'Too many failed login attempts from your IP. Please try again after 15 minutes.',
         });
     },
 });
@@ -64,7 +64,7 @@ const loginAccountLimiter = rateLimit({
     handler: (req, res) => {
         return res.status(429).render('auth/login', {
             layout: 'auth',
-            errorMessage: 'Bạn đã đăng nhập sai quá nhiều lần cho tài khoản này. Vui lòng thử lại sau 15 phút.',
+            errorMessage: 'Too many failed login attempts for this account. Please try again after 15 minutes.',
         });
     },
 });

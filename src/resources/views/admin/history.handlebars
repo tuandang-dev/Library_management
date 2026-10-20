@@ -128,7 +128,7 @@
                     <h2 class="borrow-records__title h5 mb-0">Transaction History</h2>
                 </div>
                 <p class="borrow-records__subtitle small mb-0">
-                    Showing {{showingCount}} of {{totalRecordsCount}} records
+                    Showing {{#if pagination.showPagination}}{{pagination.showingFrom}}-{{pagination.showingTo}}{{else}}{{showingCount}}{{/if}} of {{totalRecordsCount}} records
                 </p>
             </div>
         </div>
@@ -200,6 +200,7 @@
                 </div>
             </div>
             {{/each}}
+            {{> pagination pagination=pagination}}
             {{else}}
             <div class="history-empty-state card border-0 shadow-sm text-center py-5">
                 <div class="card-body">
