@@ -201,6 +201,54 @@ Khi triển khai ứng dụng lên các nền tảng đám mây (như Render, Ra
    npm start
    ```
 
+## Seed dữ liệu demo an toàn
+
+`seed:demo` chỉ phục vụ bộ dữ liệu trình diễn `library-demo-v1`. Script không tạo hoặc cập nhật admin; tài khoản admin vẫn do startup quản lý. Không thêm dependency, không thay đổi model, DNS Windows hoặc cấu hình Render.
+
+### Điều kiện trước khi chạy
+
+- Sao lưu và kiểm tra dữ liệu hiện có; tránh thao tác mượn/trả đồng thời khi nạp demo lần đầu.
+- `MONGODB_URI` phải chỉ rõ database `/test` trên cluster `library-management-syst.acu8hcg.mongodb.net`. URI thiếu database, cluster khác hoặc tùy chọn ngoài `retryWrites`, `w`, `appName`, `authSource` sẽ bị từ chối. Không chia sẻ URI có thông tin xác thực.
+- Lệnh npm hiện có nạp `.env` cục bộ; biến đã có trong môi trường tiến trình được ưu tiên. Không tự sửa URI hoặc trỏ vào database khác để vượt kiểm tra.
+- Khi tạo mới, cần `STUDENT_DEFAULT_PASSWORD` dài ít nhất 6 ký tự. Không có mật khẩu dự phòng hardcode và không in mật khẩu/hash ra log. Sinh viên demo dùng mật khẩu này ở lần tạo đầu; chạy lại không reset mật khẩu.
+- Cần quyền đọc, ghi và transaction. Các unique index theo model phải tồn tại: `categories.name`, `categories.slug`, `books.bookId`, `books.isbn`, `users.email`, `borrowtickets.ticketId`, `attendances(userId,dateKey)`. Script không tự tạo collection/index; thiếu index hoặc collection thì dừng. Không tự động chạy lệnh sửa index trên database đang dùng.
+
+### Xem trước và xác nhận ghi
+
+Chạy xem trước (có kết nối và đọc Atlas nhưng không ghi document hoặc tự tạo index):
+
+```bash
+npm run seed:demo -- --dry-run --dns-cloudflare
+```
+
+`--dns-cloudflare` đặt DNS `1.1.1.1` chỉ cho tiến trình seed, trước các truy vấn DNS. Bỏ tùy chọn này nếu DNS mặc định hoạt động. DNS thành công chưa bảo đảm kết nối và quyền truy cập MongoDB thành công.
+
+Sau khi tự kiểm tra kết quả xem trước và chấp nhận nạp dữ liệu, lệnh ghi là:
+
+```bash
+npm run seed:demo -- --write --confirm=library-demo-v1@library-management-syst.acu8hcg.mongodb.net/test --dns-cloudflare
+```
+
+Không có `--write` thì mặc định chỉ xem trước. Có `--write` nhưng thiếu hoặc sai `--confirm` thì dừng trước kết nối. Không đặt lệnh seed trong Build/Start Command của Render.
+
+### Chính sách dữ liệu và chạy lại
+
+- Lần đầu dự kiến thêm 94 document: 7 thể loại, 20 sách, 13 sinh viên, 3 vé, 16 lịch sử mượn/trả, 15 điểm danh và 20 nhật ký mẫu. Nhật ký có tiền tố `[DEMO library-demo-v1]`; chúng là dữ liệu mô phỏng, không chứng minh hệ thống đã gửi email hoặc thực hiện các sự kiện đó.
+- `_id` demo được sinh ổn định từ phiên bản bộ dữ liệu, loại document và khóa logic. Cách này chống trùng cả với lịch sử/nhật ký chưa có unique key, không cần sửa schema. Không tự đổi phiên bản để né xung đột.
+- Kiểm tra cả document xóa mềm, email không phân biệt hoa/thường, khóa tự nhiên và các tham chiếu. Trùng khóa với document khác, tham chiếu bị đổi, xóa mềm hoặc bộ demo thiếu một phần: dừng, không ghi đè/khôi phục/xóa dữ liệu.
+- Bộ demo đầy đủ: không ghi gì, giữ nguyên mật khẩu, tồn kho, trạng thái, ngày và timestamp hiện có. Dữ liệu do seeder cũ tạo có ID khác cũng bị coi là xung đột; không tự nhận quyền sở hữu hoặc chuyển đổi.
+- Toàn bộ document mới được validate và thêm trong một transaction; không cập nhật document cũ, không fallback khi transaction lỗi. `_id` cố định và unique index phòng vệ khi có chạy đồng thời.
+- Lỗi trước commit làm hủy transaction. Mất kết nối quanh lúc commit có thể khiến client chưa biết kết quả: chạy xem trước/kiểm kê trước khi thử lại, không xóa dữ liệu để xử lý lỗi.
+- Vé ACTIVE có thời hạn 15 phút. Chạy lại không gia hạn hoặc mở lại vé; tạo vé mới qua giao diện khi cần trình diễn. Tồn kho ban đầu khớp các bản ghi mượn chưa trả của bộ demo, không trừ kho cho vé ACTIVE chưa xác nhận.
+
+### Kiểm thử không kết nối database
+
+```bash
+node --test tests/demo-seeder.test.js
+```
+
+Bộ test này dùng database/transaction trong bộ nhớ và chặn kết nối Mongoose/DNS thật; không nạp `.env`, không khởi động website. Nó không xác nhận transaction hoặc index thực tế trên Atlas. `npm test` còn chạy các bộ kiểm thử có ghi DB hiện hữu, nên không dùng lệnh đó để kiểm tra seed trên database `test` đang phục vụ Render. Không có integration test tự động kết nối Atlas trong bộ test seed.
+
 ## Hướng phát triển
 - Nhắc quá hạn tự động: Cài đặt tác vụ nền chạy định kỳ hàng ngày (cron job) để tự động quét sách quá hạn và gửi email thông báo.
 - Bổ sung kiểm thử đơn vị: Mở rộng kiểm thử đơn vị (unit tests) cho các module tính toán thời gian mượn và phân loại mức độ quá hạn.
